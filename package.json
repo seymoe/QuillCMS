@@ -1,7 +1,7 @@
 {
-  "name": "zhejingxuan",
-  "version": "1.0.0",
-  "description": "zhejingxuan",
+  "name": "quillcms",
+  "version": "0.0.1",
+  "description": "A Content Management System build with Node.js, Express, Nuxt.js and MongoDB.",
   "author": "ximolang",
   "private": true,
   "scripts": {

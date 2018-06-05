@@ -1,6 +1,6 @@
-# zhejingxuan
+# QuillCMS
 
-> zhejingxuan
+> QuillCMS, A Content Management System build with Node.js, Express, Nuxt.js and MongoDB.
 
 ## Build Setup
 
