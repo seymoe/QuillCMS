@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import PostCategory from './PostCategory'
-import PostComments from './PostComments'
+import PostTag from './PostTag'
+import PostComment from './PostComment'
 import User from './User'
 import shortid from 'shortid'
 
@@ -12,41 +13,87 @@ const PostSchema = new Schema({
     type: String,
     'default': shortid.generate
   },
-  sentence: String,    // 标题
-  picture: String,     // 图片
+  title: String,        // 标题
+  sub_title: String,    // 二级标题
+  cover: String,        // 图片
+  discription: String,  // 简介
+  content: String,      // 文章内容
   author: {
     type: String,
     ref: 'User'
   },
-  likes: {
-    tpye: Number,
-    default: 0
-  },
-  location: {
-    type: String,
-    default: ''
-  },
-  // 卡片分类
-  category: {
-    type: String,
-    ref: PostCategory
-  },
-  // 显示样式
-  stlye: {
-    type: Number,
-    default: 1
-  },
+  // 分类
+  categories: [
+    {
+      type: String,
+      ref: PostCategory
+    }
+  ],
+  // 权限 public secret
   auth: {
     type: String,
     default: 'public'
   },
+  // 状态 published draft
+  state: {
+    type: String,
+    default: 'published'
+  },
+  // 是否置顶推荐
+  isTop: {
+    type: Boolean,
+    default: false
+  },
+  // 文章来源 0: 原创 1: 转载
+  from: {
+    type: Number,
+    default: 0
+  },
+  // 文章标签
+  tags: [
+    {
+      type: String,
+      ref: 'PostTag'
+    }
+  ],
+  // 评论
   comments: [
     {
       type: String,
-      ref: 'PostComments'
+      ref: 'PostComment'
     }
   ],
-  create_time: Date
+  // 喜欢次数
+  likes: {
+    tpye: Number,
+    default: 0
+  },
+  // 浏览次数
+  views: {
+    type: Number,
+    default: 0
+  },
+  // 收藏
+  collections: {
+    type: Number,
+    default: 0
+  },
+  // 喜欢该文章的用户列表
+  like_users: [
+    {
+      type: String,
+      default: []
+    }
+  ],
+  // 收藏该文章的用户列表
+  collect_users: [
+    {
+      type: String,
+      default: []
+    }
+  ]
+  create_time: Date,
+  modify_time: Date
 })
 
 export default mongoose.model('Post', PostSchema)

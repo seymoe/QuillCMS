@@ -4,7 +4,7 @@ const User = require('./User')
 
 const Schema = mongoose.Schema
 
-const PostCommentsSchema = new Schema({
+const PostCommentSchema = new Schema({
   // 评论ID
   _id: {
     type: String,
@@ -35,4 +35,4 @@ const PostCommentsSchema = new Schema({
   created_ip: String  // 创建ip
 })
 
-module.exports = mongoose.model('PostComments', PostCommentsSchema)
+module.exports = mongoose.model('PostComment', PostCommentSchema)
