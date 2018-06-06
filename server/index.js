@@ -1,40 +1,34 @@
 import express from 'express'
 import mongoose from 'mongoose'
-const bodyParser = require('body-parser')
 import { Nuxt, Builder } from 'nuxt'
-
-// 连接mongoDB数据库
-const url = 'mongodb://127.0.0.1:27017/zhejingxuan'
-mongoose.connect(url)
-const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function () {
-  console.log('database opend!')
-})
-
-
+import config from '../nuxt.config'
+import siteConf from '../config/index.default'
+import { log } from '../utils/util'
 import serverAPI from './serverapi'
 import clientAPI from './clientapi'
 
+// Init Nuxt.js
 const app = express()
-const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 3000
+const host = process.env.HOST || siteConf.host
+const port = process.env.PORT || siteConf.port
+const nuxt = new Nuxt(config)
+const bodyParser = require('body-parser')
+const db = mongoose.connection
+
+// 连接mongoDB数据库
+mongoose.connect(siteConf.DB_URL)
+db.on('error', console.error.bind(console, 'connection error:'))
+db.once('open', function () {
+  log('database opend!')
+})
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-
 app.set('port', port)
 
 // Import API Routes
-app.use('/server/api', serverAPI)
-app.use('/client/api', clientAPI)
-
-// Import and Set Nuxt.js options
-let config = require('../nuxt.config.js')
-config.dev = !(process.env.NODE_ENV === 'production')
-
-// Init Nuxt.js
-const nuxt = new Nuxt(config)
+app.use(`/server${siteConf.api_path}`, serverAPI)
+app.use(`/client${siteConf.api_path}`, clientAPI)
 
 // Build only in dev mode
 if (config.dev) {
@@ -47,4 +41,4 @@ app.use(nuxt.render)
 
 // Listen the server
 app.listen(port, host)
-console.log('Server listening on ' + host + ':' + port) // eslint-disable-line no-console
+log('Server listening on ' + host + ':' + port) // eslint-disable-line no-console
