@@ -91,7 +91,7 @@ const PostSchema = new Schema({
       type: String,
       default: []
     }
-  ]
+  ],
   create_time: Date,
   modify_time: Date
 })

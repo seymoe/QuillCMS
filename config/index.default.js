@@ -13,7 +13,7 @@ export default {
   // 站点关键词
   keywords: 'QuillCMS,CMS',
   // 站点域名
-  host: 'http://127.0.0.1',
+  host: '127.0.0.1',
   // 端口
   port: 4000,
   // API版本路径
