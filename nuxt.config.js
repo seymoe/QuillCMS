@@ -28,17 +28,37 @@ module.exports = {
     ]
   },
   plugins: [
-    
+    {
+      src: '~plugins/element-ui',
+      ssr: true
+    }
   ],
+
+  // babel: {        //配置按需引入规则
+  //   "plugins": [
+  //     [
+  //       "component",
+  //       {
+  //         "libraryName": "element-ui",
+  //         "styleLibraryName": "theme-chalk"
+  //       }
+  //     ]
+  //   ]
+  // },
+
   /*
   ** Global CSS
   */
-  css: ['~/assets/css/main.css'],
+  css: [
+    'element-ui/lib/theme-chalk/index.css',
+    'element-ui/lib/theme-chalk/display.css',
+    '~/assets/css/main.css',
+  ],
   /*
   ** Add axios globally
   */
   build: {
-    vendor: ['axios'],
+    vendor: ['axios', 'element-ui'],
     /*
     ** Run ESLINT on save
     */

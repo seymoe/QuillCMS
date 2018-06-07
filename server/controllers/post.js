@@ -10,12 +10,9 @@ export default {
    * @param {*} next 
    */
   getList(req, res, next) {
-    let {
-      page,
-      pageSize,
-      sort,
-      order
-    } = req.query
+    let { page, pageSize, sort, order, isTop} = req.query
+    let conditions = {}
+    let sortable = {}
 
     // 每页数据条数
     pageSize = parseInt(pageSize)
@@ -25,7 +22,17 @@ export default {
     page = parseInt(page)
     page = page > 1 ? page : 1
 
-    let conditions = {}
+    // 设置查询参数
+    if (isTop === 'yes') {
+      conditions.isTop = true
+    }
+    // 设置排序参数
+    if (sort) {
+      sortable[sort] = -1
+    }
+    if (order === 'asc') {
+      sortable[sort] = 1
+    }
 
     // 声明相关参数
     let totalCounts = 0   // 总条数
@@ -37,7 +44,7 @@ export default {
 
     let query = Post.find(conditions)
 
-    query.sort({ create_time: -1 }).count((err, count) => {
+    query.sort(sortable).count((err, count) => {
       console.log('count-> ', count)
       totalCounts = count
       if (totalCounts < pageSize) {

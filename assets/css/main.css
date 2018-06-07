@@ -45,9 +45,25 @@ img{
   width: 100%;
   margin: 0 auto;
 }
-/*
+
+.container{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @media (min-width: 768px) {
-  .app{
+  .container {
     width: 768px;
   }
-}*/
+}
+@media (min-width: 992px) {
+  .container {
+    width: 992px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1200px;
+  }
+}
