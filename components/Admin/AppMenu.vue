@@ -1,13 +1,19 @@
 <template>
   <aside class="app-menu">
+    <div class="menu-top-box">
+      <h1>QUILLCMS</h1>
+    </div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
+      background-color="#409eff"
+      text-color="#fff"
+      active-text-color="#ffd04b"
       @open="handleOpen"
       @close="handleClose">
       <el-menu-item index="1">
         <i class="iconfont">&#xe61a;</i>
-        <span slot="title">数据面板</span>
+        <span slot="title">仪表盘</span>
       </el-menu-item>
       <el-menu-item index="2">
         <i class="iconfont">&#xe602;</i>
@@ -43,7 +49,7 @@
           <span>系统管理</span>
         </template>
         <el-menu-item index="9-1">站点设置</el-menu-item>
-        <el-menu-item index="9-1">轮播管理</el-menu-item>
+        <el-menu-item index="9-2">轮播管理</el-menu-item>
       </el-submenu>
     </el-menu>
   </aside>
@@ -64,18 +70,32 @@ export default {
 
 <style lang="scss" scoped>
 .app-menu{
-  position: absolute;
-  top: 0;
-  left: 0;
+  margin-top: -50px;
+  margin-bottom: -50px;
   width: 200px;
   min-height: 100%;
-  background-color: #fff;
+  background-color: #409eff;
   border-right: 1px solid #e6e6e6;
   overflow-x: hidden;
   overflow-y: scroll;
-  .iconfont{
+  i{
     margin-right: 4px;
     font-size: 18px;
+    color: #fff;
+  }
+  .el-menu{
+    border-right: none;
+  }
+}
+.menu-top-box{
+  height: 100px;
+  line-height: 100px;
+  background-color: #3796f7;
+  h1{
+    margin: 0;
+    color: #fff;
+    text-align: center;
+    font-size: 30px;
   }
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <div class="app-header">
     <el-row>
-      <el-col :span="2">
-        <h1 class="logo">QuillCMS</h1>
-      </el-col>
-      <el-col :span="22" class="header-right">
+      <!-- <el-col :span="2">
+        <h1 class="logo"></h1>
+      </el-col> -->
+      <el-col :span="24" class="header-right">
         <div class="box">
           <i class="el-icon-bell">
             <span></span>
@@ -59,13 +59,13 @@ export default {
 <style lang="scss" scoped>
 .app-header {
   padding: 0 15px;
-  background-color: #409eff;
+  background-color: #fff;
 }
 .logo,
 .welcome {
   margin: 0;
   line-height: 50px;
-  color: #fff;
+  color: #409eff;
 }
 .header-right {
   position: relative;
@@ -75,7 +75,7 @@ export default {
     display: flex;
     justify-content: flex-end;
     height: 50px;
-    color: #fff;
+    color: #409eff;
     i {
       position: relative;
       width: 40px;
@@ -96,7 +96,7 @@ export default {
         border-radius: 50%;
       }
       &:hover {
-        background-color: #3687da;
+        background-color: #f8f8f8;
       }
     }
   }
@@ -107,7 +107,7 @@ export default {
     transition: all 0.3s;
     cursor: pointer;
     &:hover {
-      background-color: #3687da;
+      background-color: #f8f8f8;
     }
     > img {
       display: block;
@@ -128,6 +128,7 @@ export default {
     right: 0;
     top: 55px;
     width: 150px;
+    z-index: 10;
     img {
       margin: 20px auto;
       display: block;
