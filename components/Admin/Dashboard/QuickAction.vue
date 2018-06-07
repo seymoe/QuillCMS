@@ -3,6 +3,7 @@
     <h2>快捷操作</h2>
     <div class="actionbox">
       <el-button 
+        class="btn"
         v-for="item in quickActions"
         :key="item.id"
         :type="item.type"
@@ -70,5 +71,8 @@ export default {
 .actionbox{
   padding: 30px 15px;
   background-color: #fff;
+  .btn{
+    border-radius: 0;
+  }
 }
 </style>

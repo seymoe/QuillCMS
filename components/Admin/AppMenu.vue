@@ -4,52 +4,53 @@
       <h1>QUILLCMS</h1>
     </div>
     <el-menu
-      default-active="2"
+      :default-active="activeIndex"
       class="el-menu-vertical-demo"
       background-color="#409eff"
       text-color="#fff"
       active-text-color="#ffd04b"
+      :router="true"
       @open="handleOpen"
       @close="handleClose">
-      <el-menu-item index="1">
+      <el-menu-item index="/admin">
         <i class="iconfont">&#xe61a;</i>
         <span slot="title">仪表盘</span>
       </el-menu-item>
-      <el-menu-item index="2">
+      <el-menu-item index="/admin/users">
         <i class="iconfont">&#xe602;</i>
         <span slot="title">用户管理</span>
       </el-menu-item>
-      <el-menu-item index="3">
+      <el-menu-item index="/admin/posts">
         <i class="iconfont">&#xe67d;</i>
         <span slot="title">文章管理</span>
       </el-menu-item>
-      <el-menu-item index="4">
+      <el-menu-item index="/admin/comments">
         <i class="iconfont">&#xe69a;</i>
         <span slot="title">评论管理</span>
       </el-menu-item>
-      <el-menu-item index="5">
+      <el-menu-item index="/admin/categories">
         <i class="iconfont">&#xe601;</i>
         <span slot="title">分类管理</span>
       </el-menu-item>
-      <el-menu-item index="6">
+      <el-menu-item index="/admin/tags">
         <i class="iconfont">&#xe6a4;</i>
         <span slot="title">标签管理</span>
       </el-menu-item>
-      <el-menu-item index="7">
+      <el-menu-item index="/admin/ads">
         <i class="iconfont">&#xe674;</i>
         <span slot="title">广告管理</span>
       </el-menu-item>
-      <el-menu-item index="8">
+      <el-menu-item index="/admin/links">
         <i class="iconfont">&#xe636;</i>
         <span slot="title">友链管理</span>
       </el-menu-item>
-      <el-submenu index="9">
+      <el-submenu index="/admin/system">
         <template slot="title">
           <i class="el-icon-setting"></i>
           <span>系统管理</span>
         </template>
-        <el-menu-item index="9-1">站点设置</el-menu-item>
-        <el-menu-item index="9-2">轮播管理</el-menu-item>
+        <el-menu-item index="/admin/system/site">站点设置</el-menu-item>
+        <el-menu-item index="/admin/system/slider">轮播管理</el-menu-item>
       </el-submenu>
     </el-menu>
   </aside>
@@ -57,6 +58,12 @@
 
 <script>
 export default {
+  props: {
+    activeIndex: {
+      type: String,
+      default: '/admin'
+    }
+  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath)
@@ -72,7 +79,7 @@ export default {
 .app-menu{
   margin-top: -50px;
   margin-bottom: -50px;
-  width: 200px;
+  width: 160px;
   min-height: 100%;
   background-color: #409eff;
   border-right: 1px solid #e6e6e6;
@@ -95,7 +102,7 @@ export default {
     margin: 0;
     color: #fff;
     text-align: center;
-    font-size: 30px;
+    font-size: 24px;
   }
 }
 </style>
