@@ -1,16 +1,16 @@
 <template>
   <div class="admin-page">
-    <app-header
+    <app-header 
       :spanPostion="menuSetting.btnPosition"
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
-      <app-menu
+      <app-menu 
+        activeIndex="/admin/users"
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
-        <quick-statistics></quick-statistics>
-        <quick-action></quick-action>
-        <system-info></system-info>
+        <user-top></user-top>
+        <user-table></user-table>
       </main>
     </div>
     <app-footer></app-footer>
@@ -22,9 +22,8 @@ import AppHeader from '~/components/Admin/AppHeader'
 import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
 import AppPageTitle from '~/components/Admin/AppPageTitle'
-import QuickStatistics from '~/components/Admin/Dashboard/QuickStatistics'
-import SystemInfo from '~/components/Admin/Dashboard/SystemInfo'
-import QuickAction from '~/components/Admin/Dashboard/QuickAction'
+import UserTop from '~/components/Admin/Users/UserTop'
+import UserTable from '~/components/Admin/Users/UserTable'
 
 export default {
   data() {
@@ -37,8 +36,8 @@ export default {
             path: '/admin'
           },
           {
-            name: '仪表盘',
-            path: '/admin'
+            name: '用户管理',
+            path: '/admin/users'
           }
         ]
       },
@@ -63,9 +62,8 @@ export default {
     AppFooter,
     AppMenu,
     AppPageTitle,
-    QuickStatistics,
-    SystemInfo,
-    QuickAction
+    UserTop,
+    UserTable
   }
 }
 </script>

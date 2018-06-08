@@ -77,7 +77,7 @@
           <template slot-scope="scope">
             <div class="btns">
               <el-button @click="handleClick(scope.row)" type="primary" size="mini">编辑</el-button>
-              <el-button type="danger" size="mini">编辑</el-button>
+              <el-button type="danger" size="mini">删除</el-button>
             </div>
           </template>
         </el-table-column>

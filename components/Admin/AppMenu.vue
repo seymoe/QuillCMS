@@ -98,6 +98,9 @@ export default {
   }
   .el-menu{
     border-right: none;
+    .el-menu-item.is-active i{
+      color: rgb(255, 208, 75);
+    }
   }
 }
 .menu-top-box{

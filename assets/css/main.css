@@ -76,3 +76,25 @@ img{
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
+
+/* 管理后台公共样式 */
+.admin-page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f8f8f8;
+}
+.admin-main-content {
+  display: flex;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  width: 100%;
+  bottom: 50px;
+}
+.admin-main-wrap {
+  flex: 1;
+  overflow-y: scroll;
+}

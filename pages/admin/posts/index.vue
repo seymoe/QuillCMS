@@ -1,13 +1,13 @@
 <template>
-  <div class="dashbord-page">
+  <div class="admin-page">
     <app-header 
       :spanPostion="menuSetting.btnPosition"
       @toggle-appmenu="handleToggleAppmenu"></app-header>
-    <div class="main-content">
+    <div class="admin-main-content">
       <app-menu 
         activeIndex="/admin/posts"
         :isCollapse="menuSetting.isCollapse"></app-menu>
-      <main class="main">
+      <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
         <post-top></post-top>
         <post-table></post-table>
@@ -69,25 +69,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.dashbord-page{
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #f8f8f8;
-}
-.main-content{
-  display: flex;
-  position: absolute;
-  top: 50px;
-  left: 0;
-  width: 100%;
-  bottom: 50px;
-}
-main.main{
-  flex: 1;
-  overflow-y: scroll;
-}
+
 </style>
 
