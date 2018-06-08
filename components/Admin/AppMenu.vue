@@ -1,7 +1,8 @@
 <template>
-  <aside class="app-menu">
+  <aside class="app-menu" :style="{ 'width': isCollapse ? '65px' : '160px' }">
     <div class="menu-top-box">
-      <h1>QUILLCMS</h1>
+      <h1 v-if="!isCollapse">QUILLCMS</h1>
+      <h1 v-else>Q</h1>
     </div>
     <el-menu
       :default-active="activeIndex"
@@ -11,7 +12,8 @@
       active-text-color="#ffd04b"
       :router="true"
       @open="handleOpen"
-      @close="handleClose">
+      @close="handleClose"
+      :collapse="isCollapse">
       <el-menu-item index="/admin">
         <i class="iconfont">&#xe61a;</i>
         <span slot="title">仪表盘</span>
@@ -62,6 +64,10 @@ export default {
     activeIndex: {
       type: String,
       default: '/admin'
+    },
+    isCollapse: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -79,12 +85,12 @@ export default {
 .app-menu{
   margin-top: -50px;
   margin-bottom: -50px;
-  width: 160px;
   min-height: 100%;
   background-color: #409eff;
   border-right: 1px solid #e6e6e6;
   overflow-x: hidden;
   overflow-y: scroll;
+  transition: all .5s;
   i{
     margin-right: 4px;
     font-size: 18px;

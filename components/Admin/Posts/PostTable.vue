@@ -17,7 +17,7 @@
           <template slot-scope="scope">{{ scope.row.id }}</template>
         </el-table-column>
         <el-table-column
-          width="50"
+          width="80"
           label="推荐">
           <template slot-scope="scope">
             <i :class="{'iconfont': true, 'topicon': true, 'top': scope.row.isTop }">&#xe62a;</i>
@@ -30,14 +30,14 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="100"
+          width="80"
           label="分类">
           <template slot-scope="scope">
             {{ scope.row.category }}
           </template>
         </el-table-column>
         <el-table-column
-          width="50"
+          width="80"
           label="来源">
           <template slot-scope="scope">
             {{ scope.row.from }}
@@ -51,21 +51,21 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="100"
+          width="80"
           label="点击数">
           <template slot-scope="scope">
             {{ scope.row.clicks }}
           </template>
         </el-table-column>
         <el-table-column
-          width="100"
+          width="80"
           label="喜欢数">
           <template slot-scope="scope">
             {{ scope.row.likes }}
           </template>
         </el-table-column>
         <el-table-column
-          width="100"
+          width="80"
           label="评论数">
           <template slot-scope="scope">
             {{ scope.row.comments }}
@@ -207,114 +207,6 @@ export default {
           },
           {
             id: 10,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 11,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 12,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 13,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 14,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 15,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 16,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 17,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 18,
-            isTop: false,
-            title: 'QuillCMS正在开发中...',
-            category: '其他',
-            from: '原创',
-            create_time: '2018-06-08',
-            clicks: 301,
-            likes: 20,
-            comments: 12,
-            author: 'admin'
-          },
-          {
-            id: 19,
             isTop: false,
             title: 'QuillCMS正在开发中...',
             category: '其他',

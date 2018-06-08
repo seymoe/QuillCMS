@@ -5,6 +5,11 @@
         <h1 class="logo"></h1>
       </el-col> -->
       <el-col :span="24" class="header-right">
+        <span class="btn-collapse" 
+          :style="{'margin-left': spanPostion + 'px'}"
+          @click="toggleAppMenu">
+          <i class="iconfont">&#xe601;</i>
+        </span>
         <div class="box">
           <i class="el-icon-bell">
             <span></span>
@@ -41,6 +46,7 @@ export default {
       showPanel: false
     }
   },
+  props: ['spanPostion'],
   methods: {
     handleTogglePanel() {
       this.showPanel = !this.showPanel
@@ -50,6 +56,9 @@ export default {
       if (this.showPanel) {
         this.showPanel = false
       }
+    },
+    toggleAppMenu() {
+      this.$emit('toggle-appmenu')
     }
   }
 }
@@ -70,7 +79,22 @@ export default {
 .header-right {
   position: relative;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  .btn-collapse{
+    display: block;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .5s;
+    &:hover{
+      color: #409eff;
+    }
+    i{
+      font-size: 20px;
+    }
+  }
   .box {
     display: flex;
     justify-content: flex-end;

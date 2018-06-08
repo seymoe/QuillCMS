@@ -1,8 +1,12 @@
 <template>
   <div class="dashbord-page">
-    <app-header></app-header>
+    <app-header 
+      :spanPostion="menuSetting.btnPosition"
+      @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="main-content">
-      <app-menu activeIndex="/admin/posts"></app-menu>
+      <app-menu 
+        activeIndex="/admin/posts"
+        :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="main">
         <app-page-title :cateObj="cateObj"></app-page-title>
         <post-top></post-top>
@@ -36,6 +40,20 @@ export default {
             path: '/admin/posts'
           }
         ]
+      },
+      menuSetting: {
+        btnPosition: 145,
+        isCollapse: false
+      }
+    }
+  },
+  methods: {
+    handleToggleAppmenu() {
+      this.menuSetting.isCollapse = !this.menuSetting.isCollapse
+      if (this.menuSetting.isCollapse) {
+        this.menuSetting.btnPosition = 50
+      } else {
+        this.menuSetting.btnPosition = 145
       }
     }
   },
@@ -69,6 +87,7 @@ export default {
 }
 main.main{
   flex: 1;
+  overflow-y: scroll;
 }
 </style>
 
