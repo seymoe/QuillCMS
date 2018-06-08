@@ -6,6 +6,7 @@
       <main class="main">
         <app-page-title :cateObj="cateObj"></app-page-title>
         <post-top></post-top>
+        <post-table></post-table>
       </main>
     </div>
     <app-footer></app-footer>
@@ -18,6 +19,7 @@ import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
 import AppPageTitle from '~/components/Admin/AppPageTitle'
 import PostTop from '~/components/Admin/Posts/PostTop'
+import PostTable from '~/components/Admin/Posts/PostTable'
 
 export default {
   data() {
@@ -42,7 +44,8 @@ export default {
     AppFooter,
     AppMenu,
     AppPageTitle,
-    PostTop
+    PostTop,
+    PostTable
   }
 }
 </script>
