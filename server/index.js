@@ -4,8 +4,8 @@ import { Nuxt, Builder } from 'nuxt'
 import config from '../nuxt.config'
 import siteConf from '../config/index.default'
 import { log } from '../utils/util'
-import serverAPI from './serverapi'
-import clientAPI from './clientapi'
+import serverAPI from './api/server'
+import clientAPI from './api/client'
 
 // Init Nuxt.js
 const app = express()
@@ -13,6 +13,8 @@ const host = process.env.HOST || siteConf.host
 const port = process.env.PORT || siteConf.port
 const nuxt = new Nuxt(config)
 const bodyParser = require('body-parser')
+
+mongoose.Promise = global.Promise
 const db = mongoose.connection
 
 // 连接mongoDB数据库

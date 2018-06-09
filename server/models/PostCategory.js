@@ -17,6 +17,11 @@ const PostCategorySchema = new Schema({
     type: Number,
     default: 1
   },
+  // 排序 正整数
+  sort_id: {
+    type: Number,
+    default: 1
+  },
   // 父级分类 默认为0：顶级分类
   parent_id: {
     type: String,
@@ -24,12 +29,25 @@ const PostCategorySchema = new Schema({
   },
   name: String,    // 分类名称
   description: String,    // 分类描述
+  // seo link
+  default_url: {
+    type: String,
+    default: ''
+  },
+  //存储所有父节点结构路径 ","分割
+  sort_path: {
+    type: String,
+    default: '0'
+  },
   // 是否激活
   enable: {
     type: Boolean,
     default: true
   },
-  create_time: Date
+  create_time: {
+    type: Date,
+    default: Date.now
+  }
 })
 
 export default mongoose.model('PostCategory', PostCategorySchema)

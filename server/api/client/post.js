@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import PostController from '../controllers/post'
+import PostController from '../../controllers/post'
 const router = Router()
 
 /* 文章列表 */

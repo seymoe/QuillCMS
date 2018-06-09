@@ -1,9 +1,7 @@
 import { Router } from 'express'
+import postCategory from './postCategory'
 
 const router = Router()
-
-// Add USERS Routes
-// router.use(couponAPI)
-// router.use(media)
+router.use(postCategory)
 
 export default router
