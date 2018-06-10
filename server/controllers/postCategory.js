@@ -1,8 +1,7 @@
 import PostCategory from '../models/PostCategory'
 import validator from 'validator'
-import formidable from 'formidable'
+import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
-import postCategory from '../api/server/postCategory';
 
 export default {
   /**
@@ -89,7 +88,7 @@ export default {
       log(queryObj)
 
       // 查询文档
-      const categoryList = await PostCategory.find(queryObj).sort({ sort_id: 1 }).skip((page - 1) * pageSize).limit(pageSize).exec()
+      const categoryList = await PostCategory.find(queryObj).sort({ sort_id: -1 }).skip((page - 1) * pageSize).limit(pageSize).exec()
       const totalCounts = await PostCategory.count(queryObj)
 
       let cateObj = {
@@ -110,16 +109,28 @@ export default {
    * @param {*} res 
    * @param {*} next 
    */
-  deleteOne(req, res, next) {
+  async deleteOne(req, res, next) {
     try {
       let errMsg = ''
-      if (!checkCurrentId(req.query.ids)) {
+      let id = req.params.id
+      log(id)
+      if (!shortid.isValid(id)) {
         errMsg = 'ID格式校验失败'
       }
       if (errMsg) {
         res.send(renderApiErr(req, res, 500, errMsg))
       }
-      await ContentCategoryModel.remove({ _id: req.query.ids });
+
+      // 判断该分类是否含有下级分类，如果存在，强制删除下级分类才可删除该分类
+      let subCateCount = await PostCategory.count({parent_id: id})
+      if (subCateCount > 0) {
+        errMsg = '请先删除下级分类再删除该分类'
+      }
+      if (errMsg) {
+        res.send(renderApiErr(req, res, 500, errMsg))
+      }
+
+      await PostCategory.remove({ _id: id })
       res.send(renderApiData(res, 200, '删除成功', {}))
     } catch (err) {
       res.send(renderApiErr(req, res, 500, err))

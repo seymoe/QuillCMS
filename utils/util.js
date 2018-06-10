@@ -65,7 +65,6 @@ export const arrayToTree = (arr) => {
     obj1.children = []
     subArr.forEach(obj2 => {
       if (obj2.parent_id === obj1._id) {
-        log('push')
         obj1.children.push(obj2)
       }
     })

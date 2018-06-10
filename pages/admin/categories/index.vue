@@ -13,11 +13,13 @@
           @add-cate="handleToggleAddDialog"></categories-top>
         <categories-tree 
           :categoryTree="categoryList"
-          @add-cate="handleToggleAddDialog"></categories-tree>
+          @add-cate="handleToggleAddDialog"
+          @delete-cate="clientDeleteOneCate"></categories-tree>
         <add-cate-dialog 
           :dialogFormVisible="dialogFormVisible"
           :dialogParentNode="dialogParentNode"
-          @add-cate="handleToggleAddDialog"></add-cate-dialog>
+          @add-cate="handleToggleAddDialog"
+          @create-new-cate="clientCreateOneCate"></add-cate-dialog>
       </main>
     </div>
     <app-footer></app-footer>
@@ -37,21 +39,24 @@ import CategoriesTree from '~/components/Admin/Categories/CategoriesTree'
 import AddCateDialog from '~/components/Admin/Categories/AddCateDialog'
 
 let serverGetCategoryList = () => {
-  return axios.get(API.categoryList, {
-    params: {
-      mode: 'full'
-    }
-  }).then(res => {
-    log(1)
-    if (res.data.success) {
-      let _tree = arrayToTree(res.data.data.list)
-      return _tree
-    } else {
+  return axios
+    .get(API.categoryList, {
+      params: {
+        mode: 'full'
+      }
+    })
+    .then(res => {
+      log(1)
+      if (res.data.success) {
+        let _tree = arrayToTree(res.data.data.list)
+        return _tree
+      } else {
+        return []
+      }
+    })
+    .catch(e => {
       return []
-    }
-  }).catch(e => {
-    return []
-  })
+    })
 }
 
 export default {
@@ -84,12 +89,8 @@ export default {
     }
   },
 
-  async asyncData ({ params }) {
-    let [
-      categoryList
-    ] = await Promise.all([
-      serverGetCategoryList()
-    ])
+  async asyncData({ params }) {
+    let [categoryList] = await Promise.all([serverGetCategoryList()])
     return {
       categoryList
     }
@@ -116,9 +117,77 @@ export default {
       this.dialogParentNode = topCateNode || {}
     },
 
-    // 客户端发送请求
-    clientCreateOneCate() {
-      log(1)
+    // 客户端发送增加分类请求
+    clientCreateOneCate(data, successCB, failCB) {
+      log(data)
+      this.$request
+        .post(API.categoryAdd, data)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            successCB && successCB()
+            this.clientGetCategoryList()
+          }
+        })
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: JSON.stringify(err)
+          })
+          failCB && failCB()
+        })
+    },
+
+    // 客户端拉取分类列表请求
+    clientGetCategoryList() {
+      this.$request
+        .get(API.categoryList, {
+          params: {
+            mode: 'full'
+          }
+        })
+        .then(res => {
+          if (res.data.success) {
+            let _tree = arrayToTree(res.data.data.list)
+            this.categoryList = _tree
+          }
+        })
+        .catch(e => {
+          log(e)
+          // 发生错误则刷新页面从服务端重新拉取列表
+          location.reload()
+        })
+    },
+
+    // 客户端发起删除分类请求
+    clientDeleteOneCate(cateNode) {
+      log(cateNode)
+      this.$request
+        .delete(API.categoryDelete + '/' + cateNode._id)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.clientGetCategoryList()
+          } else {
+            this.$notify({
+              title: '错误',
+              message: res.data.message,
+              type: 'danger'
+            })
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
     }
   },
   components: {
@@ -134,6 +203,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>
 

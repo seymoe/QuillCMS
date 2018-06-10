@@ -11,21 +11,25 @@
         <span>{{ node.label }}</span>
         <span>
           <el-button
+            class="btn"
+            v-if="data.children"
             type="primary"
             size="mini"
             @click="addSubCate(data)">
             添加
           </el-button>
           <el-button
+            class="btn"
             type="success"
             size="mini"
-            @click="() => remove(node, data)">
+            @click="() => deleteOneCate(data)">
             编辑
           </el-button>
           <el-button
+            class="btn"
             type="danger"
             size="mini"
-            @click="() => remove(node, data)">
+            @click="() => deleteOneCate(data)">
             删除
           </el-button>
         </span>
@@ -35,6 +39,8 @@
 </template>
 
 <script>
+import { log } from '~/utils/util'
+
 export default {
   data() {
     return {
@@ -52,9 +58,31 @@ export default {
   },
   methods: {
     // 添加子类目
-    addSubCate(node) {
-      console.log(node)
-      this.$emit('add-cate', true, node)
+    addSubCate(data) {
+      this.$emit('add-cate', true, data)
+    },
+    // 删除一个分类
+    deleteOneCate(data) {
+      if (data.children && data.children.length > 0) {
+        this.$notify.error({
+          title: '错误',
+          message: '该分类含有下级分类，请先删除下级分类再进行操作'
+        })
+        return false
+      } else {
+        this.$confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            // 继续删除
+            this.$emit('delete-cate', data)
+          })
+          .catch(() => {
+            log('取消删除')
+          })
+      }
     }
   }
 }
@@ -76,5 +104,8 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+  .btn{
+    border-radius: 0;
+  }
 }
 </style>
