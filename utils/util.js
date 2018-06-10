@@ -8,7 +8,7 @@ export const checkCurrentId = (ids) => {
   if (!ids) return false
   let idState = true
   let idsArr = ids.split(',')
-  if (typeof idsArr === "object" && idsArr.length > 0) {
+  if (typeof idsArr === 'object' && idsArr.length > 0) {
     for (let i = 0; i < idsArr.length; i++) {
       if (!shortid.isValid(idsArr[i])) {
         idState = false
@@ -33,8 +33,9 @@ export const renderApiData = (res, responseCode, responseMessage, data = {}) => 
   return sendData
 }
 
+// 封装api返回的错误数据
 export const renderApiErr = (req, res, responseCode, responseMessage) => {
-  if (typeof responseMessage == 'object') {
+  if (typeof responseMessage === 'object') {
     responseMessage = responseMessage.message
   }
   let errorData = {
@@ -47,4 +48,28 @@ export const renderApiErr = (req, res, responseCode, responseMessage) => {
   // 记录错误日志
   // logUtil.error(responseMessage, req)
   return errorData
+}
+
+// 数组转树形结构
+export const arrayToTree = (arr) => {
+  if (arr.length < 2) return arr
+
+  let result = arr.filter((ele, index) => {
+    return ele.parent_id === '0'
+  })
+  let subArr = arr.filter((ele, index) => {
+    return ele.parent_id !== '0'
+  })
+
+  result.forEach(obj1 => {
+    obj1.children = []
+    subArr.forEach(obj2 => {
+      if (obj2.parent_id === obj1._id) {
+        log('push')
+        obj1.children.push(obj2)
+      }
+    })
+  })
+
+  return result
 }

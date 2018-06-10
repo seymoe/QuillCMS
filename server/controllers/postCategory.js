@@ -17,7 +17,7 @@ export default {
     try {
       log(fields)
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err, 'checkform'))
+      res.send(renderApiErr(req, res, 500, err))
     }
 
     const obj = {
@@ -52,10 +52,15 @@ export default {
     }
   },
 
+  /**
+   * 获取分类列表
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
   async getList(req, res, next) {
     try {
       let fields = req.query
-      log(fields)
       let queryObj = {}
       let page = Number(fields.page) || 1
       let pageSize = Number(fields.pageSize) || 10
@@ -70,8 +75,6 @@ export default {
 
       if (enable === 'true') {
         queryObj['enable'] = true
-      } else {
-        queryObj['enable'] = false
       }
 
       if (type) {
@@ -83,12 +86,14 @@ export default {
         pageSize = 1000
       }
 
+      log(queryObj)
+
       // 查询文档
       const categoryList = await PostCategory.find(queryObj).sort({sort_id: 1}).skip((page - 1) * pageSize).limit(pageSize).exec()
       const totalCounts = await PostCategory.count(queryObj)
 
       let cateObj = {
-        data: categoryList,
+        list: categoryList,
         page: page || 1,
         pageSize: pageSize || 10,
         totalCounts: totalCounts

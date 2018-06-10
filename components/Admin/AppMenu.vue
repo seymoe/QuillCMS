@@ -26,13 +26,13 @@
         <i class="iconfont">&#xe67d;</i>
         <span slot="title">文章管理</span>
       </el-menu-item>
-      <el-menu-item index="/admin/comments">
-        <i class="iconfont">&#xe69a;</i>
-        <span slot="title">评论管理</span>
-      </el-menu-item>
       <el-menu-item index="/admin/categories">
         <i class="iconfont">&#xe601;</i>
         <span slot="title">分类管理</span>
+      </el-menu-item>
+      <el-menu-item index="/admin/comments">
+        <i class="iconfont">&#xe69a;</i>
+        <span slot="title">评论管理</span>
       </el-menu-item>
       <el-menu-item index="/admin/tags">
         <i class="iconfont">&#xe6a4;</i>

@@ -31,6 +31,10 @@ module.exports = {
     {
       src: '~plugins/element-ui',
       ssr: true
+    },
+    {
+      src: '~plugins/axios',
+      ssr: false
     }
   ],
 
