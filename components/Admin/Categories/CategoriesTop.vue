@@ -1,13 +1,23 @@
 <template>
   <section class="post-top">
     <div class="left">
-      <el-button class="btn" type="primary" size="mini">新增</el-button>
+      <el-button 
+        class="btn" 
+        type="primary" 
+        size="mini"
+        @click="showAddDialog">新增</el-button>
     </div>
   </section>
 </template>
 
 <script>
-export default {}
+export default {
+  methods: {
+    showAddDialog() {
+      this.$emit('add-cate', true)
+    }
+  }
+}
 </script>
 
 

@@ -1,7 +1,7 @@
 import PostCategory from '../models/PostCategory'
 import validator from 'validator'
 import formidable from 'formidable'
-import { log, renderApiData, renderApiErr } from '../../utils/util'
+import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
 import postCategory from '../api/server/postCategory';
 
 export default {
@@ -80,7 +80,7 @@ export default {
       if (type) {
         queryObj['type'] = type
       }
-      
+
       if (mode === 'full') {
         page = 1
         pageSize = 1000
@@ -89,7 +89,7 @@ export default {
       log(queryObj)
 
       // 查询文档
-      const categoryList = await PostCategory.find(queryObj).sort({sort_id: 1}).skip((page - 1) * pageSize).limit(pageSize).exec()
+      const categoryList = await PostCategory.find(queryObj).sort({ sort_id: 1 }).skip((page - 1) * pageSize).limit(pageSize).exec()
       const totalCounts = await PostCategory.count(queryObj)
 
       let cateObj = {
@@ -99,6 +99,28 @@ export default {
         totalCounts: totalCounts
       }
       res.send(renderApiData(res, 200, '分类列表获取成功', cateObj))
+    } catch (err) {
+      res.send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 删除分类 可同时删除多个
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  deleteOne(req, res, next) {
+    try {
+      let errMsg = ''
+      if (!checkCurrentId(req.query.ids)) {
+        errMsg = 'ID格式校验失败'
+      }
+      if (errMsg) {
+        res.send(renderApiErr(req, res, 500, errMsg))
+      }
+      await ContentCategoryModel.remove({ _id: req.query.ids });
+      res.send(renderApiData(res, 200, '删除成功', {}))
     } catch (err) {
       res.send(renderApiErr(req, res, 500, err))
     }

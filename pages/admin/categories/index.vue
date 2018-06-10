@@ -9,8 +9,15 @@
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
-        <categories-top></categories-top>
-        <categories-tree :categoryTree="categoryList"></categories-tree>
+        <categories-top
+          @add-cate="handleToggleAddDialog"></categories-top>
+        <categories-tree 
+          :categoryTree="categoryList"
+          @add-cate="handleToggleAddDialog"></categories-tree>
+        <add-cate-dialog 
+          :dialogFormVisible="dialogFormVisible"
+          :dialogParentNode="dialogParentNode"
+          @add-cate="handleToggleAddDialog"></add-cate-dialog>
       </main>
     </div>
     <app-footer></app-footer>
@@ -27,6 +34,7 @@ import AppMenu from '~/components/Admin/AppMenu'
 import AppPageTitle from '~/components/Admin/AppPageTitle'
 import CategoriesTop from '~/components/Admin/Categories/CategoriesTop'
 import CategoriesTree from '~/components/Admin/Categories/CategoriesTree'
+import AddCateDialog from '~/components/Admin/Categories/AddCateDialog'
 
 let serverGetCategoryList = () => {
   return axios.get(API.categoryList, {
@@ -68,8 +76,11 @@ export default {
       },
 
       // ------- 以上为每个页面固定状态值 -------
-
-      categoryList: []
+      // 分类列表
+      categoryList: [],
+      // 是否显示添加分类弹框
+      dialogFormVisible: false,
+      dialogParentNode: {}
     }
   },
 
@@ -92,6 +103,22 @@ export default {
       } else {
         this.menuSetting.btnPosition = 145
       }
+    },
+
+    // 切换增加分类弹框显示
+    /*
+    * bool { Boolean } 是否显示弹窗
+    * topCateNode { String } 父级分类ID，默认为0
+    */
+    handleToggleAddDialog(bool, topCateNode) {
+      if (this.dialogFormVisible === bool) return false
+      this.dialogFormVisible = bool
+      this.dialogParentNode = topCateNode || {}
+    },
+
+    // 客户端发送请求
+    clientCreateOneCate() {
+      log(1)
     }
   },
   components: {
@@ -100,7 +127,8 @@ export default {
     AppMenu,
     AppPageTitle,
     CategoriesTop,
-    CategoriesTree
+    CategoriesTree,
+    AddCateDialog
   }
 }
 </script>

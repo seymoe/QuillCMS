@@ -13,7 +13,7 @@
           <el-button
             type="primary"
             size="mini"
-            @click="() => append(data)">
+            @click="addSubCate(data)">
             添加
           </el-button>
           <el-button
@@ -48,6 +48,13 @@ export default {
     categoryTree: {
       type: Array,
       default: []
+    }
+  },
+  methods: {
+    // 添加子类目
+    addSubCate(node) {
+      console.log(node)
+      this.$emit('add-cate', true, node)
     }
   }
 }
