@@ -1,6 +1,7 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import { Nuxt, Builder } from 'nuxt'
+import session from 'express-session'
 import config from '../nuxt.config'
 import siteConf from '../config/index.default'
 import { log } from '../utils/util'
@@ -26,6 +27,13 @@ db.once('open', function () {
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+// Sessions 来创建 req.session
+app.use(session({
+  secret: siteConf.secret,
+  resave: siteConf.resave,
+  saveUninitialized: siteConf.saveUninitialized,
+  cookie: { maxAge: siteConf.maxAge }
+}))
 app.set('port', port)
 
 // Import API Routes

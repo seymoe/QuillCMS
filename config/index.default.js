@@ -29,5 +29,13 @@ export default {
   DB_HOST: '127.0.0.1',
   DB_PORT: 27017,
   DB_USERNAME: 'quillcms',
-  DB_PASSWORD: 'quillcms'
+  DB_PASSWORD: 'quillcms',
+
+  /**
+   * Cookie配置
+   */
+  secret: 'quillcms',
+  resave: false,
+  saveUninitialized: false,
+  maxAge: 60000
 }
