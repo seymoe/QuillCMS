@@ -37,5 +37,5 @@ export default {
   secret: 'quillcms',
   resave: false,
   saveUninitialized: false,
-  maxAge: 60000
+  maxAge: 3600000
 }

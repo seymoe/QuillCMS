@@ -76,5 +76,9 @@ module.exports = {
         })
       }
     }
-  }
+  },
+
+  router: {
+    middleware: 'adminAuth'
+  },
 }

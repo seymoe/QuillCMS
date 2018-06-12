@@ -12,7 +12,7 @@
         </span>
         <div class="box">
           <i class="el-icon-bell">
-            <span></span>
+            <!-- <span></span> -->
           </i>
           <i class="el-icon-message">
             <!-- <span></span> -->
@@ -21,13 +21,13 @@
             @click="handleTogglePanel"
             v-click-outside="handleOutsideClickMenu">
             <img src="~/assets/img/avatar.png" alt="">
-            <span>管理员</span>
+            <span>{{ loginState.userInfo.username ? loginState.userInfo.username : '' }}</span>
           </div>
         </div>
         <transition name="fade">
           <el-card v-show="showPanel" class="panal" :body-style="{ padding: '0px' }">
             <img src="~/assets/img/avatar.png" alt="">
-            <h2>管理员</h2>
+            <h2>{{ loginState.userInfo.username ? loginState.userInfo.username : '' }}</h2>
             <div class="foot">
               <el-button type="text" class="button">设置</el-button>
               <el-button type="text" class="button">退出</el-button>
@@ -46,7 +46,7 @@ export default {
       showPanel: false
     }
   },
-  props: ['spanPostion'],
+  props: ['spanPostion', 'loginState'],
   methods: {
     handleTogglePanel() {
       this.showPanel = !this.showPanel

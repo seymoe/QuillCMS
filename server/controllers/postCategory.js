@@ -58,7 +58,6 @@ export default {
    * @param {*} next 
    */
   async getList(req, res, next) {
-    log('session', req.session)
     try {
       let fields = req.query
       let queryObj = {}

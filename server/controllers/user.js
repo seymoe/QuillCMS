@@ -92,10 +92,7 @@ export default {
         user.last_login_time = Date.now()
         await user.save()
 
-        res.send(renderApiData(res, 200, '登陆成功', {
-          hasLogin: req.session.userLogined,
-          userInfo: req.session.userInfo
-        }))
+        res.send(renderApiData(res, 200, '登陆成功'))
       } else {
         res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
       }

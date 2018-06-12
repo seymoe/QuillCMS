@@ -85,7 +85,9 @@ export default {
                 message: res.data.message,
                 type: 'success'
               })
-              location.href = '/admin'
+              setTimeout(() => {
+                location.href = '/admin'
+              }, 300)
             }
           }).catch(err => {
             log(err)

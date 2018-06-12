@@ -4,7 +4,10 @@ Vue.use(Vuex)
 
 const store = () => new Vuex.Store({
   state: {
-    loginState: {}
+    loginState: {
+      hasLogin: false,
+      userInfo: {}
+    }
   },
   mutations: {
     SET_LOGIN_STATE(state, val) {
@@ -13,11 +16,14 @@ const store = () => new Vuex.Store({
   },
   actions: {
     nuxtServerInit({ commit }, { req }) {
-      let _loginState = {
-        hasLogin: req.session.userLogined,
-        userInfo: req.session.userInfo
+      if (req.session && req.session.userLogined) {
+        let _loginState = {
+          hasLogin: req.session.userLogined,
+          userInfo: req.session.userInfo
+        }
+        console.log('11-> ', _loginState)
+        commit('SET_LOGIN_STATE', _loginState)
       }
-      commit('SET_LOGIN_STATE', _loginState)
     }
   }
 })

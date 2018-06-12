@@ -2,6 +2,7 @@
   <div class="admin-page">
     <app-header 
       :spanPostion="menuSetting.btnPosition"
+      :loginState="loginState"
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
       <app-menu 
@@ -18,6 +19,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import AppHeader from '~/components/Admin/AppHeader'
 import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
@@ -57,6 +59,9 @@ export default {
       }
     }
   },
+  computed: mapState([
+    'loginState'
+  ]),
   components: {
     AppHeader,
     AppFooter,
