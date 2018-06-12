@@ -72,3 +72,11 @@ export const arrayToTree = (arr) => {
 
   return result
 }
+
+// 返回客户端IP地址
+export const getClientIp = (req) => {
+  return req.headers['x-forwarded-for'] ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress || ''
+}

@@ -20,7 +20,7 @@ const UserSchema = new Schema({
     type: String,
     default: 'member'
   },           // 角色标识 super admin member
-  status: {
+  enable: {
     type: Boolean,
     default: true        // 角色状态 开启，禁用
   },
@@ -83,7 +83,7 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  　last_login_ip: {
+  last_login_ip: {
     type: String,
     default: ''
   }

@@ -35,6 +35,9 @@
 
 <script>
 import validate from '~/utils/validate'
+import axios from 'axios'
+import API from '~/config/api'
+import { log } from '~/utils/util'
 
 export default {
   layout: 'single',
@@ -73,7 +76,20 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log('success')
+          let data = this.form
+          data.fakemark = 'quillcms_login_mark_' + Date.now()
+          axios.post(API.userLogin, this.form).then(res => {
+            if (res.data.success) {
+              this.$notify({
+                title: '成功',
+                message: res.data.message,
+                type: 'success'
+              })
+              location.href = '/admin'
+            }
+          }).catch(err => {
+            log(err)
+          })
         } else {
           console.log('error submit!!')
           return false
