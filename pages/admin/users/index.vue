@@ -16,7 +16,8 @@
         <user-table 
           :userTableData="userList"
           :pageSize="userMeta.pageSize"
-          :totalCounts="userMeta.totalCounts"></user-table>
+          :totalCounts="userMeta.totalCounts"
+          @delete-user="clientDeleteOneUser"></user-table>
         <add-user-dialog
           :dialogFormVisible="dialogFormVisible"
           @add-user="handleToggleAddDialog"
@@ -91,6 +92,7 @@ export default {
 
     // 客户端发送增加分类请求
     clientCreateOneUser(data, successCB, failCB) {
+      data.fakemark = 'quillcms_login_mark_' + Date.now()
       log(data)
       this.$request
         .post(API.userAdd, data)
@@ -129,6 +131,32 @@ export default {
             this.userMeta.page = res.data.data.page
             this.userMeta.pageSize = res.data.data.pageSize
             this.userMeta.totalCounts = res.data.data.totalCounts
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
+    },
+
+    // 客户端发起删除分类请求
+    clientDeleteOneUser(userObj) {
+      log(userObj)
+      this.$request
+        .delete(API.userDelete + '/' + userObj._id)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.clientGetUserList()
+          } else {
+            this.$notify({
+              title: '错误',
+              message: res.data.message,
+              type: 'danger'
+            })
           }
         })
         .catch(e => {

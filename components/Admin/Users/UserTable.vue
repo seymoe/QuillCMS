@@ -36,7 +36,7 @@
           <template slot-scope="scope">
             {{ scope.row.role === 'super' ? '超级管理员' : '' }}
             {{ scope.row.role === 'admin' ? '管理员' : '' }}
-            {{ scope.row.role === 'member' ? '注册用户' : '' }}
+            {{ scope.row.role === 'member' ? '普通会员' : '' }}
           </template>
         </el-table-column>
         <el-table-column
@@ -64,7 +64,7 @@
           <template slot-scope="scope">
             <div class="btns">
               <el-button @click="handleClick(scope.row)" type="primary" size="mini">编辑</el-button>
-              <el-button type="danger" size="mini">删除</el-button>
+              <el-button type="danger" size="mini" @click="handleDeleteUser(scope.row)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -106,6 +106,10 @@ export default {
   methods: {
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    handleDeleteUser(data) {
+      console.log(data)
+      this.$emit('delete-user', data)
     }
   }
 }

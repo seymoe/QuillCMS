@@ -9,5 +9,6 @@ export default {
   // 用户相关
   userLogin: `${siteConf.api_url}/server${siteConf.api_path}/user/login`,
   userList: `${siteConf.api_url}/server${siteConf.api_path}/user/list`,
-  userAdd: `${siteConf.api_url}/server${siteConf.api_path}/user/new`
+  userAdd: `${siteConf.api_url}/server${siteConf.api_path}/user/new`,
+  userDelete: `${siteConf.api_url}/server${siteConf.api_path}/user`
 }

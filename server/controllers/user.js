@@ -1,5 +1,6 @@
 import User from '../models/User'
 import validator from 'validator'
+import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, getClientIp } from '../../utils/util'
 import valiObj from '../../utils/validate'
 
@@ -10,7 +11,7 @@ let checkLoginActionFields = (formData) => {
 
   if (!/^quillcms_login_mark_\d{13}$/.test(fakemark)) {
     return false
-  } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password)){
+  } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password)) {
     return false
   }
 
@@ -18,16 +19,32 @@ let checkLoginActionFields = (formData) => {
 }
 
 // 检验创建用户请求
-let checkCreateUserFields = (formData) => {
+let checkCreateUserFields = (formData, req) => {
+  // 超级管理员用户才可以创建用户
+  let hasLogin = req.session.userLogined
+  let userInfo = req.session.userInfo
+
+  if (!hasLogin || userInfo.role !== 'super') {
+    return false
+  }
+
   // fakemark 防伪标识， 值为 quillcms_login_mark_[时间戳]
   let { email, password, username, nickname, role, enable, fakemark } = formData
 
   if (!/^quillcms_login_mark_\d{13}$/.test(fakemark)) {
     return false
-  } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password)){
+  } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password)) {
     return false
+  } else if (nickname.length > 10 || nickname.length <= 0) {
+    return false
+  } else if (role !== 'member' && role !== 'admin') {
+    return false
+  } else {
+    let uPattern = /^[a-zA-Z0-9_-]{4,16}$/
+    if (!uPattern.test(username)) {
+      return false
+    }
   }
-
   return true
 }
 
@@ -42,7 +59,10 @@ export default {
     // 校验传入的参数
     let fields = req.body
     try {
-      log(fields)
+      let validateResult = checkCreateUserFields(fields, req)
+      if (!validateResult) {
+        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
     } catch (err) {
       res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -53,7 +73,7 @@ export default {
       email: fields.email,
       password: fields.password,
       role: fields.role,
-      enable: fields.role === 'false' ? false: true
+      enable: fields.role === 'false' ? false : true
     }
 
     const newUser = new User(obj)
@@ -63,6 +83,41 @@ export default {
       res.send(renderApiData(res, 200, '用户创建成功', { id: userObj._id }))
     } catch (err) {
       res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 删除一个用户
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  async deleteOne(req, res, next) {
+    try {
+      let userInfo = req.session.userInfo
+      let errMsg = ''
+      let id = req.params.id
+      log(id)
+      if (!shortid.isValid(id)) {
+        errMsg = 'ID格式校验失败'
+      }
+
+      if (userInfo.role !== 'super') {
+        errMsg = '没有操作权限'
+      }
+
+      if (id === userInfo.id) {
+        errMsg = '无法删除'
+      }
+
+      if (errMsg) {
+        res.send(renderApiErr(req, res, 500, errMsg))
+      }
+
+      await User.remove({ _id: id })
+      res.send(renderApiData(res, 200, '删除成功', {}))
+    } catch (err) {
+      res.send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -135,12 +190,13 @@ export default {
         log(user)
 
         req.session.userLogined = true,
-        req.session.userInfo = {
-          username: user.username,
-          id: user._id,
-          email: user.email,
-          nickname: user.nickname
-        }
+          req.session.userInfo = {
+            username: user.username,
+            id: user._id,
+            email: user.email,
+            nickname: user.nickname,
+            role: user.role
+          }
 
         // 更新登陆信息
         let ip = getClientIp(req)
