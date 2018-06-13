@@ -1,15 +1,21 @@
 <template>
   <section class="post-top">
     <div class="left">
-      <el-button class="btn" type="primary" size="mini">新增</el-button>
+      <el-button class="btn" type="primary" size="mini" @click="showAddDialog">新增</el-button>
     </div>
     <div class="right">
-      <el-select v-model="selectValue" placeholder="请选择" size="mini" class="select">
+      <el-select 
+        v-model="selectValue" 
+        placeholder="请选择" 
+        size="mini" 
+        class="select"
+        @change="toggleRole">
         <el-option
           v-for="item in selectOptions"
           :key="item.value"
           :label="item.label"
           :value="item.value">
+          <span>{{ item.label }}</span>
         </el-option>
       </el-select>
     </div>
@@ -20,25 +26,33 @@
 export default {
   data() {
     return {
-      selectValue: 1,
+      selectValue: 'all',
       selectOptions: [
         {
-          value: 1,
+          value: 'all',
           label: '全部'
         },
         {
-          value: 2,
+          value: 'super',
           label: '超级管理员'
         },
         {
-          value: 3,
+          value: 'admin',
           label: '普通管理员'
         },
         {
-          value: 4,
+          value: 'member',
           label: '注册会员'
         }
       ]
+    }
+  },
+  methods: {
+    toggleRole(value) {
+      this.$emit('toggle-role', value)
+    },
+    showAddDialog() {
+      this.$emit('add-user', true)
     }
   }
 }

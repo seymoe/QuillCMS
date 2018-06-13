@@ -80,3 +80,12 @@ export const getClientIp = (req) => {
     req.socket.remoteAddress ||
     req.connection.socket.remoteAddress || ''
 }
+
+// 接口中间件 判断是否是登陆状态
+export const checkUserSession = (req, res, next) => {
+  if (req.session.userLogined && req.session.userInfo.id) {
+    next()
+  } else {
+    res.status(401).send(renderApiErr(req, res, 401, '用户未登陆，授权失败'))
+  }
+}

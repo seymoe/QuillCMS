@@ -17,6 +17,20 @@ let checkLoginActionFields = (formData) => {
   return true
 }
 
+// 检验创建用户请求
+let checkCreateUserFields = (formData) => {
+  // fakemark 防伪标识， 值为 quillcms_login_mark_[时间戳]
+  let { email, password, username, nickname, role, enable, fakemark } = formData
+
+  if (!/^quillcms_login_mark_\d{13}$/.test(fakemark)) {
+    return false
+  } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password)){
+    return false
+  }
+
+  return true
+}
+
 export default {
   /**
    * 创建一个用户，创建需要最高权限，超级管理员只允许一个存在
@@ -35,9 +49,11 @@ export default {
 
     const obj = {
       username: fields.username,
+      nickname: fields.nickname,
       email: fields.email,
       password: fields.password,
-      role: fields.role
+      role: fields.role,
+      enable: fields.role === 'false' ? false: true
     }
 
     const newUser = new User(obj)
@@ -50,6 +66,46 @@ export default {
     }
   },
 
+  async getUsers(req, res, next) {
+    try {
+      log(req.query)
+      let fields = req.query
+      let queryObj = {}
+      let page = Number(fields.page) || 1
+      let pageSize = Number(fields.pageSize) || 10
+      let role = fields.role  // 角色 super/admin/member
+
+      if (role === 'super' || role === 'admin' || role === 'member') {
+        queryObj.role = role
+      }
+
+      log(queryObj)
+
+      // 查询文档
+      const userList = await User.find(queryObj, { password: 0 }).sort({ date: -1 }).skip((page - 1) * pageSize).limit(pageSize).exec()
+      const totalCounts = await User.count(queryObj)
+
+      log(userList, totalCounts)
+
+      let userObj = {
+        list: userList,
+        page: page,
+        lastPage: Math.ceil(totalCounts / pageSize),
+        pageSize: pageSize,
+        totalCounts: totalCounts
+      }
+      res.send(renderApiData(res, 200, '用户列表获取成功', userObj))
+    } catch (err) {
+      res.send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 处理登陆请求
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
   async loginAction(req, res, next) {
     let fields = req.body
     try {

@@ -12,9 +12,9 @@
           width="50">
         </el-table-column>
         <el-table-column
-          width="50"
+          width="100"
           label="ID">
-          <template slot-scope="scope">{{ scope.row.id }}</template>
+          <template slot-scope="scope">{{ scope.row._id }}</template>
         </el-table-column>
         <el-table-column
           width="100"
@@ -34,13 +34,15 @@
           width="100"
           label="用户类型">
           <template slot-scope="scope">
-            {{ scope.row.role }}
+            {{ scope.row.role === 'super' ? '超级管理员' : '' }}
+            {{ scope.row.role === 'admin' ? '管理员' : '' }}
+            {{ scope.row.role === 'member' ? '注册用户' : '' }}
           </template>
         </el-table-column>
         <el-table-column
           label="手机号">
           <template slot-scope="scope">
-            {{ scope.row.phone }}
+            {{ scope.row.phone ? scope.row.phone : '无' }}
           </template>
         </el-table-column>
         <el-table-column
@@ -51,9 +53,9 @@
         </el-table-column>
         <el-table-column
           width="80"
-          label="是否有效">
+          label="状态">
           <template slot-scope="scope">
-            {{ scope.row.status ? '是' : '否' }}
+            {{ scope.row.enable ? '启用' : '禁用' }}
           </template>
         </el-table-column>
         <el-table-column
@@ -67,6 +69,14 @@
           </template>
         </el-table-column>
     </el-table>
+    <div class="pagination-wrap">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="totalCounts"
+        :page-size="pageSize">
+      </el-pagination>
+    </div>
   </section>
 </template>
 
@@ -81,18 +91,16 @@ export default {
     userTableData: {
       type: Array,
       default: function() {
-        return [
-          {
-            id: 1,
-            username: 'admin',
-            nickname: '曦莫琅',
-            role: 'super',
-            phone: '15073171302',
-            email: 'ximolang@yeah.net',
-            status: true
-          }
-        ]
+        return []
       }
+    },
+    pageSize: {
+      type: Number,
+      default: 10
+    },
+    totalCounts: {
+      type: Number,
+      default: 0
     }
   },
   methods: {
@@ -113,6 +121,11 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.pagination-wrap{
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
 }
 </style>
 

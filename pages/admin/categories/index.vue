@@ -29,7 +29,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import axios from 'axios'
 import API from '~/config/api'
 import { log, arrayToTree } from '~/utils/util'
 import AppHeader from '~/components/Admin/AppHeader'
@@ -39,27 +38,6 @@ import AppPageTitle from '~/components/Admin/AppPageTitle'
 import CategoriesTop from '~/components/Admin/Categories/CategoriesTop'
 import CategoriesTree from '~/components/Admin/Categories/CategoriesTree'
 import AddCateDialog from '~/components/Admin/Categories/AddCateDialog'
-
-let serverGetCategoryList = () => {
-  return axios
-    .get(API.categoryList, {
-      params: {
-        mode: 'full'
-      }
-    })
-    .then(res => {
-      log(1)
-      if (res.data.success) {
-        let _tree = arrayToTree(res.data.data.list)
-        return _tree
-      } else {
-        return []
-      }
-    })
-    .catch(e => {
-      return []
-    })
-}
 
 export default {
   data() {
@@ -88,13 +66,6 @@ export default {
       // 是否显示添加分类弹框
       dialogFormVisible: false,
       dialogParentNode: {}
-    }
-  },
-
-  async asyncData({ params }) {
-    let [categoryList] = await Promise.all([serverGetCategoryList()])
-    return {
-      categoryList
     }
   },
 
@@ -195,6 +166,9 @@ export default {
   computed: mapState([
     'loginState'
   ]),
+  mounted() {
+    this.clientGetCategoryList()
+  },
   components: {
     AppHeader,
     AppFooter,

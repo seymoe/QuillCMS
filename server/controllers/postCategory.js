@@ -93,8 +93,9 @@ export default {
 
       let cateObj = {
         list: categoryList,
-        page: page || 1,
-        pageSize: pageSize || 10,
+        page: page,
+        lastPage: Math.ceil(totalCounts / pageSize),
+        pageSize: pageSize,
         totalCounts: totalCounts
       }
       res.send(renderApiData(res, 200, '分类列表获取成功', cateObj))
