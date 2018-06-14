@@ -9,6 +9,8 @@ router.get('/user/list', checkUserSession, UserController.getUsers)
 router.post('/user/new', checkUserSession, UserController.createUser)
 /* 用户登陆 */
 router.post('/user/login', UserController.loginAction)
+/* 退出登陆 */
+router.post('/user/logout', UserController.logoutAction)
 /* 删除用户 */
 router.delete('/user/:id', checkUserSession, UserController.deleteOne)
 

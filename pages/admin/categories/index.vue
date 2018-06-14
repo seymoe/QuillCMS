@@ -110,7 +110,7 @@ export default {
           log(err)
           this.$notify.error({
             title: '错误',
-            message: JSON.stringify(err)
+            message: err.message
           })
           failCB && failCB()
         })

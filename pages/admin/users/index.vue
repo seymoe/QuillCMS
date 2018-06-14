@@ -90,9 +90,9 @@ export default {
       this.dialogFormVisible = bool
     },
 
-    // 客户端发送增加分类请求
+    // 客户端发送增加用户请求
     clientCreateOneUser(data, successCB, failCB) {
-      data.fakemark = 'quillcms_login_mark_' + Date.now()
+      data.fakemark = 'quillcms_user_mark_' + Date.now()
       log(data)
       this.$request
         .post(API.userAdd, data)
@@ -111,7 +111,7 @@ export default {
           log(err)
           this.$notify.error({
             title: '错误',
-            message: JSON.stringify(err)
+            message: err.message
           })
           failCB && failCB()
         })
@@ -138,7 +138,7 @@ export default {
         })
     },
 
-    // 客户端发起删除分类请求
+    // 客户端发起删除用户请求
     clientDeleteOneUser(userObj) {
       log(userObj)
       this.$request

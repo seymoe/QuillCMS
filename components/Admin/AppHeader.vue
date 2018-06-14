@@ -30,7 +30,7 @@
             <h2>{{ loginState.userInfo.username ? loginState.userInfo.username : '' }}</h2>
             <div class="foot">
               <el-button type="text" class="button">设置</el-button>
-              <el-button type="text" class="button">退出</el-button>
+              <el-button type="text" class="button" @click="clientUserLogout">退出</el-button>
             </div>
           </el-card>
         </transition>
@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import API from '~/config/api'
+
 export default {
   data() {
     return {
@@ -59,6 +61,28 @@ export default {
     },
     toggleAppMenu() {
       this.$emit('toggle-appmenu')
+    },
+    clientUserLogout() {
+      this.$request.post(API.userLogout).then(res => {
+        if (res.data.success) {
+          this.$notify({
+            title: '成功',
+            message: res.data.message,
+            type: 'success'
+          })
+          setTimeout(() => {
+            location.reload()
+          }, 300)
+        }
+      }).catch(err => {
+        this.$notify.error({
+          title: '错误',
+          message: err.message
+        })
+        setTimeout(() => {
+          location.reload()
+        }, 300)
+      })
     }
   }
 }

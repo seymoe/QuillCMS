@@ -2,6 +2,36 @@ import PostCategory from '../models/PostCategory'
 import validator from 'validator'
 import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
+import valiObj from '../../utils/validate'
+
+// 校验创建分类的参数
+let checkCateFields = (formData, req) => {
+  // 超级管理员用户才可以创建分类
+  let hasLogin = req.session.userLogined
+  let userInfo = req.session.userInfo
+
+  if (!hasLogin || userInfo.role !== 'super') {
+    return false
+  }
+
+  let { name, description, default_url, sort_id, type, parent_id, enable } = formData
+
+  if (name.length <= 0 || name.length > 10) {
+    return false
+  } else if (description.length > 40) {
+    return false
+  } else if (!/^[a-zA-Z0-9_-]{1,32}$/.test(default_url)) {
+    return false
+  } else if (Number(sort_id) <= 0) {
+    return false
+  } else if (type !== 1 && type !== 2 && type !== 3) {
+    return false
+  } else if (!shortid.isValid(parent_id) && parent_id !== '0') {
+    return false
+  }
+
+  return true
+}
 
 export default {
   /**
@@ -14,9 +44,12 @@ export default {
     // 校验传入的参数
     let fields = req.body
     try {
-      log(fields)
+      let validateResult = checkCateFields(fields, req)
+      if (!validateResult) {
+        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      res.status(500).send(renderApiErr(req, res, 500, err))
     }
 
     const obj = {
@@ -26,8 +59,7 @@ export default {
       name: fields.name,
       description: fields.description,
       default_url: fields.default_url,
-      sort_path: fields.sort_path,
-      enable: fields.enable
+      enable: fields.enable === 'false' ? false : true
     }
 
     const newPostCategory = new PostCategory(obj)

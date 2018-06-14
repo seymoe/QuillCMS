@@ -31,7 +31,7 @@ let checkCreateUserFields = (formData, req) => {
   // fakemark 防伪标识， 值为 quillcms_login_mark_[时间戳]
   let { email, password, username, nickname, role, enable, fakemark } = formData
 
-  if (!/^quillcms_login_mark_\d{13}$/.test(fakemark)) {
+  if (!/^quillcms_user_mark_\d{13}$/.test(fakemark)) {
     return false
   } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password)) {
     return false
@@ -211,5 +211,17 @@ export default {
     } catch (err) {
       res.status(500).send(renderApiErr(req, res, 500, err))
     }
+  },
+
+  /**
+   * 退出登陆
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  logoutAction(req, res, next) {
+    delete req.session.userLogined
+    delete req.session.userInfo
+    res.send(renderApiData(res, 200, '成功退出登陆'))
   }
 }
