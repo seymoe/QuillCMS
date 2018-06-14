@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       cateObj: {
-        cateName: '仪表盘',
+        cateName: '用户管理',
         pathArray: [
           {
             name: '首页',

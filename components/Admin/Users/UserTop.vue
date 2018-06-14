@@ -38,11 +38,11 @@ export default {
         },
         {
           value: 'admin',
-          label: '普通管理员'
+          label: '管理员'
         },
         {
           value: 'member',
-          label: '注册会员'
+          label: '普通会员'
         }
       ]
     }
