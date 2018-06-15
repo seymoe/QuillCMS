@@ -35,7 +35,6 @@
 
 <script>
 import validate from '~/utils/validate'
-import axios from 'axios'
 import API from '~/config/api'
 import { log } from '~/utils/util'
 
@@ -78,7 +77,7 @@ export default {
         if (valid) {
           let data = this.form
           data.fakemark = 'quillcms_login_mark_' + Date.now()
-          axios.post(API.userLogin, this.form).then(res => {
+          this.$request.post(API.userLogin, this.form).then(res => {
             if (res.data.success) {
               this.$notify({
                 title: '成功',
@@ -91,6 +90,11 @@ export default {
             }
           }).catch(err => {
             log(err)
+            this.$notify({
+              title: '错误',
+              message: err.message,
+              type: 'danger'
+            })
           })
         } else {
           console.log('error submit!!')

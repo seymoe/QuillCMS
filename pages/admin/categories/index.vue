@@ -86,6 +86,16 @@ export default {
     */
     handleToggleAddDialog(bool, topCateNode) {
       if (this.dialogFormVisible === bool) return false
+
+      // 只有超级管理员才能添加添加分类
+      if (this.loginState.userInfo.role !== 'super') {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
       this.dialogFormVisible = bool
       this.dialogParentNode = topCateNode || {}
     },
@@ -139,6 +149,15 @@ export default {
 
     // 客户端发起删除分类请求
     clientDeleteOneCate(cateNode) {
+      // 只有超级管理员才能删除分类
+      if (this.loginState.userInfo.role !== 'super') {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
       log(cateNode)
       this.$request
         .delete(API.categoryDelete + '/' + cateNode._id)

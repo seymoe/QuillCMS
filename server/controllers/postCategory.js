@@ -59,7 +59,7 @@ export default {
       name: fields.name,
       description: fields.description,
       default_url: fields.default_url,
-      enable: fields.enable === 'false' ? false : true
+      enable: fields.enable ? true : false
     }
 
     const newPostCategory = new PostCategory(obj)

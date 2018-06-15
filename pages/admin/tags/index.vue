@@ -6,22 +6,21 @@
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
       <app-menu 
-        activeIndex="/admin/users"
+        activeIndex="/admin/tags"
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
-        <user-top
-          @toggle-role="clientGetUserList"
-          @add-user="handleToggleAddDialog"></user-top>
-        <user-table 
-          :userTableData="userList"
-          :pageSize="userMeta.pageSize"
-          :totalCounts="userMeta.totalCounts"
-          @delete-user="clientDeleteOneUser"></user-table>
-        <add-user-dialog
+        <tag-top
+          @add-tag="handleToggleAddDialog"></tag-top>
+        <tag-table 
+          :tagTableData="tagList"
+          :pageSize="tagMeta.pageSize"
+          :totalCounts="tagMeta.totalCounts"
+          @delete-tag="clientDeleteOneTag"></tag-table>
+        <add-tag-dialog 
           :dialogFormVisible="dialogFormVisible"
-          @add-user="handleToggleAddDialog"
-          @create-new-user="clientCreateOneUser"></add-user-dialog>
+          @add-tag="handleToggleAddDialog"
+          @create-new-tag="clientCreateOneTag"></add-tag-dialog>
       </main>
     </div>
     <app-footer></app-footer>
@@ -36,23 +35,23 @@ import AppHeader from '~/components/Admin/AppHeader'
 import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
 import AppPageTitle from '~/components/Admin/AppPageTitle'
-import UserTop from '~/components/Admin/Users/UserTop'
-import UserTable from '~/components/Admin/Users/UserTable'
-import AddUserDialog from '~/components/Admin/Users/AddUserDialog'
+import TagTop from '~/components/Admin/Tags/TagTop'
+import TagTable from '~/components/Admin/Tags/TagTable'
+import AddTagDialog from '~/components/Admin/Tags/AddTagDialog'
 
 export default {
   data() {
     return {
       cateObj: {
-        cateName: '用户管理',
+        cateName: '标签管理',
         pathArray: [
           {
             name: '首页',
             path: '/admin'
           },
           {
-            name: '用户管理',
-            path: '/admin/users'
+            name: '标签管理',
+            path: '/admin/tags'
           }
         ]
       },
@@ -60,13 +59,16 @@ export default {
         btnPosition: 145,
         isCollapse: false
       },
-      userList: [],
-      userMeta: {
+
+      // ------- 以上为每个页面固定状态值 -------
+      // 标签列表
+      tagList: [],
+      tagMeta: {
         page: 1,
         pageSize: 10,
         totalCounts: 0
       },
-      // 是否显示添加用户弹框
+      // 是否显示添加标签弹框
       dialogFormVisible: false
     }
   },
@@ -81,15 +83,15 @@ export default {
       }
     },
 
-    // 切换增加用户弹框显示
+    // 切换增加标签弹框显示
     /*
     * bool { Boolean } 是否显示弹窗
     */
     handleToggleAddDialog(bool) {
       if (this.dialogFormVisible === bool) return false
 
-      // 只有超级管理员才能添加用户
-      if (this.loginState.userInfo.role !== 'super') {
+      // 只有管理员才能添加添加分类
+      if (this.loginState.userInfo.role !== 'super' && this.loginState.userInfo.role !== 'admin') {
         this.$message({
           type: 'warning',
           message: '权限不足'
@@ -100,12 +102,11 @@ export default {
       this.dialogFormVisible = bool
     },
 
-    // 客户端发送增加用户请求
-    clientCreateOneUser(data, successCB, failCB) {
-      data.fakemark = 'quillcms_user_mark_' + Date.now()
+    // 客户端发送增加标签请求
+    clientCreateOneTag(data, successCB, failCB) {
       log(data)
       this.$request
-        .post(API.userAdd, data)
+        .post(API.tagAdd, data)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -114,7 +115,7 @@ export default {
               type: 'success'
             })
             successCB && successCB()
-            this.clientGetUserList()
+            this.clientGetTagList()
           }
         })
         .catch(err => {
@@ -127,31 +128,33 @@ export default {
         })
     },
 
-    // 客户端获取用户列表
-    clientGetUserList(role) {
+    // 客户端拉取标签列表请求
+    clientGetTagList() {
       this.$request
-        .get(API.userList, {
+        .get(API.tagList, {
           params: {
-            role: role || 'all'
+            mode: 'full'
           }
         })
         .then(res => {
           if (res.data.success) {
-            this.userList = res.data.data.list
-            this.userMeta.page = res.data.data.page
-            this.userMeta.pageSize = res.data.data.pageSize
-            this.userMeta.totalCounts = res.data.data.totalCounts
+            this.tagList = res.data.data.list
+            this.tagMeta.page = res.data.data.page
+            this.tagMeta.pageSize = res.data.data.pageSize
+            this.tagMeta.totalCounts = res.data.data.totalCounts
           }
         })
         .catch(e => {
           log(e)
+          // 发生错误则刷新页面从服务端重新拉取列表
+          location.reload()
         })
     },
 
-    // 客户端发起删除用户请求
-    clientDeleteOneUser(userObj) {
-      // 只有超级管理员才能删除用户
-      if (this.loginState.userInfo.role !== 'super') {
+    // 客户端发起删除标签请求
+    clientDeleteOneTag(tagNode) {
+      // 只有超级管理员才能删除分类
+      if (this.loginState.userInfo.role !== 'super' && this.loginState.userInfo.role !== 'admin') {
         this.$message({
           type: 'warning',
           message: '权限不足'
@@ -159,9 +162,10 @@ export default {
         return false
       }
 
-      log(userObj)
+      log(tagNode)
+
       this.$request
-        .delete(API.userDelete + '/' + userObj._id)
+        .delete(API.tagDelete + '/' + tagNode._id)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -169,7 +173,7 @@ export default {
               message: res.data.message,
               type: 'success'
             })
-            this.clientGetUserList()
+            this.clientGetTagList()
           } else {
             this.$notify({
               title: '错误',
@@ -183,19 +187,20 @@ export default {
         })
     }
   },
-  computed: mapState(['loginState']),
+  computed: mapState([
+    'loginState'
+  ]),
   mounted() {
-    // 拉取用户列表
-    this.clientGetUserList('all')
+    this.clientGetTagList()
   },
   components: {
     AppHeader,
     AppFooter,
     AppMenu,
     AppPageTitle,
-    UserTop,
-    UserTable,
-    AddUserDialog
+    TagTop,
+    TagTable,
+    AddTagDialog
   }
 }
 </script>

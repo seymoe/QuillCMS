@@ -2,6 +2,8 @@ import Post from '../models/Post'
 import validator from 'validator'
 import { log } from '../../utils/util'
 
+let checkCreatePostFields = (formData) => {}
+
 export default {
   /**
    * 获取post数据列表

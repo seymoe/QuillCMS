@@ -73,7 +73,7 @@ export default {
       email: fields.email,
       password: fields.password,
       role: fields.role,
-      enable: fields.role === 'false' ? false : true
+      enable: fields.enable ? true : false
     }
 
     const newUser = new User(obj)
@@ -121,6 +121,12 @@ export default {
     }
   },
 
+  /**
+   * 获取用户列表
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
   async getUsers(req, res, next) {
     try {
       log(req.query)
@@ -184,6 +190,10 @@ export default {
       if (user) {
         if (!user.enable) {
           res.status(401).send(renderApiErr(req, res, 401, '账号已被禁用'))
+        }
+
+        if (user.role === 'member') {
+          res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
         }
 
         // 用户信息正确，未被禁用
