@@ -52,6 +52,8 @@ img{
   width: 100%;
   margin-left: auto;
   margin-right: auto;
+  box-sizing: border-box;
+  padding: 0 15px;
 }
 
 @media (min-width: 768px) {
@@ -70,9 +72,18 @@ img{
   }
 }
 
+/* flex相关样式 */
+
 .flex-row{
   display: flex;
   flex-direction: row;
+}
+.flex-column{
+  display: flex;
+  flex-direction: column;
+}
+.flex-1{
+  flex: 1
 }
 
 /* fade login box */
@@ -103,4 +114,13 @@ img{
 .admin-main-wrap {
   flex: 1;
   overflow-y: scroll;
+}
+
+/* 前台公共样式 */
+.app-page{
+  background-color: #f8f8f8;
+}
+.app-wrap{
+  margin-top: 60px;
+  padding-top: 20px;
 }

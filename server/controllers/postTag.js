@@ -101,7 +101,7 @@ export default {
   },
 
   /**
-   * 删除一个用户
+   * 删除一个标签
    * @param {*} req 
    * @param {*} res 
    * @param {*} next 

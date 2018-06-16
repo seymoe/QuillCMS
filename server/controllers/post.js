@@ -153,7 +153,9 @@ export default {
       categories: fields.categories,
       tags: fields.tags,
       content_type: fields.content_type === 'T' ? 'T' : 'M',
-      author: fields.author
+      author: fields.author,
+      clicks: 0,
+      likes: 0
     }
 
     log(obj)
@@ -185,29 +187,22 @@ export default {
    * @param {*} next 
    */
   deleteOne(req, res, next) {
-    // // token验证不通过则跳转至登陆页
-    // if (!req.user) {
-    //   return res.redirect('/admin/login')
-    // }
-    let _id = validator.trim(req.params.id)
-    if (!_id || _id.length === 0) {
-      return res.status(400).send({
-        success: false,
-        msg: '无效卡片id'
-      })
+    try {
+      let errMsg = ''
+      let id = req.params.id
+      log(id)
+      if (!shortid.isValid(id)) {
+        errMsg = 'ID格式校验失败'
+      }
+
+      if (errMsg) {
+        res.send(renderApiErr(req, res, 500, errMsg))
+      }
+
+      await Post.remove({ _id: id })
+      res.send(renderApiData(res, 200, '删除成功', {}))
+    } catch (err) {
+      res.send(renderApiErr(req, res, 500, err))
     }
-    Post.remove({
-      _id: _id
-    }, function (err) {
-      if (err) res.send({
-        success: false,
-        msg: err
-      })
-      res.json({
-        success: true,
-        msg: '删除成功'
-      })
-      next()
-    })
   }
 }

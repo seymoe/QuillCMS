@@ -44,7 +44,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="100"
+          width="140"
           label="创建时间">
           <template slot-scope="scope">
             {{ scope.row.create_time }}
@@ -77,7 +77,7 @@
           <template slot-scope="scope">
             <div class="btns">
               <el-button @click="handleClick(scope.row)" type="primary" size="mini">编辑</el-button>
-              <el-button type="danger" size="mini">删除</el-button>
+              <el-button type="danger" size="mini" @click="handleDeletePost(scope.row)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -103,6 +103,10 @@ export default {
   methods: {
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    handleDeletePost(data) {
+      console.log(data)
+      this.$emit('delete-post', data)
     }
   }
 }

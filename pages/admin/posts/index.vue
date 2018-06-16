@@ -13,7 +13,8 @@
         <post-top
           @route-to-new="handleToNewPage"></post-top>
         <post-table
-          :postTableData="postList"></post-table>
+          :postTableData="postList"
+          @delete-post="clientDeleteOnePost"></post-table>
       </main>
     </div>
     <app-footer></app-footer>
@@ -78,6 +79,40 @@ export default {
           log(e)
           // 发生错误则刷新页面从服务端重新拉取列表
           location.reload()
+        })
+    },
+
+    // 客户端发起删除标签请求
+    clientDeleteOnePost(post) {
+      // 只有超级管理员才能删除分类
+      if (this.loginState.userInfo.role !== 'super' && this.loginState.userInfo.role !== 'admin') {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
+      this.$request
+        .delete(API.postDelete + '/' + post._id)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.clientGetPostList()
+          } else {
+            this.$notify({
+              title: '错误',
+              message: res.data.message,
+              type: 'danger'
+            })
+          }
+        })
+        .catch(e => {
+          log(e)
         })
     },
 

@@ -14,6 +14,7 @@ export default {
   // 文章相关
   postAdd: `${siteConf.api_url}/server${siteConf.api_path}/post/new`,
   postList: `${siteConf.api_url}/server${siteConf.api_path}/post/list`,
+  postDelete: `${siteConf.api_url}/server${siteConf.api_path}/post`,
 
   // 用户相关
   userLogin: `${siteConf.api_url}/server${siteConf.api_path}/user/login`,

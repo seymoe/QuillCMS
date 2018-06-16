@@ -260,6 +260,10 @@ export default {
               content_type: 'M'
             }
             this.$refs[formName].resetFields()
+
+            setTimeout(() => {
+              this.$router.push('/admin/posts')
+            })
           }
           // 校验文章内容是否为空
           if (data.content === '') {
