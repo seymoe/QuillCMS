@@ -8,7 +8,10 @@
           <index-post-tab></index-post-tab>
         </el-col>
         <el-col class="sidebar" :span="6">
-
+          <advertise-box></advertise-box>
+          <hot-posts></hot-posts>
+          <hot-creaters></hot-creaters>
+          <hot-tags></hot-tags>
         </el-col>
       </el-row>
     </section>
@@ -19,13 +22,27 @@
 import AppHeader from '~/components/Client/AppHeader'
 import IndexSwiper from '~/components/Client/Index/IndexSwiper'
 import IndexPostTab from '~/components/Client/Index/IndexPostTab'
+import AdvertiseBox from '~/components/Client/AdvertiseBox'
+import HotPosts from '~/components/Client/HotPosts'
+import HotTags from '~/components/Client/HotTags'
+import HotCreaters from '~/components/Client/HotCreaters'
 
 export default {
   layout: 'app',
   components: {
     AppHeader,
     IndexSwiper,
-    IndexPostTab
+    IndexPostTab,
+    AdvertiseBox,
+    HotPosts,
+    HotTags,
+    HotCreaters
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.sidebar{
+  margin-left: 20px;
+}
+</style>
