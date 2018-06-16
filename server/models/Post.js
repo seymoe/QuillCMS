@@ -31,7 +31,7 @@ const PostSchema = new Schema({
   categories: [
     {
       type: String,
-      ref: PostCategory
+      ref: 'PostCategory'
     }
   ],
   // 权限 public secret
@@ -74,7 +74,7 @@ const PostSchema = new Schema({
     default: 0
   },
   // 浏览次数
-  views: {
+  clicks: {
     type: Number,
     default: 0
   },
@@ -97,8 +97,14 @@ const PostSchema = new Schema({
       default: []
     }
   ],
-  create_time: Date,
-  modify_time: Date
+  create_time: {
+    type: Date,
+    default: Date.now
+  },
+  modify_time: {
+    type: Date,
+    default: Date.now
+  }
 })
 
 export default mongoose.model('Post', PostSchema)

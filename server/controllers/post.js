@@ -1,6 +1,7 @@
 import Post from '../models/Post'
 import validator from 'validator'
-import { log, renderApiData, renderApiErr } from '../../utils/util'
+import shortid from 'shortid'
+import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
 
 let checkCreatePostFields = (formData, req) => {
   // 管理员用户才可以创建文章
@@ -32,96 +33,93 @@ export default {
    * @param {*} res 
    * @param {*} next 
    */
-  getList(req, res, next) {
-    let { page, pageSize, sort, order, isTop} = req.query
-    let conditions = {}
-    let sortable = {}
+  async getList(req, res, next) {
+    try {
+      log(req.query)
+      let fields = req.query
+      let queryObj = {}
+      let page = Number(fields.page) || 1
+      let pageSize = Number(fields.pageSize) || 10
+      let isTop = fields.isTop
+      let clickSort = fields.click_sort
+      // 排序
+      let sortObj = { data: -1 }
+      if (clickSort === -1 || clickSort === 1) {
+        sortObj = { clicks: clickSort }
+      }
 
-    // 每页数据条数
-    pageSize = parseInt(pageSize)
-    pageSize = (pageSize >= 1 || pageSize <= 100) ? pageSize : 20
+      // 查询文档
+      const postList = await Post.find(queryObj).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).populate([
+        {
+          path: 'author',
+          select: 'username nickname _id avatar'
+        },
+        {
+          path: 'categories',
+          select: 'name _id'
+        },
+        {
+          path: 'tags',
+          select: 'name _id'
+        }
+      ]).exec()
+      const totalCounts = await Post.count(queryObj)
 
-    // 页数
-    page = parseInt(page)
-    page = page > 1 ? page : 1
+      log(postList, totalCounts)
 
-    // 设置查询参数
-    if (isTop === 'yes') {
-      conditions.isTop = true
+      let postObj = {
+        list: postList,
+        page: page,
+        lastPage: Math.ceil(totalCounts / pageSize),
+        pageSize: pageSize,
+        totalCounts: totalCounts
+      }
+      res.send(renderApiData(res, 200, '文章列表获取成功', postObj))
+    } catch (err) {
+      res.status(500).send(renderApiErr(req, res, 500, err))
     }
-    // 设置排序参数
-    if (sort) {
-      sortable[sort] = -1
-    }
-    if (order === 'asc') {
-      sortable[sort] = 1
-    }
+  },
 
-    // 声明相关参数
-    let totalCounts = 0   // 总条数
-    let totalpages = 0    // 总页数
-    let _data = []
-    let msg = ''
+  async getListByCateId(req, res, next) {
+    try {
+      log(req.query)
+      let fields = req.query
+      let queryObj = {}
+      let cateId = fields.cateid
+      let page = Number(fields.page) || 1
+      let pageSize = Number(fields.pageSize) || 10
+      let clickSort = fields.click_sort
 
-    let option = { skip: (page - 1) * pageSize, limit: pageSize }
-
-    let query = Post.find(conditions)
-
-    query.sort(sortable).count((err, count) => {
-      console.log('count-> ', count)
-      totalCounts = count
-      if (totalCounts < pageSize) {
-        totalpages = 1
+      // 判断分类ID是否为有效值
+      if (!checkCurrentId(cateId)) {
+        res.status(404).send(renderApiErr(req, res, 500, '无效分类ID'))
       } else {
-        if (totalCounts % pageSize === 0) {
-          totalpages = totalCounts / pageSize
-        } else {
-          totalpages = Math.floor(totalCounts / pageSize) + 1
-        }
-      }
-      console.info(totalpages)
-
-      if (page > totalpages) {
-        let obj = {
-          success: false,
-          currentPage: page,
-          pageSize: pageSize,
-          totalCounts: totalCounts,
-          totalPages: totalpages,
-          data: [],
-          msg: '页数超过总页数，无数据',
-        }
-        return res.json(obj)
+        queryObj['categories'] = cateId
       }
 
-      // 开始查询
-      query.skip(option.skip).limit(option.limit).exec('find', (err, goods) => {
-        console.log(err)
-        if (err) {
-          let obj = {
-            success: false,
-            currentPage: page,
-            pageSize: pageSize,
-            totalCounts: totalCounts,
-            totalPages: totalpages,
-            data: [],
-            msg: '查询数据库出错',
-          }
-          return res.json(obj)
-        } else {
-          let obj = {
-            success: true,
-            currentPage: page,
-            pageSize: pageSize,
-            totalCounts: totalCounts,
-            totalPages: totalpages,
-            data: goods,
-            msg: '数据获取成功',
-          }
-          return res.json(obj)
-        }
-      })
-    })
+      // 排序
+      let sortObj = { data: -1 }
+      if (clickSort === -1 || clickSort === 1) {
+        sortObj = { clicks: clickSort }
+      }
+
+      // 查询文档
+      const postList = await Post.find(queryObj).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).exec()
+      const totalCounts = await Post.count(queryObj)
+
+      log(postList, totalCounts)
+
+      let postObj = {
+        list: postList,
+        page: page,
+        lastPage: Math.ceil(totalCounts / pageSize),
+        pageSize: pageSize,
+        totalCounts: totalCounts
+      }
+      res.send(renderApiData(res, 200, '文章列表获取成功', tagObj))
+    } catch (err) {
+      res.status(500).send(renderApiErr(req, res, 500, err))
+    }
   },
 
   /**

@@ -12,7 +12,8 @@
         <app-page-title :cateObj="cateObj"></app-page-title>
         <post-top
           @route-to-new="handleToNewPage"></post-top>
-        <post-table></post-table>
+        <post-table
+          :postTableData="postList"></post-table>
       </main>
     </div>
     <app-footer></app-footer>
@@ -21,6 +22,8 @@
 
 <script>
 import { mapState } from 'vuex'
+import API from '~/config/api'
+import { log } from '~/utils/util'
 import AppHeader from '~/components/Admin/AppHeader'
 import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
@@ -47,7 +50,8 @@ export default {
       menuSetting: {
         btnPosition: 145,
         isCollapse: false
-      }
+      },
+      postList: []
     }
   },
   methods: {
@@ -58,6 +62,23 @@ export default {
       } else {
         this.menuSetting.btnPosition = 145
       }
+    },
+
+    // 客户端拉取文章列表请求
+    clientGetPostList() {
+      this.$request
+        .get(API.postList)
+        .then(res => {
+          log(res.data.data)
+          if (res.data.success) {
+            this.postList = res.data.data.list
+          }
+        })
+        .catch(e => {
+          log(e)
+          // 发生错误则刷新页面从服务端重新拉取列表
+          location.reload()
+        })
     },
 
     // 跳转至新增页面
@@ -78,6 +99,9 @@ export default {
   computed: mapState([
     'loginState'
   ]),
+  mounted() {
+    this.clientGetPostList()
+  },
   components: {
     AppHeader,
     AppFooter,
