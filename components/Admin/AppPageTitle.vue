@@ -47,6 +47,7 @@ export default {
     margin: 0;
     height: 50px;
     color: #475669;
+    font-size: 18px;
   }
 }
 .page-title-bread{

@@ -10,7 +10,8 @@
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
-        <post-top></post-top>
+        <post-top
+          @route-to-new="handleToNewPage"></post-top>
         <post-table></post-table>
       </main>
     </div>
@@ -57,6 +58,21 @@ export default {
       } else {
         this.menuSetting.btnPosition = 145
       }
+    },
+
+    // 跳转至新增页面
+    handleToNewPage() {
+      if (!this.loginState.hasLogin) {
+        return false
+      } else if (this.loginState.userInfo.role !== 'super') {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
+      this.$router.push('/admin/posts/new')
     }
   },
   computed: mapState([

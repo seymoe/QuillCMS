@@ -19,6 +19,7 @@
     "express": "^4.15.3",
     "express-session": "^1.15.6",
     "form-data": "^2.3.1",
+    "mavon-editor": "^2.6.9",
     "moment": "^2.19.3",
     "mongoose": "^4.13.6",
     "nuxt": "^1.4.1",

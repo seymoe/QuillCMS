@@ -1,7 +1,7 @@
 <template>
   <section class="post-top">
     <div class="left">
-      <el-button class="btn" type="primary" size="mini">新增</el-button>
+      <el-button class="btn" type="primary" size="mini" @click="toNewPage">新增</el-button>
       <el-button class="btn" type="danger" size="mini">删除</el-button>
     </div>
     <div class="right">
@@ -49,10 +49,14 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    toNewPage() {
+      this.$emit('route-to-new')
+    }
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 .post-top{

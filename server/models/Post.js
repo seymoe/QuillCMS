@@ -18,6 +18,11 @@ const PostSchema = new Schema({
   cover: String,        // 图片
   discription: String,  // 简介
   content: String,      // 文章内容
+  // 内容格式 M：markdown T：Text
+  content_type: {
+    type: String,
+    default: 'M'
+  },
   author: {
     type: String,
     ref: 'User'

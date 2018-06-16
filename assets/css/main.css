@@ -5,6 +5,7 @@ html, body
   letter-spacing: 0.5px;
   font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif;
   margin: 0;
+  font-size: 14px;
 }
 
 a, a:hover, a:focus, a:visited
@@ -67,6 +68,11 @@ img{
   .container {
     width: 1200px;
   }
+}
+
+.flex-row{
+  display: flex;
+  flex-direction: row;
 }
 
 /* fade login box */

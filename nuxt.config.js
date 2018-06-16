@@ -35,6 +35,10 @@ module.exports = {
     {
       src: '~plugins/axios',
       ssr: false
+    },
+    {
+      src: '~plugins/mavon-editor',
+      ssr: false
     }
   ],
 
@@ -57,6 +61,7 @@ module.exports = {
     'element-ui/lib/theme-chalk/index.css',
     'element-ui/lib/theme-chalk/display.css',
     '~/assets/css/main.css',
+    'mavon-editor/dist/css/index.css'
   ],
   /*
   ** Add axios globally

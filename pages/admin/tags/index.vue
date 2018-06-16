@@ -139,9 +139,6 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.tagList = res.data.data.list
-            this.tagMeta.page = res.data.data.page
-            this.tagMeta.pageSize = res.data.data.pageSize
-            this.tagMeta.totalCounts = res.data.data.totalCounts
           }
         })
         .catch(e => {
