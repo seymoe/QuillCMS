@@ -1,10 +1,10 @@
 import { Router } from 'express'
 
-import post from './post'
+import route from './route'
 
 const router = Router()
 
 // Add USERS Routes
-router.use(post)
+router.use(route)
 
 export default router

@@ -9,9 +9,9 @@
         </h1>
         <nav class="app-nav flex-row flex-1 hidden-xs-only">
           <nuxt-link class="nav-link active" to="/">首页</nuxt-link>
-          <nuxt-link class="nav-link" to="/">技术天地</nuxt-link>
-          <nuxt-link class="nav-link" to="/">技术天地</nuxt-link>
-          <nuxt-link class="nav-link" to="/">技术天地</nuxt-link>
+          <nuxt-link class="nav-link" to="/" 
+            v-for="item in topMenuData" 
+            :key="item._id">{{ item.name }}</nuxt-link>
         </nav>
       </el-col>
       <el-col :span="6" class="head-right flex-row">
@@ -24,6 +24,13 @@
     </el-row>
   </header>
 </template>
+
+<script>
+export default {
+  props: ['topMenuData']
+}
+</script>
+
 
 <style lang="scss" scoped>
 .app-header{

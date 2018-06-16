@@ -1,6 +1,8 @@
 import siteConf from './index.default'
 
 export default {
+  /** 管理端 ----------------- */
+
   // 分类相关
   categoryList: `${siteConf.api_url}/server${siteConf.api_path}/category/list`,
   categoryAdd: `${siteConf.api_url}/server${siteConf.api_path}/category/new`,
@@ -21,5 +23,8 @@ export default {
   userLogout: `${siteConf.api_url}/server${siteConf.api_path}/user/logout`,
   userList: `${siteConf.api_url}/server${siteConf.api_path}/user/list`,
   userAdd: `${siteConf.api_url}/server${siteConf.api_path}/user/new`,
-  userDelete: `${siteConf.api_url}/server${siteConf.api_path}/user`
+  userDelete: `${siteConf.api_url}/server${siteConf.api_path}/user`,
+
+  /** 客户端 ------------------ */
+  topMenu: `${siteConf.api_url}/client${siteConf.api_path}/category/list`
 }

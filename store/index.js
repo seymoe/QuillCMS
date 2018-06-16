@@ -7,11 +7,15 @@ const store = () => new Vuex.Store({
     loginState: {
       hasLogin: false,
       userInfo: {}
-    }
+    },
+    topMenu: []
   },
   mutations: {
     SET_LOGIN_STATE(state, val) {
       state.loginState = val
+    },
+    SET_TOP_MENU(state, val) {
+      state.topMenu = val
     }
   },
   actions: {
@@ -21,7 +25,6 @@ const store = () => new Vuex.Store({
           hasLogin: req.session.userLogined,
           userInfo: req.session.userInfo
         }
-        console.log('11-> ', _loginState)
         commit('SET_LOGIN_STATE', _loginState)
       }
     }

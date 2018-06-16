@@ -7,7 +7,7 @@
         </el-carousel-item>
       </el-carousel>
     </div>
-    <div class="list flex-column">
+    <div class="list flex-column hidden-xs-only">
       <div class="listitem" v-for="item in 3" :key="item">
         <nuxt-link to="/">
           <img src="~/assets/img/place.png" alt="">
@@ -22,8 +22,22 @@
 .swiper-wrap{
   margin-bottom: 20px;
   justify-content: space-between;
+  @media screen and (max-width: 767px) {
+    margin-bottom: 15px;
+    margin-right: -15px;
+    margin-left: -15px;
+    .el-carousel{
+      height: 200px;
+      /deep/ .el-carousel__container{
+        height: 200px !important;
+      }
+    }
+  }
   .swiper{
     margin-right: 10px;
+    @media screen and (max-width: 767px) {
+      margin-right: 0px;
+    }
   }
   .list{
     width: 180px;
@@ -54,7 +68,6 @@
 .el-carousel__item img {
     display: block;
     width: 100%;
-    height: 100%;
   }
 
   .el-carousel__item:nth-child(2n) {

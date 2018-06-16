@@ -1,6 +1,10 @@
 import { Router } from 'express'
 import PostController from '../../controllers/post'
+import PostCategoryController from '../../controllers/postCategory'
 const router = Router()
+
+/* 顶部菜单 */
+router.get('/category/list', PostCategoryController.getList)
 
 /* 文章列表 */
 router.get('/cards', PostController.getList)

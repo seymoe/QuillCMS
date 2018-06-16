@@ -186,7 +186,7 @@ export default {
    * @param {*} res 
    * @param {*} next 
    */
-  deleteOne(req, res, next) {
+  async deleteOne(req, res, next) {
     try {
       let errMsg = ''
       let id = req.params.id

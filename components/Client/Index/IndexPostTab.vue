@@ -17,7 +17,7 @@
             <h2><nuxt-link to="/">测试文章标题测试文章标题，测试文章标题</nuxt-link></h2>
             <p class="desc">测试文章标题测试文章标题测试文章标题</p>
             <div class="foot flex-row">
-              <div class="author-box flex-row">
+              <div class="author-box flex-row hidden-xs-only">
                 <img src="~/assets/img/avatar.png" alt="">
                 <span>曦莫琅</span>
               </div>
@@ -60,6 +60,11 @@ export default {
 .post-tab-wrap{
   background-color: #fff;
   padding: 0 15px;
+  box-sizing: border-box;
+  @media screen and (max-width: 767px) {
+    margin-left: -5px;
+    margin-right: -5px;
+  }
 }
 .tab-head{
   border-bottom: 1px solid #f8f8f8;
@@ -86,6 +91,9 @@ export default {
     padding: 20px 0;
     border-bottom: 1px solid #f8f8f8;
     transition: all .3s;
+    @media screen and (max-width: 767px) {
+      flex-direction: column;
+    }
     &:hover{
       background-color: #f8f8f8;
     }
@@ -99,6 +107,11 @@ export default {
     display: block;
     width: 100%;
     height: 153px;
+  }
+  @media screen and (max-width: 767px) {
+    margin-bottom: 10px;
+    width: 100%;
+    margin-right: 0;
   }
 }
 .txtbox{

@@ -6,6 +6,7 @@ html, body
   font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,Arial,sans-serif;
   margin: 0;
   font-size: 14px;
+  background-color: #f8f8f8;
 }
 
 a, a:hover, a:focus, a:visited
@@ -123,4 +124,13 @@ img{
 .app-wrap{
   margin-top: 60px;
   padding-top: 20px;
+}
+.app-wrap .main{
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 767px) {
+  .app-wrap{
+    padding-top: 0;
+  }
 }

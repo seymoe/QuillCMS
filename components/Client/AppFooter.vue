@@ -17,6 +17,7 @@
 
 <style lang="scss" scoped>
 .app-footer{
+  margin-top: 20px;
   padding: 15px 0;
   background-color: #2d3237;
   color: #5f676f;
