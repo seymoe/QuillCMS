@@ -37,6 +37,7 @@
                   expand-trigger="hover"
                   :options="categoryList"
                   :props="cateProps"
+                  placeholder="请选择文章分类"
                   v-model="postFormData.categories">
                 </el-cascader>
               </el-form-item>
@@ -61,7 +62,7 @@
             <markdown-editor
               :data="postFormData"></markdown-editor>
             <div class="form-footer flex-row">
-              <el-button type="primary" size="small">保存</el-button>
+              <el-button type="primary" size="small" @click="submitPost('addPostForm')">保存</el-button>
               <el-button type="danger" size="small">取消</el-button>
             </div>
             </el-form>
@@ -85,6 +86,27 @@ import MarkdownEditor from '~/components/Common/MarkdownEditor'
 
 export default {
   data() {
+    let checkTitle = (rule, value, callback) => {
+      if (value.length > 40) {
+        return callback(new Error('标题不能超过40个字符'))
+      } else {
+        callback()
+      }
+    }
+    let checkSubTitle = (rule, value, callback) => {
+      if (value.length > 40) {
+        return callback(new Error('副标题不能超过40个字符'))
+      } else {
+        callback()
+      }
+    }
+    let checkDescription = (rule, value, callback) => {
+      if (value.length > 80) {
+        return callback(new Error('简介不能超过80个字符'))
+      } else {
+        callback()
+      }
+    }
     return {
       cateObj: {
         cateName: '新增文章',
@@ -108,7 +130,22 @@ export default {
         isCollapse: false
       },
 
-      addPostRules: {},
+      addPostRules: {
+        title: [
+          { required: true, message: '标题不能为空' },
+          { validator: checkTitle, trigger: 'blur' }
+        ],
+        sub_title: [
+          { validator: checkSubTitle, trigger: 'blur' }
+        ],
+        description: [
+          { required: true, message: '简介不能为空' },
+          { validator: checkDescription, trigger: 'blur' }
+        ],
+        categories: [
+          { required: true, message: '分类不能为空' }
+        ]
+      },
 
       //  可供选择的分类列表
       categoryList: [],
@@ -199,6 +236,66 @@ export default {
         .catch(e => {
           log(e)
         })
+    },
+
+    // 提交文章
+    submitPost(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let data = this.postFormData
+          let successCB = () => {
+            this.postFormData = {
+              title: '',
+              sub_title: '',
+              cover: '',
+              discription: '',
+              content: '',
+              author: '',
+              auth: 'public',
+              state: 'published',
+              isTop: false,
+              from: 0,
+              categories: [],
+              tags: [],
+              content_type: 'M'
+            }
+            this.$refs[formName].resetFields()
+          }
+          // 校验文章内容是否为空
+          if (data.content === '') {
+            this.$message({
+              message: '请输入文章内容'
+            })
+            return false
+          }
+
+          data.fakemark = 'quillcms_post_mark_' + Date.now()
+          data.author = this.loginState.userInfo.id
+
+          log(data)
+          this.$request
+            .post(API.postAdd, data)
+            .then(res => {
+              if (res.data.success) {
+                this.$notify({
+                  title: '成功',
+                  message: res.data.message,
+                  type: 'success'
+                })
+                successCB && successCB()
+              }
+            })
+            .catch(err => {
+              log(err)
+              this.$notify.error({
+                title: '错误',
+                message: err.message
+              })
+            })
+        } else {
+          return false
+        }
+      })
     }
   },
   computed: mapState(['loginState']),

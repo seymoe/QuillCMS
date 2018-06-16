@@ -11,6 +11,9 @@ export default {
   tagAdd: `${siteConf.api_url}/server${siteConf.api_path}/tag/new`,
   tagDelete: `${siteConf.api_url}/server${siteConf.api_path}/tag`,
 
+  // 文章相关
+  postAdd: `${siteConf.api_url}/server${siteConf.api_path}/post/new`,
+
   // 用户相关
   userLogin: `${siteConf.api_url}/server${siteConf.api_path}/user/login`,
   userLogout: `${siteConf.api_url}/server${siteConf.api_path}/user/logout`,

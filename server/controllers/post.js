@@ -1,8 +1,29 @@
 import Post from '../models/Post'
 import validator from 'validator'
-import { log } from '../../utils/util'
+import { log, renderApiData, renderApiErr } from '../../utils/util'
 
-let checkCreatePostFields = (formData) => {}
+let checkCreatePostFields = (formData, req) => {
+  // 管理员用户才可以创建文章
+  let hasLogin = req.session.userLogined
+  let userInfo = req.session.userInfo
+  if (!hasLogin || userInfo.id !== formData.author) {
+    return false
+  }
+
+  if (!/^quillcms_post_mark_\d{13}$/.test(formData.fakemark)) {
+    return false
+  }
+
+  if (formData.title.length === 0 
+      || formData.title.length > 40 
+      || formData.sub_title.length > 40 
+      || formData.description.length === 0 
+      || formData.description.length > 80
+      || formData.content.length === 0) {
+    return false
+  }
+  return true
+}
 
 export default {
   /**
@@ -109,58 +130,44 @@ export default {
    * @param {*} res 
    * @param {*} next 
    */
-  createOne(req, res, next) {
-    console.log(req)
-    let editErr = false,
-      desc = '',
-      commentArr = []
-  
-    // 获取POST过来的字段数据
-    const sentence = validator.trim(req.body.sentence || '') // 必需字段，文章标题
-    const imgsrc = validator.trim(req.body.picture || '') // 非必需
-    const category = validator.trim(req.body.category) // 非必需字段，默认值为 默认
-    const style = validator.trim(req.body.style)
-    const location = validator.trim(req.body.location)
-    const author = validator.trim(req.body.author)
-    const auth = validator.trim(req.body.auth || 'public') // 非必需字段，默认值为 public 
-  
-    // 校验数据是否符合要求
-    if (sentence === '') {
-      editErr = '要说话哦'
-    } else if (sentence.length > 40) {
-      editErr = '毋需多言，四十字足矣'
+  async createOne(req, res, next) {
+    // 校验传入的参数
+    let fields = req.body
+    try {
+      let validateResult = checkCreatePostFields(fields, req)
+      if (!validateResult) {
+        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
+    } catch (err) {
+      res.status(500).send(renderApiErr(req, res, 500, err))
     }
-  
-    // 数据验证不通过则返回 400
-    if (editErr) {
-      return res.status(400).send({
-        success: false,
-        msg: editErr
-      })
+
+    const obj = {
+      title: fields.title,
+      sub_title: fields.sub_title,
+      description: fields.description,
+      cover: fields.cover,
+      content: fields.content,
+      auth: fields.auth === 'secret' ? 'secret' : 'public',
+      state: fields.state === 'draft' ? 'draft' : 'published',
+      isTop: fields.isTop === false ? false : true ,
+      from: fields.from === '1' ? 1 : 0,
+      categories: fields.categories,
+      tags: fields.tags,
+      content_type: fields.content_type === 'T' ? 'T' : 'M',
+      author: fields.author
     }
-  
-    // 数据库存储并返回状态
-    Post.create({
-      sentence: sentence,
-      picture: imgsrc,
-      category: category,
-      author: author,
-      likes: 0,
-      location: location,
-      auth: auth,
-      style: style,
-      create_time: Date.now(),
-      comments: commentArr
-    }, function (err, posts) {
-      if (err) return res.send({
-        success: false,
-        msg: err
-      })
-      return res.json({
-        success: true,
-        msg: '添加成功'
-      })
-    })
+
+    log(obj)
+
+    const newPost = new Post(obj)
+
+    try {
+      let postObj = await newPost.save()
+      res.send(renderApiData(res, 200, '文章创建成功', { id: postObj._id }))
+    } catch (err) {
+      res.status(500).send(renderApiErr(req, res, 500, err))
+    }
   },
 
   /**
