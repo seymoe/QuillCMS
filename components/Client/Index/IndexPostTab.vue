@@ -9,12 +9,12 @@
       <div class="post-list">
         <div class="post-img-item flex-row" v-for="item in tabPostList" :key="item._id">
           <div class="imgbox">
-            <nuxt-link to="/">
+            <nuxt-link :to="'/post/' + item._id">
               <img src="~/assets/img/place.png" alt="">
             </nuxt-link>
           </div>
           <div class="txtbox flex-column flex-1">
-            <h2><nuxt-link to="/">{{ item.title }}</nuxt-link></h2>
+            <h2><nuxt-link :to="'/post/' + item._id">{{ item.title }}</nuxt-link></h2>
             <p class="desc">{{ item.description }}</p>
             <div class="foot flex-row">
               <div class="author-box flex-row hidden-xs-only">
@@ -23,10 +23,9 @@
               </div>
               <div class="action-box">
                 <span>{{ item.create_time }}</span>
-                <span><i></i>4343</span>
-                <span><i></i>4343</span>
-                <span><i></i>4343</span>
-                <span><i></i>4343</span>
+                <span><i></i>{{ item.clicksNum }}</span>
+                <span><i></i>{{ item.likesNum }}</span>
+                <span><i></i>{{ item.collectionsNum }}</span>
               </div>
             </div>
           </div>

@@ -9,18 +9,18 @@
         v-for="(item,index) in hotPosts" 
         :key="index">
         <template v-if="index < 3">
-          <nuxt-link to="/" class="imgbox">
+          <nuxt-link :to="'/post/' + item._id" class="imgbox">
             <img src="~/assets/img/place.png" alt="">
             <span>{{ item.title }}</span>
           </nuxt-link>
         </template>
         <template v-else>
-          <nuxt-link to="/" class="imgbox">
+          <nuxt-link :to="'/post/' + item._id" class="imgbox">
             <img src="~/assets/img/place.png" alt="">
           </nuxt-link>
           <div class="txtbox flex-column flex-1">
             <h2>
-              <nuxt-link to="/">{{ item.title }}</nuxt-link>
+              <nuxt-link :to="'/post/' + item._id">{{ item.title }}</nuxt-link>
             </h2>
             <p>{{ item.creat_time }}</p>
           </div>
@@ -62,6 +62,9 @@ export default {
     img{
       display: block;
       height: 153px;
+      @media screen and (max-width: 767px) {
+        height: auto;
+      }
     }
     span{
       position: absolute;
