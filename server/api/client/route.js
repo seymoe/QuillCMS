@@ -6,8 +6,11 @@ const router = Router()
 /* 顶部菜单 */
 router.get('/category/list', PostCategoryController.getList)
 
-/* 文章列表 */
-router.get('/cards', PostController.getList)
+/* 文章相关 */
+
+// 文章列表
+router.get('/post/list', PostController.getList)
+
 router.get('/cards/:id', PostController.getOne)
 router.post('/cards/new', PostController.createOne)
 router.delete('/cards/:id', PostController.deleteOne)

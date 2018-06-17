@@ -4,26 +4,37 @@
       <h1>热门文章</h1>
     </div>
     <div class="post-list">
-      <div class="post-item-top">
-        <nuxt-link to="/" class="imgbox">
-          <img src="~/assets/img/place.png" alt="">
-          <span>刚刚美国加息，刚刚美国加息，刚刚美国加息</span>
-        </nuxt-link>
-      </div>
-      <div class="post-item-btm flex-row">
-        <nuxt-link to="/" class="imgbox">
-          <img src="~/assets/img/place.png" alt="">
-        </nuxt-link>
-        <div class="txtbox flex-column flex-1">
-          <h2>
-            <nuxt-link to="/">小米上市倒计时，小米上市倒计时，小米上市倒计时</nuxt-link>
-          </h2>
-          <p>2018年6月13日</p>
-        </div>
+      <div 
+        :class="{'post-item-top': index < 3, 'post-item-btm flex-row': index >= 3}" 
+        v-for="(item,index) in hotPosts" 
+        :key="index">
+        <template v-if="index < 3">
+          <nuxt-link to="/" class="imgbox">
+            <img src="~/assets/img/place.png" alt="">
+            <span>{{ item.title }}</span>
+          </nuxt-link>
+        </template>
+        <template v-else>
+          <nuxt-link to="/" class="imgbox">
+            <img src="~/assets/img/place.png" alt="">
+          </nuxt-link>
+          <div class="txtbox flex-column flex-1">
+            <h2>
+              <nuxt-link to="/">{{ item.title }}</nuxt-link>
+            </h2>
+            <p>{{ item.creat_time }}</p>
+          </div>
+        </template>
       </div>
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  props: ['hotPosts']
+}
+</script>
 
 <style lang="scss" scoped>
 .hot-post{

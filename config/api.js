@@ -26,5 +26,8 @@ export default {
   userDelete: `${siteConf.api_url}/server${siteConf.api_path}/user`,
 
   /** 客户端 ------------------ */
-  topMenu: `${siteConf.api_url}/client${siteConf.api_path}/category/list`
+  topMenu: `${siteConf.api_url}/client${siteConf.api_path}/category/list`,
+
+  // 文章列表
+  appPostList: `${siteConf.api_url}/client${siteConf.api_path}/post/list`
 }

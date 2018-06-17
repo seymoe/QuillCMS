@@ -4,6 +4,7 @@ import PostTag from './PostTag'
 import PostComment from './PostComment'
 import User from './User'
 import shortid from 'shortid'
+import moment from 'moment'
 
 const Schema = mongoose.Schema
 
@@ -16,7 +17,7 @@ const PostSchema = new Schema({
   title: String,        // 标题
   sub_title: String,    // 二级标题
   cover: String,        // 图片
-  discription: String,  // 简介
+  description: String,  // 简介
   content: String,      // 文章内容
   // 内容格式 M：markdown T：Text
   content_type: {
@@ -69,17 +70,17 @@ const PostSchema = new Schema({
     }
   ],
   // 喜欢次数
-  likes: {
-    tpye: Number,
+  likesNum: {
+    type: Number,
     default: 0
   },
   // 浏览次数
-  clicks: {
+  clicksNum: {
     type: Number,
     default: 0
   },
   // 收藏
-  collections: {
+  collectionsNum: {
     type: Number,
     default: 0
   },
@@ -105,6 +106,13 @@ const PostSchema = new Schema({
     type: Date,
     default: Date.now
   }
+})
+
+PostSchema.path('create_time').get(function (v) {
+  return moment(v).format("YYYY-MM-DD")
+})
+PostSchema.path('modify_time').get(function (v) {
+  return moment(v).format("YYYY-MM-DD")
 })
 
 export default mongoose.model('Post', PostSchema)

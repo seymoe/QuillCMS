@@ -5,11 +5,12 @@
       <el-row class="container main" type="flex" justify="space-between">
         <el-col class="content" :xs="24" :sm="18">
           <index-swiper></index-swiper>
-          <index-post-tab></index-post-tab>
+          <index-post-tab
+            :tabPostList="newestPostList"></index-post-tab>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
           <advertise-box></advertise-box>
-          <hot-posts></hot-posts>
+          <hot-posts :hotPosts="hotPostList"></hot-posts>
           <hot-creaters></hot-creaters>
           <hot-tags></hot-tags>
         </el-col>
@@ -68,23 +69,76 @@ let serverGetMenuData = () => {
 //       return []
 //     })
 // }
+
 // 最新文章
+let serverGetNewestPosts = () => {
+  return axios
+    .get(API.appPostList, {
+      params: {
+        mode: 'normal',
+        limit: 5
+      }
+    })
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data.list
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
 
 // 热门标签
 
 // 热门文章
+let serverGetHotPosts = () => {
+  return axios
+    .get(API.appPostList, {
+      params: {
+        sortBy: 'clicks',
+        mode: 'simple',
+        limit: 5
+      }
+    })
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data.list
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
 
 export default {
   layout: 'app',
   data() {
     return {
-
+      newestPostList: [],
+      hotPostList: []
     }
   },
 
   async fetch({ store, params }) {
     let topMenuData = await serverGetMenuData()
     store.commit('SET_TOP_MENU', topMenuData)
+  },
+
+  async asyncData() {
+    let [
+      newestPostList,
+      hotPostList
+    ] = await Promise.all([
+      serverGetNewestPosts(),
+      serverGetHotPosts()
+    ])
+    return {
+      hotPostList,
+      newestPostList
+    }
   },
 
   computed: mapState([

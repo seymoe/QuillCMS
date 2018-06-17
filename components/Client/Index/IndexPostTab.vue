@@ -7,22 +7,22 @@
     </div>
     <div class="tab-body">
       <div class="post-list">
-        <div class="post-img-item flex-row" v-for="item in 10" :key="item">
+        <div class="post-img-item flex-row" v-for="item in tabPostList" :key="item._id">
           <div class="imgbox">
             <nuxt-link to="/">
               <img src="~/assets/img/place.png" alt="">
             </nuxt-link>
           </div>
           <div class="txtbox flex-column flex-1">
-            <h2><nuxt-link to="/">测试文章标题测试文章标题，测试文章标题</nuxt-link></h2>
-            <p class="desc">测试文章标题测试文章标题测试文章标题</p>
+            <h2><nuxt-link to="/">{{ item.title }}</nuxt-link></h2>
+            <p class="desc">{{ item.description }}</p>
             <div class="foot flex-row">
               <div class="author-box flex-row hidden-xs-only">
                 <img src="~/assets/img/avatar.png" alt="">
-                <span>曦莫琅</span>
+                <span>{{ item.author.nickname }}</span>
               </div>
               <div class="action-box">
-                <span>2017年4月20日</span>
+                <span>{{ item.create_time }}</span>
                 <span><i></i>4343</span>
                 <span><i></i>4343</span>
                 <span><i></i>4343</span>

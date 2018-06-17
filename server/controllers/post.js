@@ -1,4 +1,5 @@
 import Post from '../models/Post'
+import PostTag from '../models/PostTag'
 import validator from 'validator'
 import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
@@ -37,40 +38,115 @@ export default {
     try {
       log(req.query)
       let fields = req.query
-      let queryObj = {}
       let page = Number(fields.page) || 1
-      let pageSize = Number(fields.pageSize) || 10
-      let isTop = fields.isTop
-      let clickSort = fields.click_sort
+      let pageSize = Number(fields.limit) || 10
+      let isTop = fields.isTop  // 是否置顶
+      let sortBy = fields.sortBy  // 排序参数
+      let mode = fields.mode  // 返回数据的模式 simple normal
+      let cateId = fields.cateId  // 分类id
+      let tagName = fields.tagName  // 文章标签
+      let state = fields.state  // 文章状态 published draft
+      let user = fields.user  // 用户ID
+      let from = fields.from  // 文章类型 1 0
+      let searchKey = fields.searchKey  // 搜索词
+
+      // 查询参数配置
+      let queryObj = {auth: 'public'}, sortObj = {create_time: -1}, files = null, postList = [], totalCounts = 0
+
+      if (isTop) {
+        queryObj.isTop = true
+      }
+
       // 排序
-      let sortObj = { data: -1 }
-      if (clickSort === -1 || clickSort === 1) {
-        sortObj = { clicks: clickSort }
+      if (sortBy) {
+        delete sortObj.create_time
+        sortObj[sortBy] = -1
+      }
+
+      // 搜索
+      if (searchKey) {
+        let reKey = new RegExp(searchKey, 'i')
+        queryObj.content = { $regex: reKey }
+        queryObj.from = 0
+      }
+
+      // 文章分类
+      if (cateId && cateId !== 'AppIndex') {
+        queryObj.categories = cateId
+      }
+
+      // 文章标签
+      if (tagName) {
+        let targetTag = await PostTag.findOne({ name: tagName })
+        if (targetTag) {
+          queryObj.tags = targetTag._id
+          // 如果有标签，则查询全部类别
+          delete queryObj.categories
+        }
+      }
+
+      // 文章状态
+      if (state === 'draft') {
+        queryObj.state = 'draft'
+      } else {
+        queryObj.state = 'published'
+      }
+
+      // 文章类型
+      if (from === 1 || from === 0) {
+        queryObj.from = from
+      }
+
+      // 返回的字段
+      if (mode === 'simple') {
+        files = {
+          _id: 1,
+          title: 1,
+          cover: 1,
+          create_time: 1
+        }
+      } else if (mode === 'normal') {
+        files = {
+          _id: 1,
+          title: 1,
+          cover: 1,
+          description: 1,
+          author: 1,
+          categories: 1,
+          tags: 1,
+          likesNum: 1,
+          clicksNum: 1,
+          collectionsNum: 1,
+          create_time: 1
+        }
       }
 
       // 查询文档
-      const postList = await Post.find(queryObj).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).populate([
-        {
-          path: 'author',
-          select: 'username nickname _id avatar'
-        },
-        {
-          path: 'categories',
-          select: 'name _id'
-        },
-        {
-          path: 'tags',
-          select: 'name _id'
-        }
-      ]).exec()
-      const totalCounts = await Post.count(queryObj)
-
-      log(postList, totalCounts)
+      if (mode === 'simple') {
+        postList = await Post.find(queryObj, files).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).exec()
+      } else {
+        postList = await Post.find(queryObj, files).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).populate([
+          {
+            path: 'author',
+            select: 'nickname _id avatar'
+          },
+          {
+            path: 'categories',
+            select: 'name _id'
+          },
+          {
+            path: 'tags',
+            select: 'name _id'
+          }
+        ]).exec()
+      }
+      totalCounts = await Post.count(queryObj)
 
       let postObj = {
         list: postList,
         page: page,
         lastPage: Math.ceil(totalCounts / pageSize),
+        searchKey: searchKey || '',
         pageSize: pageSize,
         totalCounts: totalCounts
       }
@@ -153,9 +229,7 @@ export default {
       categories: fields.categories,
       tags: fields.tags,
       content_type: fields.content_type === 'T' ? 'T' : 'M',
-      author: fields.author,
-      clicks: 0,
-      likes: 0
+      author: fields.author
     }
 
     log(obj)

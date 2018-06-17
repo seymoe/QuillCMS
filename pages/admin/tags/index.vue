@@ -144,7 +144,7 @@ export default {
         .catch(e => {
           log(e)
           // 发生错误则刷新页面从服务端重新拉取列表
-          location.reload()
+          // location.reload()
         })
     },
 
