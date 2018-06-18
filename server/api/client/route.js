@@ -10,8 +10,9 @@ router.get('/category/list', PostCategoryController.getList)
 
 // 文章列表
 router.get('/post/list', PostController.getList)
+// 文章详情
+router.get('/post/:id', PostController.getOne)
 
-router.get('/cards/:id', PostController.getOne)
 router.post('/cards/new', PostController.createOne)
 router.delete('/cards/:id', PostController.deleteOne)
 

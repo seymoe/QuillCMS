@@ -6,6 +6,7 @@ const router = Router()
 /* 添加标签 */
 router.post('/post/new', checkUserSession, PostController.createOne)
 router.get('/post/list', checkUserSession, PostController.getList)
+router.get('/post/:id', checkUserSession, PostController.getOne)
 router.delete('/post/:id', checkUserSession, PostController.deleteOne)
 
 export default router

@@ -21,13 +21,15 @@
             @click="handleTogglePanel"
             v-click-outside="handleOutsideClickMenu">
             <img src="~/assets/img/avatar.png" alt="">
-            <span>{{ loginState.userInfo.username ? loginState.userInfo.username : '' }}</span>
+            <span>{{ loginState.userInfo.nickname ? loginState.userInfo.nickname : '' }}</span>
           </div>
         </div>
         <transition name="fade">
           <el-card v-show="showPanel" class="panal" :body-style="{ padding: '0px' }">
             <img src="~/assets/img/avatar.png" alt="">
-            <h2>{{ loginState.userInfo.username ? loginState.userInfo.username : '' }}</h2>
+            <h2>{{ loginState.userInfo.nickname ? loginState.userInfo.nickname : '' }}</h2>
+            <p>{{ loginState.userInfo.role === 'super' ? '超级管理员' : '' }}</p>
+            <p>{{ loginState.userInfo.role === 'admin' ? '管理员' : '' }}</p>
             <div class="foot">
               <el-button type="text" class="button">设置</el-button>
               <el-button type="text" class="button" @click="clientUserLogout">退出</el-button>
@@ -186,6 +188,9 @@ export default {
     }
     h2 {
       margin: 20px 0;
+      text-align: center;
+    }
+    p{
       text-align: center;
     }
     div.foot {

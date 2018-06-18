@@ -29,5 +29,6 @@ export default {
   topMenu: `${siteConf.api_url}/client${siteConf.api_path}/category/list`,
 
   // 文章列表
-  appPostList: `${siteConf.api_url}/client${siteConf.api_path}/post/list`
+  appPostList: `${siteConf.api_url}/client${siteConf.api_path}/post/list`,
+  appPostDetail: `${siteConf.api_url}/client${siteConf.api_path}/post`
 }

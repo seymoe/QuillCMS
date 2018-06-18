@@ -2,6 +2,7 @@ import Post from '../models/Post'
 import PostTag from '../models/PostTag'
 import validator from 'validator'
 import shortid from 'shortid'
+import marked from 'marked'
 import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
 
 let checkCreatePostFields = (formData, req) => {
@@ -16,12 +17,12 @@ let checkCreatePostFields = (formData, req) => {
     return false
   }
 
-  if (formData.title.length === 0 
-      || formData.title.length > 40 
-      || formData.sub_title.length > 40 
-      || formData.description.length === 0 
-      || formData.description.length > 80
-      || formData.content.length === 0) {
+  if (formData.title.length === 0
+    || formData.title.length > 40
+    || formData.sub_title.length > 40
+    || formData.description.length === 0
+    || formData.description.length > 80
+    || formData.content.length === 0) {
     return false
   }
   return true
@@ -51,7 +52,7 @@ export default {
       let searchKey = fields.searchKey  // 搜索词
 
       // 查询参数配置
-      let queryObj = {auth: 'public'}, sortObj = {create_time: -1}, files = null, postList = [], totalCounts = 0
+      let queryObj = { auth: 'public' }, sortObj = { create_time: -1 }, files = null, postList = [], totalCounts = 0
 
       if (isTop) {
         queryObj.isTop = true
@@ -224,7 +225,7 @@ export default {
       content: fields.content,
       auth: fields.auth === 'secret' ? 'secret' : 'public',
       state: fields.state === 'draft' ? 'draft' : 'published',
-      isTop: fields.isTop === false ? false : true ,
+      isTop: fields.isTop === false ? false : true,
       from: fields.from === '1' ? 1 : 0,
       categories: fields.categories,
       tags: fields.tags,
@@ -250,8 +251,34 @@ export default {
    * @param {*} res 
    * @param {*} next 
    */
-  getOne(req, res, next) {
-    return true
+  async getOne(req, res, next) {
+    try {
+      let targetId = req.params.id
+      let queryObj = { _id: targetId }
+
+      const content = await Post.findOneAndUpdate(queryObj, { '$inc': { 'clicksNum': 1 } }).populate([
+        {
+          path: 'author',
+          select: 'nickname _id'
+        },
+        {
+          path: 'tags',
+          select: 'name _id'
+        },
+        {
+          path: 'categories',
+          select: 'name _id'
+        }]
+      ).exec()
+
+      if (content.content) {
+        content.content = marked(content.content)
+      }
+
+      res.send(renderApiData(res, 200, '获取成功', content || {}))
+    } catch (err) {
+      res.status(500).send(renderApiErr(req, res, 500, err))
+    }
   },
 
   /**

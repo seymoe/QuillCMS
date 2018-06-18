@@ -4,7 +4,7 @@
     <section class="app-wrap">
       <el-row class="container main" type="flex" justify="space-between">
         <el-col class="content" :xs="24" :sm="18">
-          <h1>{{ postId }}</h1>
+          <post-detail :postData="postData"></post-detail>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
           <advertise-box></advertise-box>
@@ -23,6 +23,7 @@ import axios from 'axios'
 import API from '~/config/api'
 import { log, arrayToTree } from '~/utils/util'
 import AppHeader from '~/components/Client/AppHeader'
+import PostDetail from '~/components/client/Post/PostDetail'
 import AdvertiseBox from '~/components/Client/AdvertiseBox'
 import HotPosts from '~/components/Client/HotPosts'
 import HotTags from '~/components/Client/HotTags'
@@ -37,7 +38,7 @@ let serverGetMenuData = () => {
       }
     })
     .then(res => {
-      log(res.data)
+      // log(res.data)
       if (res.data.success) {
         let _tree = arrayToTree(res.data.data.list)
         return _tree
@@ -47,26 +48,21 @@ let serverGetMenuData = () => {
       return []
     })
 }
-// 推荐文章
-// let serverGetTopPosts = () => {
-//   return axios
-//     .get(API.weekHot, {
-//       params: {
-//         limit: 6
-//       }
-//     })
-//     .then(res => {
-//       log(res.data)
-//       if (res.status === 200) {
-//         return res.data
-//       }
-//     })
-//     .catch(e => {
-//       return []
-//     })
-// }
 
-// 热门标签
+// 文章详情
+let serverGetPostData = (postId) => {
+  return axios
+    .get(API.appPostDetail + '/' + postId)
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data
+      }
+    })
+    .catch(e => {
+      return {}
+    })
+}
 
 // 热门文章
 let serverGetHotPosts = () => {
@@ -79,7 +75,6 @@ let serverGetHotPosts = () => {
       }
     })
     .then(res => {
-      log(res.data)
       if (res.data.success) {
         return res.data.data.list
       }
@@ -93,6 +88,8 @@ export default {
   layout: 'app',
   data() {
     return {
+      postId: '',
+      postData: {},
       hotPostList: []
     }
   },
@@ -104,12 +101,15 @@ export default {
 
   async asyncData({ params }) {
     let [
-      hotPostList
+      hotPostList,
+      postData
     ] = await Promise.all([
-      serverGetHotPosts()
+      serverGetHotPosts(),
+      serverGetPostData(params.id)
     ])
     return {
       hotPostList,
+      postData,
       postId: params.id
     }
   },
@@ -120,6 +120,7 @@ export default {
 
   components: {
     AppHeader,
+    PostDetail,
     AdvertiseBox,
     HotPosts,
     HotTags,
