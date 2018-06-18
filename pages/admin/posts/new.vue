@@ -59,6 +59,20 @@
                 </el-select>
               </el-form-item>
             </div>
+            <!-- 上传图片 -->
+            <el-form-item label="配图" prop="cover">
+              <el-upload
+                class="upload-box"
+                drag
+                :action="uploadAction"
+                :before-upload="beforeAvatarUpload"
+                :http-request="uploadImage"
+                :show-file-list="false"
+                >
+                <i class="el-icon-upload"></i>
+                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em>任何JPG,JPEG,PNG,或GIF最高可达1MB</div>
+              </el-upload>
+            </el-form-item>
             <markdown-editor
               :data="postFormData"></markdown-editor>
             <div class="form-footer flex-row">
@@ -135,16 +149,12 @@ export default {
           { required: true, message: '标题不能为空' },
           { validator: checkTitle, trigger: 'blur' }
         ],
-        sub_title: [
-          { validator: checkSubTitle, trigger: 'blur' }
-        ],
+        sub_title: [{ validator: checkSubTitle, trigger: 'blur' }],
         description: [
           { required: true, message: '简介不能为空' },
           { validator: checkDescription, trigger: 'blur' }
         ],
-        categories: [
-          { required: true, message: '分类不能为空' }
-        ]
+        categories: [{ required: true, message: '分类不能为空' }]
       },
 
       //  可供选择的分类列表
@@ -173,7 +183,10 @@ export default {
         categories: [],
         tags: [],
         content_type: 'M'
-      }
+      },
+
+      // 文件上传API
+      uploadAction: API.uploadImage
     }
   },
   methods: {
@@ -235,6 +248,46 @@ export default {
         })
         .catch(e => {
           log(e)
+        })
+    },
+
+    // 上传图片相关方法
+    beforeAvatarUpload(file) {
+      const isJPG =
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/gif'
+      const isLt1M = file.size / 1024 / 1024 < 1
+
+      if (!isJPG) {
+        this.$message({
+          message: '上传图片只能是JPG、JPEG、GIF或PNG格式!',
+          type: 'error'
+        })
+      }
+      if (!isLt1M) {
+        this.$message({
+          message: '上传图片大小不能超过 1MB!',
+          type: 'error'
+        })
+      }
+      return isJPG && isLt1M
+    },
+
+    // 上传图片
+    uploadImage(content) {
+      log(content)
+      let formData = new FormData()
+      formData.append('image', content.file)
+      this.$request
+        .post(content.action, formData)
+        .then(res => {
+          if (res.data.success) {
+            log('上传成功')
+          }
+        })
+        .catch(err => {
+          log(err)
         })
     },
 
@@ -336,6 +389,21 @@ export default {
     justify-content: flex-start;
     .btn{
       margin-right: 20px;
+    }
+  }
+}
+.upload-box {
+  width: 100%;
+  height: 100%;
+  .el-upload {
+    width: 100%;
+  }
+  .el-upload-dragger {
+    width: 100% !important;
+    height: 146px;
+    background-color: #eeeeee;
+    .el-upload__text{
+      line-height: 1.8;
     }
   }
 }

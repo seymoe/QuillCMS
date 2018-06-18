@@ -1,7 +1,7 @@
 import Post from '../models/Post'
 import PostTag from '../models/PostTag'
 import PostCategory from '../models/PostCategory'
-import validator from 'validator'
+// import validator from 'validator'
 import shortid from 'shortid'
 import Marked from 'marked'
 const highlight = require('highlight.js')
