@@ -129,6 +129,15 @@ img{
   flex-wrap: wrap;
 }
 
+/* 文章详情样式 */
+.posthtml{
+  font-size: 16px;
+}
+.posthtml p{
+  color: #3d464d;
+  line-height: 1.8;
+}
+
 @media screen and (max-width: 767px) {
   .app-wrap{
     padding-top: 0;

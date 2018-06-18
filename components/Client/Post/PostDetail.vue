@@ -1,11 +1,15 @@
 <template>
-  <section class="post-detail-wrap" style="background: #fff">
-    <header>
+  <article class="post-detail">
+    <header class="head">
       <h1>{{ postData.title }}</h1>
-      <p>{{ postData.author.nickname }}</p>
+      <div class="foot flex-row">
+        <nuxt-link :to="'/user/' + postData.author._id">{{ postData.author.nickname }}</nuxt-link>
+        <span v-if="postData.categories.length > 0">{{ postData.categories[postData.categories.length - 1]['name'] }}</span>
+        <span>{{ postData.create_time }}</span>
+      </div>
     </header>
     <div class="posthtml" v-html="postData.content"></div>
-  </section>
+  </article>
 </template>
 
 <script>
@@ -14,9 +18,30 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.post-detail-wrap{
+<style lang="scss" scoped>
+.post-detail{
+  padding: 30px;
   background-color: #fff;
+}
+.head{
+  h1{
+    margin: 0 0 15px 0;
+    font-size: 26px;
+    color: #3d464d;
+  }
+  .foot{
+    align-items: center;
+    color: #999;
+    a{
+      color: #409eff;
+    }
+    a, span{
+      margin-right: 10px;
+    }
+  }
+}
+.posthtml{
+  margin: 30px 0 0 0;
 }
 </style>
 

@@ -23,11 +23,12 @@ import axios from 'axios'
 import API from '~/config/api'
 import { log, arrayToTree } from '~/utils/util'
 import AppHeader from '~/components/Client/AppHeader'
-import PostDetail from '~/components/client/Post/PostDetail'
 import AdvertiseBox from '~/components/Client/AdvertiseBox'
 import HotPosts from '~/components/Client/HotPosts'
 import HotTags from '~/components/Client/HotTags'
 import HotCreaters from '~/components/Client/HotCreaters'
+
+import PostDetail from '~/components/Client/Post/PostDetail'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -120,11 +121,11 @@ export default {
 
   components: {
     AppHeader,
-    PostDetail,
     AdvertiseBox,
     HotPosts,
     HotTags,
-    HotCreaters
+    HotCreaters,
+    PostDetail
   }
 }
 </script>

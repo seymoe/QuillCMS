@@ -31,6 +31,15 @@ export default {
   DB_USERNAME: 'quillcms',
   DB_PASSWORD: 'quillcms',
 
+  /* 七牛配置 */
+  openqn: false, // 是否开启,若为true 则下面的信息必须配置正确完整
+  accessKey: 'your accessKey',
+  secretKey: 'your secretKey',
+  bucket: 'quillcms', // 上传的目标资源空间
+  origin: '', // cdn域名
+  fsizeLimit: 1024 * 1024 * 5, // 上传文件大小限制默认为5M
+  assetsCdn: true, // 静态资源使用cnd.请在build完成后将 elemt.*.js 上传的七牛的融合cdn
+
   /**
    * Cookie配置
    */
