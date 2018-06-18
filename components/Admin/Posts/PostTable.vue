@@ -54,14 +54,14 @@
           width="80"
           label="点击数">
           <template slot-scope="scope">
-            {{ scope.row.clicks }}
+            {{ scope.row.clicksNum }}
           </template>
         </el-table-column>
         <el-table-column
           width="80"
           label="喜欢数">
           <template slot-scope="scope">
-            {{ scope.row.likes }}
+            {{ scope.row.likesNum }}
           </template>
         </el-table-column>
         <el-table-column

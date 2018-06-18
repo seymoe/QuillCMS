@@ -23,9 +23,9 @@
               </div>
               <div class="action-box">
                 <span>{{ item.create_time }}</span>
-                <span><i></i>{{ item.clicksNum }}</span>
-                <span><i></i>{{ item.likesNum }}</span>
-                <span><i></i>{{ item.collectionsNum }}</span>
+                <span><i class="iconfont">&#xe603;</i>{{ item.clicksNum }}</span>
+                <span><i class="iconfont">&#xe606;</i>{{ item.likesNum }}</span>
+                <span><i class="iconfont">&#xe8f8;</i>{{ item.collectionsNum }}</span>
               </div>
             </div>
           </div>
@@ -94,7 +94,7 @@ export default {
       flex-direction: column;
     }
     &:hover{
-      background-color: #f8f8f8;
+      background-color: #fafafa;
     }
   }
 }
@@ -102,10 +102,17 @@ export default {
   margin-right: 20px;
   width: 245px;
   overflow: hidden;
+  &:hover{
+    img{
+      transform: scale(1.05);
+    }
+  }
   img{
     display: block;
     width: 100%;
     height: 153px;
+    transform: scale(1);
+    transition: all .5s;
   }
   @media screen and (max-width: 767px) {
     margin-bottom: 10px;
@@ -164,6 +171,9 @@ export default {
 .action-box{
   span{
     margin-right: 15px;
+    i{
+      margin-right: 5px;
+    }
   }
 }
 </style>

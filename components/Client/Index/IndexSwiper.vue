@@ -9,7 +9,7 @@
     </div>
     <div class="list flex-column hidden-xs-only">
       <div class="listitem" v-for="item in 3" :key="item">
-        <nuxt-link to="/">
+        <nuxt-link to="/" class="imgbox">
           <img src="~/assets/img/place.png" alt="">
           <span>前端用户中心</span>
         </nuxt-link>
@@ -45,6 +45,16 @@
     .listitem{
       position: relative;
       height: 100px;
+      overflow: hidden;
+      &:hover{
+        img{
+          transform: scale(1.05);
+        }
+      }
+      img{
+        transform: scale(1);
+        transition: all .5s;
+      }
       span{
         position: absolute;
         bottom: 0;

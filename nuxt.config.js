@@ -24,7 +24,8 @@ module.exports = {
       { hid: 'keywords', name: 'keywords', content: conf.keywords }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://cdn.bootcss.com/highlight.js/9.12.0/styles/vs2015.min.css'}
     ]
   },
   plugins: [

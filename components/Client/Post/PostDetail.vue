@@ -22,6 +22,11 @@ export default {
 .post-detail{
   padding: 30px;
   background-color: #fff;
+  @media screen and (max-width: 767px) {
+    padding: 30px 15px;
+    margin-left: -15px;
+    margin-right: -15px;
+  }
 }
 .head{
   h1{

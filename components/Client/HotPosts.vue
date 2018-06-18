@@ -59,9 +59,16 @@ export default {
     position: relative;
     display: block;
     overflow: hidden;
+    &:hover{
+      img{
+        transform: scale(1.05);
+      }
+    }
     img{
       display: block;
       height: 153px;
+      transform: scale(1);
+      transition: all .5s;
       @media screen and (max-width: 767px) {
         height: auto;
       }

@@ -1,9 +1,25 @@
 import Post from '../models/Post'
 import PostTag from '../models/PostTag'
+import PostCategory from '../models/PostCategory'
 import validator from 'validator'
 import shortid from 'shortid'
-import marked from 'marked'
+import Marked from 'marked'
+const highlight = require('highlight.js')
 import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
+
+Marked.setOptions({
+  renderer: new Marked.Renderer(),
+  gfm: true,
+  tables: true,
+  breaks: false,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: false,
+  highlight: function (code) {
+    return highlight.highlightAuto(code).value
+  }
+})
 
 let checkCreatePostFields = (formData, req) => {
   // 管理员用户才可以创建文章
@@ -45,6 +61,7 @@ export default {
       let sortBy = fields.sortBy  // 排序参数
       let mode = fields.mode  // 返回数据的模式 simple normal
       let cateId = fields.cateId  // 分类id
+      let cateName = fields.cateName  // 分类名称
       let tagName = fields.tagName  // 文章标签
       let state = fields.state  // 文章状态 published draft
       let user = fields.user  // 用户ID
@@ -74,6 +91,14 @@ export default {
       // 文章分类
       if (cateId && cateId !== 'AppIndex') {
         queryObj.categories = cateId
+      }
+      
+      // 分类名称
+      if (cateName && cateName !== '首页') {
+        let targetCateName = await PostCategory.findOne({ name: cateName })
+        if (targetCateName) {
+          queryObj.categories = targetCateName._id
+        }
       }
 
       // 文章标签
@@ -121,6 +146,8 @@ export default {
           create_time: 1
         }
       }
+
+      log('queryObj-> ', queryObj)
 
       // 查询文档
       if (mode === 'simple') {
@@ -272,7 +299,9 @@ export default {
       ).exec()
 
       if (content.content) {
-        content.content = marked(content.content)
+        let tok = Marked.lexer(content.content)
+        let text = Marked.parser(tok).replace(/<pre>/ig, '<pre class="hljs">')
+        content.content = text
       }
 
       res.send(renderApiData(res, 200, '获取成功', content || {}))

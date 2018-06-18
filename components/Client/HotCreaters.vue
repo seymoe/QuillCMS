@@ -45,6 +45,11 @@
     height: 60px;
     border-radius: 100%;
     overflow: hidden;
+    transform: rotate(0deg);
+    transition: all .8s;
+    &:hover{
+      transform: rotate(360deg)
+    }
     img{
       display: block;
       width: 60px;

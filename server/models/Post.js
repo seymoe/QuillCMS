@@ -108,6 +108,8 @@ const PostSchema = new Schema({
   }
 })
 
+PostSchema.set('toJSON', { getters: true, virtuals: true })
+PostSchema.set('toObject', { getters: true, virtuals: true })
 PostSchema.path('create_time').get(function (v) {
   return moment(v).format("YYYY-MM-DD")
 })

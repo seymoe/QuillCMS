@@ -8,16 +8,18 @@
           </nuxt-link>
         </h1>
         <nav class="app-nav flex-row flex-1 hidden-xs-only">
-          <nuxt-link class="nav-link active" to="/">首页</nuxt-link>
-          <nuxt-link class="nav-link" to="/" 
+          <nuxt-link :class="{'nav-link': true, 'active': currentNav === '首页'}" to="/">首页</nuxt-link>
+          <nuxt-link 
+            :class="{'nav-link': true, 'active': currentNav === item.name}"
+            :to="'/category/' + item.name" 
             v-for="item in topMenuData" 
             :key="item._id">{{ item.name }}</nuxt-link>
         </nav>
       </el-col>
       <el-col :span="6" class="head-right flex-row">
         <div class="unloigin-box flex-row">
-          <el-button type="text" class="btn">登陆</el-button>
-          <el-button type="text" class="btn">注册</el-button>
+          <el-button type="text" class="btn" @click="handleSignin">登陆</el-button>
+          <el-button type="text" class="btn" @click="handleSignup">注册</el-button>
         </div>
         <div class="login-box"></div>
       </el-col>
@@ -27,7 +29,15 @@
 
 <script>
 export default {
-  props: ['topMenuData']
+  props: ['topMenuData', 'currentNav'],
+  methods: {
+    handleSignin() {
+      this.$router.push('/signin')
+    },
+    handleSignup() {
+      this.$router.push('/signup')
+    }
+  }
 }
 </script>
 
@@ -64,8 +74,9 @@ export default {
     height: 60px;
     line-height: 60px;
     padding: 0 15px;
-    font-size: 16px;
+    font-size: 15px;
     transition: all .3s;
+    color: #333;
     &:hover{
       color: #409eff;
     }

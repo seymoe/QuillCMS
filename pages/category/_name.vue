@@ -1,12 +1,12 @@
 <template>
   <div class="app-page">
-    <app-header :topMenuData="topMenu" currentNav="首页"></app-header>
+    <app-header :topMenuData="topMenu" :currentNav="cateName"></app-header>
     <section class="app-wrap">
       <el-row class="container main" type="flex" justify="space-between">
         <el-col class="content" :xs="24" :sm="18">
-          <index-swiper></index-swiper>
-          <index-post-tab
-            :tabPostList="newestPostList"></index-post-tab>
+          <post-list 
+            :cateName="cateName"
+            :postList="postsList"></post-list>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
           <advertise-box></advertise-box>
@@ -25,14 +25,13 @@ import axios from 'axios'
 import API from '~/config/api'
 import { log, arrayToTree } from '~/utils/util'
 import AppHeader from '~/components/Client/AppHeader'
-import IndexSwiper from '~/components/Client/Index/IndexSwiper'
-import IndexPostTab from '~/components/Client/Index/IndexPostTab'
 import AdvertiseBox from '~/components/Client/AdvertiseBox'
 import HotPosts from '~/components/Client/HotPosts'
 import HotTags from '~/components/Client/HotTags'
 import HotCreaters from '~/components/Client/HotCreaters'
+import PostList from '~/components/Client/Post/PostList'
 
-// 服务端请求数据
+// 服务端请求列表数据
 let serverGetMenuData = () => {
   return axios
     .get(API.topMenu, {
@@ -51,36 +50,19 @@ let serverGetMenuData = () => {
       return []
     })
 }
-// 推荐文章
-// let serverGetTopPosts = () => {
-//   return axios
-//     .get(API.weekHot, {
-//       params: {
-//         limit: 6
-//       }
-//     })
-//     .then(res => {
-//       log(res.data)
-//       if (res.status === 200) {
-//         return res.data
-//       }
-//     })
-//     .catch(e => {
-//       return []
-//     })
-// }
 
-// 最新文章
-let serverGetNewestPosts = () => {
+// 文章列表
+let serverGetPostsBycateName = name => {
   return axios
     .get(API.appPostList, {
       params: {
-        mode: 'normal',
-        limit: 5
+        page: 1,
+        limit: 10,
+        cateName: name,
+        mode: 'normal'
       }
     })
     .then(res => {
-      log(res.data)
       if (res.data.success) {
         return res.data.data.list
       }
@@ -89,8 +71,6 @@ let serverGetNewestPosts = () => {
       return []
     })
 }
-
-// 热门标签
 
 // 热门文章
 let serverGetHotPosts = () => {
@@ -103,7 +83,6 @@ let serverGetHotPosts = () => {
       }
     })
     .then(res => {
-      log(res.data)
       if (res.data.success) {
         return res.data.data.list
       }
@@ -117,7 +96,8 @@ export default {
   layout: 'app',
   data() {
     return {
-      newestPostList: [],
+      cateName: '',
+      postsList: [], // 文章列表
       hotPostList: []
     }
   },
@@ -127,38 +107,33 @@ export default {
     store.commit('SET_TOP_MENU', topMenuData)
   },
 
-  async asyncData() {
-    let [
-      newestPostList,
-      hotPostList
-    ] = await Promise.all([
-      serverGetNewestPosts(),
+  async asyncData({ params }) {
+    let [postsList, hotPostList] = await Promise.all([
+      serverGetPostsBycateName(params.name),
       serverGetHotPosts()
     ])
     return {
+      postsList,
       hotPostList,
-      newestPostList
+      cateName: params.name
     }
   },
 
-  computed: mapState([
-    'topMenu'
-  ]),
+  computed: mapState(['topMenu']),
 
   components: {
     AppHeader,
-    IndexSwiper,
-    IndexPostTab,
     AdvertiseBox,
     HotPosts,
     HotTags,
-    HotCreaters
+    HotCreaters,
+    PostList
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.sidebar{
+.sidebar {
   padding-left: 20px;
   @media screen and (max-width: 767px) {
     padding-left: 0;
