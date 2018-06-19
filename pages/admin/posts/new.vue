@@ -278,7 +278,7 @@ export default {
     uploadImage(content) {
       log(content)
       let formData = new FormData()
-      formData.append('image', content.file)
+      formData.append('cover', content.file)
       this.$request
         .post(content.action, formData)
         .then(res => {
