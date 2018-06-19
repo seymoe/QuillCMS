@@ -36,9 +36,10 @@ export default {
   accessKey: 'your accessKey',
   secretKey: 'your secretKey',
   bucket: 'quillcms', // 上传的目标资源空间
+  computerRoom: '华东', // 空间所在的机房
   origin: '', // cdn域名
-  fsizeLimit: 1024 * 1024 * 5, // 上传文件大小限制默认为5M
-  assetsCdn: true, // 静态资源使用cnd.请在build完成后将 elemt.*.js 上传的七牛的融合cdn
+  fsizeLimit: 1024 * 1024 * 1, // 上传文件大小限制默认为1M
+  assetsCdn: false, // 静态资源使用cnd.请在build完成后将 elemt.*.js 上传的七牛的融合cdn
 
   /**
    * Cookie配置
