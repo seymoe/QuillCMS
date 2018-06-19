@@ -10,19 +10,21 @@
         :key="index">
         <template v-if="index < 3">
           <nuxt-link :to="'/post/' + item._id" class="imgbox">
-            <img src="~/assets/img/place.png" alt="">
+            <img  v-if="!item.cover" src="~/assets/img/place.png" alt="">
+            <img  v-else :src="item.cover" alt="">
             <span>{{ item.title }}</span>
           </nuxt-link>
         </template>
         <template v-else>
           <nuxt-link :to="'/post/' + item._id" class="imgbox">
-            <img src="~/assets/img/place.png" alt="">
+            <img  v-if="!item.cover" src="~/assets/img/place.png" alt="">
+            <img  v-else :src="item.cover" alt="">
           </nuxt-link>
           <div class="txtbox flex-column flex-1">
             <h2>
               <nuxt-link :to="'/post/' + item._id">{{ item.title }}</nuxt-link>
             </h2>
-            <p>{{ item.creat_time }}</p>
+            <p>{{ item.create_time }}</p>
           </div>
         </template>
       </div>

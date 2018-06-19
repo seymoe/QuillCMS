@@ -13,7 +13,7 @@ export default {
   // 站点关键词
   keywords: 'QuillCMS,CMS',
   // 站点域名
-  host: '127.0.0.1',
+  host: '0.0.0.0',
   // 端口
   port: 4000,
   // API版本路径
@@ -32,12 +32,12 @@ export default {
   DB_PASSWORD: 'quillcms',
 
   /* 七牛配置 */
-  openqn: false, // 是否开启,若为true 则下面的信息必须配置正确完整
+  openqn: true, // 是否开启,若为true 则下面的信息必须配置正确完整
   accessKey: 'your accessKey',
   secretKey: 'your secretKey',
   bucket: 'quillcms', // 上传的目标资源空间
-  computerRoom: '华东', // 空间所在的机房
-  origin: '', // cdn域名
+  computerRoom: '华南', // 空间所在的机房
+  origin: 'http://paktmj0gu.bkt.clouddn.com', // cdn域名
   fsizeLimit: 1024 * 1024 * 1, // 上传文件大小限制默认为1M
   assetsCdn: false, // 静态资源使用cnd.请在build完成后将 elemt.*.js 上传的七牛的融合cdn
 

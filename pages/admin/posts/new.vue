@@ -69,8 +69,13 @@
                 :http-request="uploadImage"
                 :show-file-list="false"
                 >
-                <i class="el-icon-upload"></i>
-                <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em>任何JPG,JPEG,PNG,或GIF最高可达1MB</div>
+                <template v-if="postFormData.cover">
+                  <img :src="postFormData.cover" alt="">
+                </template>
+                <template v-else>
+                  <i class="el-icon-upload"></i>
+                  <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em>任何JPG,JPEG,PNG,或GIF最高可达1MB</div>
+                </template>
               </el-upload>
             </el-form-item>
             <markdown-editor
@@ -280,10 +285,11 @@ export default {
       let formData = new FormData()
       formData.append('cover', content.file)
       this.$request
-        .post(content.action, formData)
+        .post(content.action + '?name=cover', formData)
         .then(res => {
           if (res.data.success) {
             log('上传成功')
+            this.postFormData.cover = res.data.data
           }
         })
         .catch(err => {

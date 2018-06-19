@@ -10,7 +10,8 @@
         <div class="post-img-item flex-row" v-for="item in tabPostList" :key="item._id">
           <div class="imgbox">
             <nuxt-link :to="'/post/' + item._id">
-              <img src="~/assets/img/place.png" alt="">
+              <img  v-if="!item.cover" src="~/assets/img/place.png" alt="">
+              <img  v-else :src="item.cover" alt="">
             </nuxt-link>
           </div>
           <div class="txtbox flex-column flex-1">

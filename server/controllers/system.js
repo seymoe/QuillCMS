@@ -1,8 +1,9 @@
 import { log, renderApiData, renderApiErr } from '../../utils/util'
 import conf from '../../config/index.default'
 import multer from 'multer'
+import qiniu from 'qiniu'
 
-const uploadToQiniu = (req, res, imgkey) => {
+const uploadToQiniu = (req, res, imgkey, imgname) => {
   // 鉴权凭证
   let { openqn, accessKey, secretKey, bucket, computerRoom, origin, fsizeLimit } = conf
   if (!openqn) return false
@@ -38,7 +39,7 @@ const uploadToQiniu = (req, res, imgkey) => {
   let putPolicy = new qiniu.rs.PutPolicy(options)
   let uploadToken = putPolicy.uploadToken(mac)
 
-  let localFile = process.cwd() + "/public/" + imgkey
+  let localFile = process.cwd() + '/' + imgkey
   let formUploader = new qiniu.form_up.FormUploader(config)
   let putExtra = new qiniu.form_up.PutExtra()
 
@@ -46,15 +47,16 @@ const uploadToQiniu = (req, res, imgkey) => {
   formUploader.putFile(uploadToken, imgkey, localFile, putExtra, function (respErr,
     respBody, respInfo) {
     if (respErr) {
-      throw respErr;
+      throw respErr
     }
-    if (respInfo.statusCode == 200) {
+    if (respInfo.statusCode === 200) {
       log('qiniu-response->',respBody)
-      res.end(origin + '/' + respBody.key);
+      res.send(renderApiData(res, 200, '图片上传成功', origin + '/' + respBody.key))
     } else {
       log(respInfo.statusCode)
       log(respBody)
-      res.end(respInfo.statusCode)
+      // 上传七牛云失败，返回服务器上的图片链接
+      res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${imgname}`))
     }
   })
 }
@@ -62,6 +64,11 @@ const uploadToQiniu = (req, res, imgkey) => {
 export default {
   async uploadImage(req, res, next) {
     try {
+      let uploadName = req.query.name
+      if (uploadName !== 'cover' && uploadName !== 'avatar') {
+        res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
+      }
+
       let storage = multer.diskStorage(
         {
           destination: 'static/upload/images',
@@ -79,7 +86,7 @@ export default {
       )
       let upload = multer({storage: storage})
 
-      upload.single('cover')(req, res, function (err) {
+      upload.single(uploadName)(req, res, function (err) {
         if (err) {
           res.status(500).send(renderApiErr(req, res, 500, err))
         }
@@ -91,9 +98,10 @@ export default {
             //设置上传到七牛云的文件命名
             let filePath = req.file.path
             log(filePath)
+            uploadToQiniu(req, res, filePath, req.file.filename)
           } else {
             // 未开启七牛云，返回服务器上的图片链接
-            res.end(`/upload/images/${req.file.filename}`)
+            res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${req.file.filename}`))
           }
         }
       })

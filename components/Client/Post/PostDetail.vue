@@ -8,6 +8,9 @@
         <span>{{ postData.create_time }}</span>
       </div>
     </header>
+    <div class="cover-box" v-if="postData.cover">
+      <img :src="postData.cover" alt="">
+    </div>
     <div class="posthtml" v-html="postData.content"></div>
   </article>
 </template>
