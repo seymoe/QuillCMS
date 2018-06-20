@@ -6,7 +6,7 @@
         <div class="box">
           <div>
             <p>用户统计</p>
-            <h3 style="color: #409EFF">300</h3>
+            <h3 style="color: #409EFF">{{ quickData.usersCount }}</h3>
           </div>
           <div class="usericon">
             <i class="iconfont">&#xe602;</i>
@@ -17,7 +17,7 @@
         <div class="box">
           <div>
             <p>文档统计</p>
-            <h3 style="color: #67C23A">197</h3>
+            <h3 style="color: #67C23A">{{ quickData.docsCount }}</h3>
           </div>
           <div class="posticon">
             <i class="iconfont">&#xe67d;</i>
@@ -28,7 +28,7 @@
         <div class="box">
           <div>
             <p>留言统计</p>
-            <h3 style="color: #8061EF">2000</h3>
+            <h3 style="color: #8061EF">{{ quickData.commentsCount }}</h3>
           </div>
           <div class="commenticon">
             <i class="iconfont">&#xe69a;</i>
@@ -39,7 +39,7 @@
         <div class="box">
           <div>
             <p>收入统计</p>
-            <h3 style="color: #F56C6C">¥3000</h3>
+            <h3 style="color: #F56C6C">¥{{ quickData.incomeCount }}</h3>
           </div>
           <div class="inicon">
             <i class="iconfont">&#xe645;</i>
@@ -49,6 +49,13 @@
     </el-row>
   </section>
 </template>
+
+<script>
+export default {
+  props: ['quickData']
+}
+</script>
+
 
 <style lang="scss" scoped>
 .quick-statistics{

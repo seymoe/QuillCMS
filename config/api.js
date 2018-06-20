@@ -3,6 +3,9 @@ import siteConf from './index.default'
 export default {
   /** 管理端 ----------------- */
 
+  // 数据总览
+  dataPreview: `${siteConf.api_url}/server${siteConf.api_path}/data-preview`,
+
   // 分类相关
   categoryList: `${siteConf.api_url}/server${siteConf.api_path}/category/list`,
   categoryAdd: `${siteConf.api_url}/server${siteConf.api_path}/category/new`,

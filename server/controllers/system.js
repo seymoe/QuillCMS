@@ -2,6 +2,10 @@ import { log, renderApiData, renderApiErr } from '../../utils/util'
 import conf from '../../config/index.default'
 import multer from 'multer'
 import qiniu from 'qiniu'
+import Post from '../models/Post'
+// import PostTag from '../models/PostTag'
+import PostCategory from '../models/PostCategory'
+import User from '../models/User'
 
 const uploadToQiniu = (req, res, imgkey, imgname) => {
   // 鉴权凭证
@@ -62,6 +66,12 @@ const uploadToQiniu = (req, res, imgkey, imgname) => {
 }
 
 export default {
+  /**
+   * 上传图片
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
   async uploadImage(req, res, next) {
     try {
       let uploadName = req.query.name
@@ -105,6 +115,36 @@ export default {
           }
         }
       })
+    } catch (err) {
+      res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 数据总览
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  async dataPreview(req, res, next) {
+    try {
+      let queryPostObj = { state: 'published' }
+      let queryUserObj = { role: 'member' }
+      // 文档总数
+      let docsCount = await Post.count(queryPostObj)
+      // 用户总数
+      let usersCount = await User.count(queryUserObj)
+      // 留言统计
+      let commentsCount = 0
+      // 收入统计
+      let incomeCount = 0
+      let result = {
+        docsCount,
+        usersCount,
+        commentsCount,
+        incomeCount
+      }
+      res.send(renderApiData(res, 200, '总览数据获取成功', result))
     } catch (err) {
       res.status(500).send(renderApiErr(req, res, 500, err))
     }

@@ -9,7 +9,7 @@
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
-        <quick-statistics></quick-statistics>
+        <quick-statistics :quickData="previewData"></quick-statistics>
         <quick-action></quick-action>
         <system-info></system-info>
       </main>
@@ -20,6 +20,8 @@
 
 <script>
 import { mapState } from 'vuex'
+import API from '~/config/api'
+import { log } from '~/utils/util'
 import AppHeader from '~/components/Admin/AppHeader'
 import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
@@ -47,7 +49,9 @@ export default {
       menuSetting: {
         btnPosition: 145,
         isCollapse: false
-      }
+      },
+      // 总览
+      previewData: {}
     }
   },
   methods: {
@@ -58,11 +62,25 @@ export default {
       } else {
         this.menuSetting.btnPosition = 145
       }
+    },
+
+    // 客户端拉取数据预览请求
+    clientGetDataPreview() {
+      this.$request
+        .get(API.dataPreview)
+        .then(res => {
+          if (res.data.success) {
+            this.previewData = res.data.data
+          }
+        })
+        .catch(e => {
+          log(e)
+          // 发生错误则刷新页面从服务端重新拉取列表
+          // location.reload()
+        })
     }
   },
-  computed: mapState([
-    'loginState'
-  ]),
+  computed: mapState(['loginState']),
   components: {
     AppHeader,
     AppFooter,
@@ -71,11 +89,13 @@ export default {
     QuickStatistics,
     SystemInfo,
     QuickAction
+  },
+  mounted() {
+    this.clientGetDataPreview()
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
 </style>
 
