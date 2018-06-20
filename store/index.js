@@ -8,7 +8,10 @@ const store = () => new Vuex.Store({
       hasLogin: false,
       userInfo: {}
     },
-    topMenu: []
+    // 顶部菜单数据
+    topMenu: [],
+    // 友情链接
+    friendLink: []
   },
   mutations: {
     SET_LOGIN_STATE(state, val) {
@@ -16,6 +19,9 @@ const store = () => new Vuex.Store({
     },
     SET_TOP_MENU(state, val) {
       state.topMenu = val
+    },
+    SET_FRIEND_LINK(state, val) {
+      state.friendLink = val
     }
   },
   actions: {

@@ -272,6 +272,12 @@ export default {
     }
   },
 
+  /**
+   * 更新
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
   async updateOne(req, res, next) {
     // 校验传入的参数
     let fields = req.body

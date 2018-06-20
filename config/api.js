@@ -13,6 +13,12 @@ export default {
   tagAdd: `${siteConf.api_url}/server${siteConf.api_path}/tag/new`,
   tagDelete: `${siteConf.api_url}/server${siteConf.api_path}/tag`,
 
+  // 友情链接相关
+  linkList: `${siteConf.api_url}/server${siteConf.api_path}/link/list`,
+  linkAdd: `${siteConf.api_url}/server${siteConf.api_path}/link/new`,
+  linkDelete: `${siteConf.api_url}/server${siteConf.api_path}/link`,
+  linkUpdate: `${siteConf.api_url}/server${siteConf.api_path}/link/update`,
+
   // 文章相关
   postAdd: `${siteConf.api_url}/server${siteConf.api_path}/post/new`,
   postUpdate: `${siteConf.api_url}/server${siteConf.api_path}/post/update`,
@@ -29,6 +35,7 @@ export default {
 
   /** 客户端 ------------------ */
   topMenu: `${siteConf.api_url}/client${siteConf.api_path}/category/list`,
+  friendLink: `${siteConf.api_url}/client${siteConf.api_path}/friendlinks`,
 
   // 文章列表
   appPostList: `${siteConf.api_url}/client${siteConf.api_path}/post/list`,

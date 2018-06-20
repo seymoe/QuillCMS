@@ -16,6 +16,7 @@
         </el-col>
       </el-row>
     </section>
+    <friend-link-box :friendLinks="friendLink"></friend-link-box>
   </div>
 </template>
 
@@ -31,6 +32,7 @@ import AdvertiseBox from '~/components/Client/AdvertiseBox'
 import HotPosts from '~/components/Client/HotPosts'
 import HotTags from '~/components/Client/HotTags'
 import HotCreaters from '~/components/Client/HotCreaters'
+import FriendLinkBox from '~/components/Client/FriendLinkBox'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -51,24 +53,24 @@ let serverGetMenuData = () => {
       return []
     })
 }
-// 推荐文章
-// let serverGetTopPosts = () => {
-//   return axios
-//     .get(API.weekHot, {
-//       params: {
-//         limit: 6
-//       }
-//     })
-//     .then(res => {
-//       log(res.data)
-//       if (res.status === 200) {
-//         return res.data
-//       }
-//     })
-//     .catch(e => {
-//       return []
-//     })
-// }
+// 友情链接
+let serverGetFriendLinks = () => {
+  return axios
+    .get(API.friendLink, {
+      params: {
+        limit: 10
+      }
+    })
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data.list
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
 
 // 最新文章
 let serverGetNewestPosts = () => {
@@ -124,7 +126,9 @@ export default {
 
   async fetch({ store, params }) {
     let topMenuData = await serverGetMenuData()
+    let friendLinkData = await serverGetFriendLinks()
     store.commit('SET_TOP_MENU', topMenuData)
+    store.commit('SET_FRIEND_LINK', friendLinkData)
   },
 
   async asyncData() {
@@ -142,7 +146,8 @@ export default {
   },
 
   computed: mapState([
-    'topMenu'
+    'topMenu',
+    'friendLink'
   ]),
 
   components: {
@@ -152,7 +157,8 @@ export default {
     AdvertiseBox,
     HotPosts,
     HotTags,
-    HotCreaters
+    HotCreaters,
+    FriendLinkBox
   }
 }
 </script>
