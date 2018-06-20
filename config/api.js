@@ -15,6 +15,7 @@ export default {
 
   // 文章相关
   postAdd: `${siteConf.api_url}/server${siteConf.api_path}/post/new`,
+  postUpdate: `${siteConf.api_url}/server${siteConf.api_path}/post/update`,
   postList: `${siteConf.api_url}/server${siteConf.api_path}/post/list`,
   postDelete: `${siteConf.api_url}/server${siteConf.api_path}/post`,
   uploadImage: `${siteConf.api_url}/server${siteConf.api_path}/upload`,

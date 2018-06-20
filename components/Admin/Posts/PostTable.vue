@@ -76,7 +76,7 @@
           width="140">
           <template slot-scope="scope">
             <div class="btns">
-              <el-button @click="handleClick(scope.row)" type="primary" size="mini">编辑</el-button>
+              <el-button @click="handleEditPost(scope.row._id)" type="primary" size="mini">编辑</el-button>
               <el-button type="danger" size="mini" @click="handleDeletePost(scope.row)">删除</el-button>
             </div>
           </template>
@@ -107,6 +107,10 @@ export default {
     handleDeletePost(data) {
       console.log(data)
       this.$emit('delete-post', data)
+    },
+    handleEditPost(id) {
+      console.log(id)
+      this.$router.push('/admin/posts/' + id)
     }
   }
 }

@@ -272,6 +272,49 @@ export default {
     }
   },
 
+  async updateOne(req, res, next) {
+    // 校验传入的参数
+    let fields = req.body
+    try {
+      let validateResult = checkCreatePostFields(fields, req)
+      if (!validateResult) {
+        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
+      // 如果文章id不合法，则返回校验失败
+      if (!shortid.isValid(fields._id)) {
+        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
+    } catch (err) {
+      res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+
+    const obj = {
+      title: fields.title,
+      sub_title: fields.sub_title,
+      description: fields.description,
+      cover: fields.cover,
+      content: fields.content,
+      auth: fields.auth === 'secret' ? 'secret' : 'public',
+      state: fields.state === 'draft' ? 'draft' : 'published',
+      isTop: fields.isTop === false ? false : true,
+      from: fields.from === '1' ? 1 : 0,
+      categories: fields.categories,
+      tags: fields.tags,
+      content_type: fields.content_type === 'T' ? 'T' : 'M',
+      author: fields.author
+    }
+
+    log(obj)
+
+    try {
+      let item_id = fields._id
+      await Post.findOneAndUpdate({ _id: item_id }, { $set: obj })
+      res.send(renderApiData(res, 200, '文章更新成功', { id: item_id }))
+    } catch (err) {
+      res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
   /**
    * 获取一篇文章
    * @param {*} req 
@@ -281,9 +324,16 @@ export default {
   async getOne(req, res, next) {
     try {
       let targetId = req.params.id
+      let getFrom = req.query.getFrom
       let queryObj = { _id: targetId }
+      let updateObj = { '$inc': { 'clicksNum': 1 } }
 
-      const content = await Post.findOneAndUpdate(queryObj, { '$inc': { 'clicksNum': 1 } }).populate([
+      // 如果详情拉取来自管理后台，则不进行点击数增加
+      if (getFrom === 'server') {
+        updateObj = {}
+      }
+
+      const content = await Post.findOneAndUpdate(queryObj, updateObj).populate([
         {
           path: 'author',
           select: 'nickname _id'
@@ -298,10 +348,13 @@ export default {
         }]
       ).exec()
 
-      if (content.content) {
-        let tok = Marked.lexer(content.content)
-        let text = Marked.parser(tok).replace(/<pre>/ig, '<pre class="hljs">')
-        content.content = text
+      if (getFrom !== 'server') {
+        log('hahahah---------')
+        if (content.content) {
+          let tok = Marked.lexer(content.content)
+          let text = Marked.parser(tok).replace(/<pre>/ig, '<pre class="hljs">')
+          content.content = text
+        }
       }
 
       res.send(renderApiData(res, 200, '获取成功', content || {}))

@@ -6,6 +6,9 @@
         <nuxt-link :to="'/user/' + postData.author._id">{{ postData.author.nickname }}</nuxt-link>
         <span v-if="postData.categories.length > 0">{{ postData.categories[postData.categories.length - 1]['name'] }}</span>
         <span>{{ postData.create_time }}</span>
+        <span><i class="iconfont">&#xe603;</i>{{ postData.clicksNum }}</span>
+        <span><i class="iconfont">&#xe606;</i>{{ postData.likesNum }}</span>
+        <span><i class="iconfont">&#xe8f8;</i>{{ postData.collectionsNum }}</span>
       </div>
     </header>
     <div class="cover-box" v-if="postData.cover">
@@ -44,11 +47,14 @@ export default {
       color: #409eff;
     }
     a, span{
-      margin-right: 10px;
+      margin-right: 15px;
+      i{
+        margin-right: 5px;
+      }
     }
   }
 }
-.posthtml{
+.posthtml, .cover-box{
   margin: 30px 0 0 0;
 }
 </style>
