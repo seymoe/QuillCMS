@@ -37,10 +37,10 @@ export default {
     try {
       let validateResult = checkTagFields(fields, req)
       if (!validateResult) {
-        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
       }
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
 
     const obj = {
@@ -54,9 +54,9 @@ export default {
 
     try {
       let tagObj = await newTag.save()
-      res.send(renderApiData(res, 200, '标签创建成功', { id: tagObj._id }))
+      return res.send(renderApiData(res, 200, '标签创建成功', { id: tagObj._id }))
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -94,9 +94,9 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      res.send(renderApiData(res, 200, '标签列表获取成功', tagObj))
+      return res.send(renderApiData(res, 200, '标签列表获取成功', tagObj))
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -121,13 +121,13 @@ export default {
       }
 
       if (errMsg) {
-        res.send(renderApiErr(req, res, 500, errMsg))
+        return res.status(500).send(renderApiErr(req, res, 500, errMsg))
       }
 
       await PostTag.remove({ _id: id })
-      res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(res, 200, '删除成功', {}))
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   }
 }

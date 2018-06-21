@@ -178,9 +178,9 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      res.send(renderApiData(res, 200, '文章列表获取成功', postObj))
+      return res.send(renderApiData(res, 200, '文章列表获取成功', postObj))
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -196,7 +196,7 @@ export default {
 
       // 判断分类ID是否为有效值
       if (!checkCurrentId(cateId)) {
-        res.status(404).send(renderApiErr(req, res, 500, '无效分类ID'))
+        return res.status(404).send(renderApiErr(req, res, 500, '无效分类ID'))
       } else {
         queryObj['categories'] = cateId
       }
@@ -220,9 +220,9 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      res.send(renderApiData(res, 200, '文章列表获取成功', tagObj))
+      return res.send(renderApiData(res, 200, '文章列表获取成功', tagObj))
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -238,10 +238,10 @@ export default {
     try {
       let validateResult = checkCreatePostFields(fields, req)
       if (!validateResult) {
-        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
       }
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
 
     const obj = {
@@ -266,9 +266,9 @@ export default {
 
     try {
       let postObj = await newPost.save()
-      res.send(renderApiData(res, 200, '文章创建成功', { id: postObj._id }))
+      return res.send(renderApiData(res, 200, '文章创建成功', { id: postObj._id }))
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -284,14 +284,14 @@ export default {
     try {
       let validateResult = checkCreatePostFields(fields, req)
       if (!validateResult) {
-        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
       }
       // 如果文章id不合法，则返回校验失败
       if (!shortid.isValid(fields._id)) {
-        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
       }
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
 
     const obj = {
@@ -315,9 +315,9 @@ export default {
     try {
       let item_id = fields._id
       await Post.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      res.send(renderApiData(res, 200, '文章更新成功', { id: item_id }))
+      return res.send(renderApiData(res, 200, '文章更新成功', { id: item_id }))
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -363,9 +363,9 @@ export default {
         }
       }
 
-      res.send(renderApiData(res, 200, '获取成功', content || {}))
+      return res.send(renderApiData(res, 200, '获取成功', content || {}))
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -385,13 +385,13 @@ export default {
       }
 
       if (errMsg) {
-        res.send(renderApiErr(req, res, 500, errMsg))
+        return res.send(renderApiErr(req, res, 500, errMsg))
       }
 
       await Post.remove({ _id: id })
-      res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(res, 200, '删除成功', {}))
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   }
 }

@@ -61,10 +61,10 @@ export default {
     try {
       let validateResult = checkCreateUserFields(fields, req)
       if (!validateResult) {
-        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
       }
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
 
     const obj = {
@@ -80,9 +80,9 @@ export default {
 
     try {
       let userObj = await newUser.save()
-      res.send(renderApiData(res, 200, '用户创建成功', { id: userObj._id }))
+      return res.send(renderApiData(res, 200, '用户创建成功', { id: userObj._id }))
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -111,13 +111,13 @@ export default {
       }
 
       if (errMsg) {
-        res.send(renderApiErr(req, res, 500, errMsg))
+        return res.status(500).send(renderApiErr(req, res, 500, errMsg))
       }
 
       await User.remove({ _id: id })
-      res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(res, 200, '删除成功', {}))
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -155,9 +155,9 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      res.send(renderApiData(res, 200, '用户列表获取成功', userObj))
+      return res.send(renderApiData(res, 200, '用户列表获取成功', userObj))
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -173,10 +173,10 @@ export default {
       let validateResult = checkLoginActionFields(fields)
       log(validateResult)
       if (!validateResult) {
-        res.status(500).send(renderApiErr(req, res, 500, '邮箱或密码错误'))
+        return res.status(500).send(renderApiErr(req, res, 500, '邮箱或密码错误'))
       }
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
 
     // 数据格式校验成功，则查找数据库中是否存在用户，比对其密码
@@ -189,11 +189,11 @@ export default {
       let user = await User.findOne(userObj).exec()
       if (user) {
         if (!user.enable) {
-          res.status(401).send(renderApiErr(req, res, 401, '账号已被禁用'))
+          return res.status(401).send(renderApiErr(req, res, 401, '账号已被禁用'))
         }
 
         if (user.role === 'member') {
-          res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
+          return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
         }
 
         // 用户信息正确，未被禁用
@@ -214,12 +214,12 @@ export default {
         user.last_login_time = Date.now()
         await user.save()
 
-        res.send(renderApiData(res, 200, '登陆成功'))
+        return res.send(renderApiData(res, 200, '登陆成功'))
       } else {
-        res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
+        return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
       }
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -232,6 +232,6 @@ export default {
   logoutAction(req, res, next) {
     delete req.session.userLogined
     delete req.session.userInfo
-    res.send(renderApiData(res, 200, '成功退出登陆'))
+    return res.send(renderApiData(res, 200, '成功退出登陆'))
   }
 }

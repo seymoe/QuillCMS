@@ -1,6 +1,6 @@
 <template>
   <el-dialog 
-    title="添加友链" 
+    title="编辑友链" 
     :visible.sync="showDialog"
     width="40%"
     center
@@ -11,8 +11,8 @@
       ref="addLinkForm"
       label-position="right"
       label-width="90px">
-      <el-form-item label="名称" prop="name">
-        <el-input v-model="form.name" size="small" placeholder="请输入名称"></el-input>
+      <el-form-item label="标题" prop="title">
+        <el-input v-model="form.title" size="small" placeholder="请输入标题"></el-input>
       </el-form-item>
       <el-form-item label="描述" prop="desc">
         <el-input v-model="form.desc" size="small" placeholder="请输入描述"></el-input>
@@ -33,7 +33,7 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button size="small" @click="cancelAddLink">取 消</el-button>
-      <el-button size="small" type="primary" @click="confirmAddLink('addLinkForm')">确 定</el-button>
+      <el-button size="small" type="primary" @click="confirmAddLink('addLinkForm')">更 新</el-button>
     </div>
   </el-dialog>
 </template>
@@ -44,9 +44,9 @@ import validator from 'validator'
 
 export default {
   data() {
-    let checkName = (rule, value, callback) => {
-      if (value.length > 20) {
-        return callback(new Error('名称不能超过20字符'))
+    let checkTitle = (rule, value, callback) => {
+      if (value.length > 40) {
+        return callback(new Error('标题不能超过40字符'))
       } else {
         callback()
       }
@@ -80,17 +80,10 @@ export default {
       }
     }
     return {
-      form: {
-        name: '',
-        desc: '',
-        cover: '',
-        link: '',
-        enable: true
-      },
       addCateRules: {
-        name: [
-          { required: true, message: '友链名称不能为空' },
-          { validator: checkName, trigger: 'blur' }
+        title: [
+          { required: true, message: '标题不能为空' },
+          { validator: checkTitle, trigger: 'blur' }
         ],
         cover: [{ validator: checkCover, trigger: 'blur' }],
         desc: [
@@ -108,6 +101,19 @@ export default {
     dialogFormVisible: {
       type: Boolean,
       default: true
+    },
+    form: {
+      type: Object,
+      default: function () {
+        return {
+          _id: '',
+          title: '',
+          desc: '',
+          cover: '',
+          link: '',
+          enable: true
+        }
+      }
     }
   },
   computed: {
@@ -123,13 +129,13 @@ export default {
     cancelAddLink() {
       // 弹窗确认一次
       this.form = {
-        name: '',
+        title: '',
         desc: '',
         cover: '',
         link: '',
         enable: true
       }
-      this.$emit('add-link', false)
+      this.$emit('add-ad', false)
     },
 
     // 确定添加，添加成功后关闭Dialog
@@ -139,17 +145,17 @@ export default {
           let data = this.form
           let successCallback = () => {
             this.form = {
-              name: '',
+              title: '',
               desc: '',
               cover: '',
               link: '',
               enable: true
             }
             this.$refs[formName].resetFields()
-            this.$emit('add-link', false)
+            this.$emit('add-ad', false)
           }
           log(data)
-          this.$emit('create-new-link', data, successCallback)
+          this.$emit('update-ad', data, successCallback)
         } else {
           return false
         }

@@ -11,7 +11,7 @@ const AdvertisementSchema = new Schema({
     type: String,
     default: shortid.generate
   },
-  title: String,  // 友链名称
+  title: String,  // 标题
   // 描述
   desc: {
     type: String,

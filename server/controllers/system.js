@@ -55,12 +55,12 @@ const uploadToQiniu = (req, res, imgkey, imgname) => {
     }
     if (respInfo.statusCode === 200) {
       log('qiniu-response->',respBody)
-      res.send(renderApiData(res, 200, '图片上传成功', origin + '/' + respBody.key))
+      return res.send(renderApiData(res, 200, '图片上传成功', origin + '/' + respBody.key))
     } else {
       log(respInfo.statusCode)
       log(respBody)
       // 上传七牛云失败，返回服务器上的图片链接
-      res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${imgname}`))
+      return res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${imgname}`))
     }
   })
 }
@@ -76,7 +76,7 @@ export default {
     try {
       let uploadName = req.query.name
       if (uploadName !== 'cover' && uploadName !== 'avatar') {
-        res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
+        return res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
       }
 
       let storage = multer.diskStorage(
@@ -98,7 +98,7 @@ export default {
 
       upload.single(uploadName)(req, res, function (err) {
         if (err) {
-          res.status(500).send(renderApiErr(req, res, 500, err))
+          return res.status(500).send(renderApiErr(req, res, 500, err))
         }
 
         if (req.file) {
@@ -111,12 +111,12 @@ export default {
             uploadToQiniu(req, res, filePath, req.file.filename)
           } else {
             // 未开启七牛云，返回服务器上的图片链接
-            res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${req.file.filename}`))
+            return res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${req.file.filename}`))
           }
         }
       })
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -144,9 +144,9 @@ export default {
         commentsCount,
         incomeCount
       }
-      res.send(renderApiData(res, 200, '总览数据获取成功', result))
+      return res.send(renderApiData(res, 200, '总览数据获取成功', result))
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   }
 }

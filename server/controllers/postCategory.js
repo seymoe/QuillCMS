@@ -46,10 +46,10 @@ export default {
     try {
       let validateResult = checkCateFields(fields, req)
       if (!validateResult) {
-        res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
       }
     } catch (err) {
-      res.status(500).send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
 
     const obj = {
@@ -77,9 +77,9 @@ export default {
         newQuery.default_url = parentObj.default_url + '/' + fields.default_url
       }
       await PostCategory.findOneAndUpdate({ _id: cateObj._id }, { $set: newQuery })
-      res.send(renderApiData(res, 200, '分类创建成功', { id: cateObj._id }))
+      return res.send(renderApiData(res, 200, '分类创建成功', { id: cateObj._id }))
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -130,9 +130,9 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      res.send(renderApiData(res, 200, '分类列表获取成功', cateObj))
+      return res.send(renderApiData(res, 200, '分类列表获取成功', cateObj))
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
@@ -151,7 +151,7 @@ export default {
         errMsg = 'ID格式校验失败'
       }
       if (errMsg) {
-        res.send(renderApiErr(req, res, 500, errMsg))
+        return res.status(500).send(renderApiErr(req, res, 500, errMsg))
       }
 
       // 判断该分类是否含有下级分类，如果存在，强制删除下级分类才可删除该分类
@@ -160,13 +160,13 @@ export default {
         errMsg = '请先删除下级分类再删除该分类'
       }
       if (errMsg) {
-        res.send(renderApiErr(req, res, 500, errMsg))
+        return res.status(500).send(renderApiErr(req, res, 500, errMsg))
       }
 
       await PostCategory.remove({ _id: id })
-      res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(res, 200, '删除成功', {}))
     } catch (err) {
-      res.send(renderApiErr(req, res, 500, err))
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   }
 }

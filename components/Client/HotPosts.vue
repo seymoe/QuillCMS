@@ -68,6 +68,7 @@ export default {
     }
     img{
       display: block;
+      width: 100%;
       height: 153px;
       transform: scale(1);
       transition: all .5s;

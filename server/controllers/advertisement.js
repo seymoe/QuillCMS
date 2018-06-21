@@ -1,10 +1,9 @@
-import FriendLink from '../models/FriendLink'
+import Advertisement from '../models/Advertisement'
 import validator from 'validator'
 import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
-import valiObj from '../../utils/validate'
 
-let checkFriendLinkFields = (formData, req) => {
+let checkAdsFields = (formData, req) => {
   // 管理员用户以上权限才可以创建标签
   let hasLogin = req.session.userLogined
   let userInfo = req.session.userInfo
@@ -13,8 +12,8 @@ let checkFriendLinkFields = (formData, req) => {
     return false
   }
 
-  let { name, desc, link, cover, enable } = formData
-  if (name.length <= 0 || name.length > 20) {
+  let { title, desc, link, cover, enable } = formData
+  if (title.length <= 0 || title.length > 40) {
     return false
   } else if (desc.length > 40) {
     return false
@@ -28,7 +27,7 @@ let checkFriendLinkFields = (formData, req) => {
 
 export default {
   /**
-   * 创建友情链接
+   * 创建
    * @param {*} req 
    * @param {*} res 
    * @param {*} next 
@@ -37,7 +36,7 @@ export default {
     // 校验传入的参数
     let fields = req.body
     try {
-      let validateResult = checkFriendLinkFields(fields, req)
+      let validateResult = checkAdsFields(fields, req)
       if (!validateResult) {
         return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
       }
@@ -46,25 +45,25 @@ export default {
     }
 
     const obj = {
-      name: fields.name,
+      title: fields.title,
       desc: fields.desc,
       cover: fields.cover,
       link: fields.link,
       enable: fields.enable ? true : false
     }
 
-    const newLink = new FriendLink(obj)
+    const newAd = new Advertisement(obj)
 
     try {
-      let linkObj = await newLink.save()
-      return res.send(renderApiData(res, 200, '友情链接创建成功', { id: linkObj._id }))
+      let adObj = await newAd.save()
+      return res.send(renderApiData(res, 200, '广告创建成功', { id: adObj._id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
   /**
-   * 获取一个链接
+   * 获取一个广告
    * @param {*} req 
    * @param {*} res 
    * @param {*} next 
@@ -73,16 +72,16 @@ export default {
     try {
       let targetId = req.params.id
       let queryObj = { _id: targetId }
-      const link = await FriendLink.findOne(queryObj).exec()
+      const ad = await Advertisement.findOne(queryObj).exec()
 
-      return res.send(renderApiData(res, 200, '获取成功', link || {}))
+      return res.send(renderApiData(res, 200, '获取成功', ad || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
   /**
-   * 获取友情链接列表
+   * 获取广告列表
    * @param {*} req 
    * @param {*} res 
    * @param {*} next 
@@ -99,26 +98,26 @@ export default {
       let sortObj = { data: -1 }
 
       // 查询文档
-      const linkList = await FriendLink.find(queryObj).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).exec()
-      const totalCounts = await FriendLink.count(queryObj)
+      const adList = await Advertisement.find(queryObj).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).exec()
+      const totalCounts = await Advertisement.count(queryObj)
 
-      log(linkList, totalCounts)
+      log(adList, totalCounts)
 
-      let linkObj = {
-        list: linkList,
+      let adObj = {
+        list: adList,
         page: page,
         lastPage: Math.ceil(totalCounts / pageSize),
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '友情链接列表获取成功', linkObj))
+      return res.send(renderApiData(res, 200, '广告列表获取成功', adObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
   },
 
   /**
-   * 删除一个标签
+   * 删除一个广告
    * @param {*} req 
    * @param {*} res 
    * @param {*} next 
@@ -138,10 +137,10 @@ export default {
       }
 
       if (errMsg) {
-        return res.send(renderApiErr(req, res, 500, errMsg))
+        return res.status().send(renderApiErr(req, res, 500, errMsg))
       }
 
-      await FriendLink.remove({ _id: id })
+      await Advertisement.remove({ _id: id })
       return res.send(renderApiData(res, 200, '删除成功', {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
@@ -158,7 +157,7 @@ export default {
     // 校验传入的参数
     let fields = req.body
     try {
-      let validateResult = checkFriendLinkFields(fields, req)
+      let validateResult = checkAdsFields(fields, req)
       if (!validateResult) {
         return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
       }
@@ -171,7 +170,7 @@ export default {
     }
 
     const obj = {
-      name: fields.name,
+      title: fields.title,
       desc: fields.desc,
       cover: fields.cover,
       link: fields.link,
@@ -182,8 +181,8 @@ export default {
 
     try {
       let item_id = fields._id
-      await FriendLink.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, '友链更新成功', { id: item_id }))
+      await Advertisement.findOneAndUpdate({ _id: item_id }, { $set: obj })
+      return res.send(renderApiData(res, 200, '广告更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

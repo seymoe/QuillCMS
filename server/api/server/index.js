@@ -5,6 +5,7 @@ import post from './post'
 import user from './user'
 import system from './system'
 import friendLink from './friendLink'
+import ads from './ads'
 
 const router = Router()
 router.use(postCategory)
@@ -13,5 +14,6 @@ router.use(postTag)
 router.use(post)
 router.use(system)
 router.use(friendLink)
+router.use(ads)
 
 export default router
