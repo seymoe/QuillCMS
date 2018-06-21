@@ -71,8 +71,11 @@ export default {
       // 查询参数配置
       let queryObj = { auth: 'public' }, sortObj = { create_time: -1 }, files = null, postList = [], totalCounts = 0
 
-      if (isTop) {
+      log('type of isTop ->', typeof(isTop))
+      if (isTop === 'true') {
         queryObj.isTop = true
+      } else if (isTop === 'false') {
+        queryObj.isTop = false
       }
 
       // 排序

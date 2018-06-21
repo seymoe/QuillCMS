@@ -4,7 +4,7 @@
     <section class="app-wrap">
       <el-row class="container main" type="flex" justify="space-between">
         <el-col class="content" :xs="24" :sm="18">
-          <index-swiper></index-swiper>
+          <index-swiper :swiperList="swiperTopList"></index-swiper>
           <index-post-tab
             :tabPostList="newestPostList"></index-post-tab>
         </el-col>
@@ -72,12 +72,34 @@ let serverGetFriendLinks = () => {
     })
 }
 
+// 轮播图，推荐文章
+let serverGetTopPosts = () => {
+  return axios
+    .get(API.appPostList, {
+      params: {
+        mode: 'normal',
+        isTop: true,
+        limit: 6
+      }
+    })
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data.list
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
+
 // 最新文章
 let serverGetNewestPosts = () => {
   return axios
     .get(API.appPostList, {
       params: {
         mode: 'normal',
+        isTop: false,
         limit: 5
       }
     })
@@ -119,6 +141,7 @@ export default {
   layout: 'app',
   data() {
     return {
+      swiperTopList: [],
       newestPostList: [],
       hotPostList: []
     }
@@ -133,13 +156,16 @@ export default {
 
   async asyncData() {
     let [
+      swiperTopList,
       newestPostList,
       hotPostList
     ] = await Promise.all([
+      serverGetTopPosts(),
       serverGetNewestPosts(),
       serverGetHotPosts()
     ])
     return {
+      swiperTopList,
       hotPostList,
       newestPostList
     }

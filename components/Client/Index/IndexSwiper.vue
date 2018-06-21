@@ -2,21 +2,46 @@
   <section class="swiper-wrap flex-row">
     <div class="swiper flex-1">
       <el-carousel trigger="click" height="320px">
-        <el-carousel-item v-for="item in 4" :key="item">
-          <img src="~/assets/img/place.png" alt="">
+        <el-carousel-item v-for="(item, index) in swiper" :key="index">
+          <nuxt-link :to="'/post/' + item._id ">
+            <img :src="item.cover" :alt="item.title">
+          </nuxt-link>
         </el-carousel-item>
       </el-carousel>
     </div>
     <div class="list flex-column hidden-xs-only">
-      <div class="listitem" v-for="item in 3" :key="item">
-        <nuxt-link to="/" class="imgbox">
-          <img src="~/assets/img/place.png" alt="">
-          <span>前端用户中心</span>
+      <div class="listitem" v-for="(item, index) in topList" :key="index">
+        <nuxt-link :to="'/post/' + item._id " class="imgbox">
+          <img :src="item.cover" :alt="item.title">
+          <span>{{ item.title }}</span>
         </nuxt-link>
       </div>
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  props: ['swiperList'],
+  computed: {
+    swiper: function () {
+      if (this.swiperList.length > 3) {
+        return this.swiperList.slice(0, 3)
+      } else {
+        return this.swiperList
+      }
+    },
+    topList: function () {
+      if (this.swiperList.length > 3) {
+        return this.swiperList.slice(3)
+      } else {
+        return []
+      }
+    }
+  }
+}
+</script>
+
 
 <style lang="scss" scoped>
 .swiper-wrap{

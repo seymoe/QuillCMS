@@ -9,11 +9,25 @@
         </h1>
         <nav class="app-nav flex-row flex-1 hidden-xs-only">
           <nuxt-link :class="{'nav-link': true, 'active': currentNav === '首页'}" to="/">首页</nuxt-link>
-          <nuxt-link 
-            :class="{'nav-link': true, 'active': currentNav === item.name}"
-            :to="'/category/' + item.name" 
-            v-for="item in topMenuData" 
-            :key="item._id">{{ item.name }}</nuxt-link>
+          <template v-for="item in topMenuData">
+            <nuxt-link 
+              v-if="item.children.length <= 0"
+              :class="{'nav-link': true, 'active': currentNav === item.name}"
+              :to="'/category/' + item.name"
+              :key="item._id">{{ item.name }}</nuxt-link>
+
+            <el-dropdown v-else :key="item._id">
+              <nuxt-link :class="{'nav-link': true, 'el-dropdown-link': true, 'active': currentNav === item.name}" :to="'/category/' + item.name">
+                {{ item.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+              </nuxt-link>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item v-for="sub in item.children" :key="sub._id">
+                  <nuxt-link :class="{'nav-link': true}"
+                    :to="'/category/' + sub.name">{{ sub.name }}</nuxt-link>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
         </nav>
       </el-col>
       <el-col :span="6" class="head-right flex-row">
