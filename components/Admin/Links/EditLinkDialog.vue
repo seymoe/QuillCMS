@@ -128,13 +128,6 @@ export default {
     // 取消，关闭弹出框
     cancelAddLink() {
       // 弹窗确认一次
-      this.form = {
-        name: '',
-        alias: '',
-        cover: '',
-        link: '',
-        enable: true
-      }
       this.$emit('add-link', false)
     },
 
@@ -144,13 +137,6 @@ export default {
         if (valid) {
           let data = this.form
           let successCallback = () => {
-            this.form = {
-              name: '',
-              alias: '',
-              cover: '',
-              link: '',
-              enable: true
-            }
             this.$refs[formName].resetFields()
             this.$emit('add-link', false)
           }

@@ -265,6 +265,51 @@ export default {
 
     log(obj)
 
+    // 标签相关的操作
+    if (obj.tags.length > 0) {
+      let tagIdArr = []
+      let result = obj.tags.map(async (item, index) => {
+        if (!shortid.isValid(item)) {
+          let _tag = new PostTag({
+            name: item,
+            alias: '',
+            cover: '',
+            enable: true
+          })
+          try {
+            let _o = await _tag.save()
+            log('tag -> ', _o)
+            return _o._id
+          } catch (err) {
+            log('create tag err ->', err)
+          }
+        } else {
+          try {
+            let tagResult = await PostTag.findOne({_id: item})
+            if (!tagResult) {
+              let _tag = new PostTag({
+                name: item,
+                alias: '',
+                cover: '',
+                enable: true
+              })
+              let _o = await _tag.save()
+              log('tag -> ', _o)
+              return _o._id
+            } else {
+              log('tag -> ', item)
+              return item
+            }
+          } catch (err) {
+            log('create tag err ->', err) 
+          }
+        }
+      })
+      log('result-> ', result)
+      log('obj.tags -> ', obj.tags)
+      // obj.tags = tagIdArr
+    }
+
     const newPost = new Post(obj)
 
     try {
