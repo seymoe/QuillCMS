@@ -1,6 +1,7 @@
-const mongoose = require('mongoose')
-const shortid = require('shortid')
-const User = require('./User')
+import mongoose from 'mongoose'
+import shortid from 'shortid'
+import User from './User'
+import Post from './Post'
 
 const Schema = mongoose.Schema
 
@@ -10,14 +11,17 @@ const PostCommentSchema = new Schema({
     type: String,
     'default': shortid.generate
   },
-  parent_id: String, //评论的目标
+  post_id: {
+    type: String, //评论的目标
+    ref: 'Post'
+  },
   //发表评论的用户
-  owner_userid: {
+  owner_user: {
     type: String,
     ref: 'User'
   },
   //评论的目标用户
-  target_userid: {
+  replay_user: {
     type: String,
     ref: 'User'
   },
@@ -35,4 +39,4 @@ const PostCommentSchema = new Schema({
   created_ip: String  // 创建ip
 })
 
-module.exports = mongoose.model('PostComment', PostCommentSchema)
+export default mongoose.model('PostComment', PostCommentSchema)

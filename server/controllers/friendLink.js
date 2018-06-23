@@ -91,7 +91,7 @@ export default {
     try {
       log(req.query)
       let fields = req.query
-      let queryObj = {}
+      let queryObj = {enable: true}
       let page = Number(fields.page) || 1
       let pageSize = Number(fields.pageSize) || 10
 

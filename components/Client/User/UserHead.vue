@@ -8,6 +8,7 @@
       <h1>{{ userData.nickname }}</h1>
       <p>{{ userData.signature ? userData.signature : '该用户还没有个性签名' }}</p>
     </div>
+    <i class="icon el-icon-setting"></i>
   </section>
 </template>
 
@@ -39,6 +40,7 @@ export default {
 
 <style lang="scss" scoped>
 .user-head{
+  position: relative;
   justify-content: center;
   align-items: center;
   padding: 30px 0;
@@ -68,6 +70,18 @@ export default {
     margin: 0;
     color: #fff;
     font-size: 14px;
+  }
+}
+.icon{
+  display: block;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  &:hover{
+    opacity: 0.8;
   }
 }
 </style>

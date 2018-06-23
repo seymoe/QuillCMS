@@ -15,6 +15,16 @@
       <img :src="postData.cover" alt="">
     </div>
     <div class="posthtml" v-html="postData.content"></div>
+    <footer>
+      <div class="tag-list">
+        <el-button 
+          class="tagitem"
+          v-for="item in postData.tags"
+          :key="item._id"
+          type="primary" 
+          size="small">{{ item.name }}</el-button>
+      </div>
+    </footer>
   </article>
 </template>
 
@@ -56,6 +66,9 @@ export default {
 }
 .posthtml, .cover-box{
   margin: 30px 0 0 0;
+}
+.tag-list{
+  padding: 15px 0;
 }
 </style>
 
