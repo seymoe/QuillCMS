@@ -5,7 +5,7 @@
     </div>
     <div class="creaters">
       <div class="creater flex-row">
-        <nuxt-link to="/" class="imgbox">
+        <nuxt-link to="'/user/'" class="imgbox">
           <img src="~/assets/img/avatar.png" alt="">
         </nuxt-link>
         <div class="txtbox flex-column flex-1">
@@ -19,7 +19,7 @@
 
 <style lang="scss" scoped>
 .hot-creater-wrap{
-  margin-top: 20px;
+  margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
   padding: 10px 15px;

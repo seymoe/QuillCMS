@@ -18,10 +18,10 @@
             <h2><nuxt-link :to="'/post/' + item._id">{{ item.title }}</nuxt-link></h2>
             <p class="desc">{{ item.description }}</p>
             <div class="foot flex-row">
-              <div class="author-box flex-row hidden-xs-only">
+              <nuxt-link :to="'/user/' + item.author._id" class="author-box flex-row hidden-xs-only">
                 <img src="~/assets/img/avatar.png" alt="">
                 <span>{{ item.author.nickname }}</span>
-              </div>
+              </nuxt-link>
               <div class="action-box">
                 <span>{{ item.create_time }}</span>
                 <span><i class="iconfont">&#xe603;</i>{{ item.clicksNum }}</span>
@@ -161,6 +161,9 @@ export default {
 }
 .author-box{
   margin-right: 30px;
+  span{
+    color: #999;
+  }
   img{
     margin-right: 10px;
     display: block;

@@ -25,7 +25,7 @@
 
 <style lang="scss" scoped>
 .hot-tags-wrap{
-  margin-top: 20px;
+  margin-bottom: 20px;
   width: 100%;
   box-sizing: border-box;
   padding: 10px 15px;

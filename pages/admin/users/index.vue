@@ -17,11 +17,17 @@
           :userTableData="userList"
           :pageSize="userMeta.pageSize"
           :totalCounts="userMeta.totalCounts"
-          @delete-user="clientDeleteOneUser"></user-table>
+          @delete-user="clientDeleteOneUser"
+          @update-user="handleToggleUpdateDialog"></user-table>
         <add-user-dialog
           :dialogFormVisible="dialogFormVisible"
           @add-user="handleToggleAddDialog"
           @create-new-user="clientCreateOneUser"></add-user-dialog>
+        <edit-user-dialog 
+          :dialogFormVisible="updateFormVisible"
+          :form="currentUserData"
+          @add-user="handleToggleUpdateDialog"
+          @update-user="clientUpdateOne"></edit-user-dialog>
       </main>
     </div>
     <app-footer></app-footer>
@@ -39,6 +45,7 @@ import AppPageTitle from '~/components/Admin/AppPageTitle'
 import UserTop from '~/components/Admin/Users/UserTop'
 import UserTable from '~/components/Admin/Users/UserTable'
 import AddUserDialog from '~/components/Admin/Users/AddUserDialog'
+import EditUserDialog from '~/components/Admin/Users/EditUserDialog'
 
 export default {
   data() {
@@ -67,7 +74,11 @@ export default {
         totalCounts: 0
       },
       // 是否显示添加用户弹框
-      dialogFormVisible: false
+      dialogFormVisible: false,
+
+      // 更新
+      updateFormVisible: false,
+      currentUserData: {}
     }
   },
 
@@ -98,6 +109,28 @@ export default {
       }
 
       this.dialogFormVisible = bool
+    },
+
+    // 更新弹窗
+    handleToggleUpdateDialog(bool, data) {
+      if (this.updateFormVisible === bool) return false
+      // 只有管理员才能添加添加友链
+      if (this.loginState.userInfo.role !== 'super') {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
+      if (bool) {
+        // 拉取详情成功后，显示弹窗，注入数据
+        this.clientGetOne(data, () => {
+          this.updateFormVisible = bool
+        })
+      } else {
+        this.updateFormVisible = bool
+      }
     },
 
     // 客户端发送增加用户请求
@@ -181,6 +214,64 @@ export default {
         .catch(e => {
           log(e)
         })
+    },
+
+    // 客户端更新用户
+    clientUpdateOne(data, successCB, failCB) {
+      log(data)
+      this.$request
+        .post(API.userUpdate, data)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            successCB && successCB()
+            this.clientGetUserList()
+          }
+        })
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
+          failCB && failCB()
+        })
+    },
+
+    // 客户端拉取单个详情
+    clientGetOne(node, callback) {
+      // 只有超级管理员才能编辑链接
+      if (this.loginState.userInfo.role !== 'super') {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
+      log(node)
+
+      this.$request
+        .get(API.userDelete + '/' + node._id)
+        .then(res => {
+          if (res.data.success) {
+            this.currentUserData = res.data.data
+            callback && callback()
+          } else {
+            this.$notify({
+              title: '错误',
+              message: res.data.message,
+              type: 'danger'
+            })
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
     }
   },
   computed: mapState(['loginState']),
@@ -195,7 +286,8 @@ export default {
     AppPageTitle,
     UserTop,
     UserTable,
-    AddUserDialog
+    AddUserDialog,
+    EditUserDialog
   }
 }
 </script>

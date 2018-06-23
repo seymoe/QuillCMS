@@ -63,8 +63,8 @@
           width="140">
           <template slot-scope="scope">
             <div class="btns">
-              <el-button @click="handleClick(scope.row)" type="primary" size="mini">编辑</el-button>
-              <el-button type="danger" size="mini" @click="handleDeleteUser(scope.row)">删除</el-button>
+              <el-button v-if="scope.row.role !== 'super'" @click="updateLink(scope.row)" type="primary" size="mini">编辑</el-button>
+              <el-button v-if="scope.row.role !== 'super'" type="danger" size="mini" @click="handleDeleteUser(scope.row)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -110,6 +110,9 @@ export default {
     handleDeleteUser(data) {
       console.log(data)
       this.$emit('delete-user', data)
+    },
+    updateLink(data) {
+      this.$emit('update-user', true, data)
     }
   }
 }

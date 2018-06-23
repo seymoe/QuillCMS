@@ -8,6 +8,7 @@
 
 <style lang="scss" scoped>
 .advertise-box{
+  margin-bottom: 20px;
   width: 100%;
   img{
     display: block;

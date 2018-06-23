@@ -147,6 +147,44 @@ export default {
   },
 
   /**
+   * 更新用户
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  async updateOne(req, res, next) {
+    // 校验传入的参数
+    let fields = req.body
+    try {
+      let validateResult = checkCreateUserFields(fields, req)
+      if (!validateResult) {
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
+      // 如果用户id不合法，则返回校验失败
+      if (!shortid.isValid(fields._id)) {
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+
+    const obj = {
+      nickname: fields.nickname,
+      email: fields.email,
+      password: fields.password,
+      enable: fields.enable ? true : false
+    }
+
+    try {
+      let item_id = fields._id
+      await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
+      return res.send(renderApiData(res, 200, '用户资料更新成功', { id: item_id }))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
    * 获取用户列表
    * @param {*} req 
    * @param {*} res 
@@ -181,6 +219,24 @@ export default {
         totalCounts: totalCounts
       }
       return res.send(renderApiData(res, 200, '用户列表获取成功', userObj))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 获取一个用户
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  async getOne(req, res, next) {
+    try {
+      let targetId = req.params.id
+      let queryObj = { _id: targetId }
+      const user = await User.findOne(queryObj).exec()
+
+      return res.send(renderApiData(res, 200, '获取成功', user || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -364,6 +420,32 @@ export default {
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
-  }
+  },
 
+  /**
+   * 获取会员基本信息
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns
+   */
+  async memberGetBaseInfo(req, res, next) {
+    try {
+      let targetId = req.params.id
+      let files = {
+        _id: 1,
+        username: 1,
+        nickname: 1,
+        avatar: 1,
+        signature: 1
+      }
+
+      let queryObj = { _id: targetId }
+      const user = await User.findOne(queryObj, files).exec()
+
+      return res.send(renderApiData(res, 200, '获取成功', user || {}))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  }
 }

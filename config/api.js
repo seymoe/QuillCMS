@@ -41,6 +41,7 @@ export default {
   userList: `${siteConf.api_url}/server${siteConf.api_path}/user/list`,
   userAdd: `${siteConf.api_url}/server${siteConf.api_path}/user/new`,
   userDelete: `${siteConf.api_url}/server${siteConf.api_path}/user`,
+  userUpdate: `${siteConf.api_url}/server${siteConf.api_path}/user/update`,
 
   /** 客户端 ------------------ */
   topMenu: `${siteConf.api_url}/client${siteConf.api_path}/category/list`,
@@ -57,5 +58,6 @@ export default {
   // 会员登陆
   memberLogin: `${siteConf.api_url}/client${siteConf.api_path}/member/login`,
   memberLogout: `${siteConf.api_url}/client${siteConf.api_path}/member/logout`,
-  memberRegist: `${siteConf.api_url}/client${siteConf.api_path}/member/regist`
+  memberRegist: `${siteConf.api_url}/client${siteConf.api_path}/member/regist`,
+  member: `${siteConf.api_url}/client${siteConf.api_path}/member`
 }

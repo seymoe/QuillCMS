@@ -27,6 +27,7 @@ router.post('/cards/new', PostController.createOne)
 router.delete('/cards/:id', PostController.deleteOne)
 
 /* 用户相关 */
+router.get('/member/:id', UserController.memberGetBaseInfo)
 router.post('/member/login', UserController.memberLoginAction)
 router.post('/member/logout', UserController.logoutAction)
 router.post('/member/regist', UserController.memberRegistAction)
