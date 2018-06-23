@@ -23,29 +23,54 @@ let checkCreateUserFields = (formData, req) => {
   // 超级管理员用户才可以创建用户
   let hasLogin = req.session.userLogined
   let userInfo = req.session.userInfo
-
   if (!hasLogin || userInfo.role !== 'super') {
     return false
   }
-
   // fakemark 防伪标识， 值为 quillcms_login_mark_[时间戳]
   let { email, password, username, nickname, role, enable, fakemark } = formData
 
   if (!/^quillcms_user_mark_\d{13}$/.test(fakemark)) {
     return false
-  } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password)) {
+  } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password) || !valiObj.checkUserName(username)) {
     return false
   } else if (nickname.length > 10 || nickname.length <= 0) {
     return false
   } else if (role !== 'member' && role !== 'admin') {
     return false
-  } else {
-    let uPattern = /^[a-zA-Z0-9_-]{4,16}$/
-    if (!uPattern.test(username)) {
-      return false
-    }
   }
   return true
+}
+
+// 检验会员注册请求
+let checkMemberRegistFields = (formData) => {
+  // fakemark 防伪标识， 值为 quillcms_login_mark_[时间戳]
+  let { email, password, username, nickname, fakemark } = formData
+
+  if (!/^quillcms_user_mark_\d{13}$/.test(fakemark)) {
+    return {
+      status: false,
+      msg: '未知错误'
+    }
+  } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password)) {
+    return {
+      status: false,
+      msg: '邮箱格式错误'
+    }
+  } else if (nickname.length > 10 || nickname.length <= 0) {
+    return {
+      status: false,
+      msg: '昵称不能超过10个字符'
+    }
+  } else if (!valiObj.checkUserName(username)) {
+    return {
+      status: false,
+      msg: '用户名格式由4-16位字母、数字、_、-组成'
+    }
+  }
+  return {
+    status: true,
+    msg: '校验成功'
+  }
 }
 
 export default {
@@ -233,5 +258,112 @@ export default {
     delete req.session.userLogined
     delete req.session.userInfo
     return res.send(renderApiData(res, 200, '成功退出登陆'))
+  },
+
+  // ------------------------ 会员相关 --------------------------
+
+  /**
+   * 处理会员登陆
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  async memberLoginAction(req, res, next) {
+    let fields = req.body
+    try {
+      let validateResult = checkLoginActionFields(fields)
+      log(validateResult)
+      if (!validateResult) {
+        return res.status(500).send(renderApiErr(req, res, 500, '邮箱或密码错误'))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+
+    // 数据格式校验成功，则查找数据库中是否存在用户，比对其密码
+    let userObj = {
+      email: fields.email,
+      password: fields.password
+    }
+
+    try {
+      let user = await User.findOne(userObj).exec()
+      if (user) {
+        if (!user.enable) {
+          return res.status(401).send(renderApiErr(req, res, 401, '账号已被禁用'))
+        }
+
+        if (user.role !== 'member') {
+          return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
+        }
+
+        // 用户信息正确，未被禁用
+        log(user)
+
+        req.session.userLogined = true,
+          req.session.userInfo = {
+            username: user.username,
+            id: user._id,
+            email: user.email,
+            nickname: user.nickname,
+            role: user.role
+          }
+
+        // 更新登陆信息
+        let ip = getClientIp(req)
+        user.last_login_ip = ip
+        user.last_login_time = Date.now()
+        await user.save()
+
+        return res.send(renderApiData(res, 200, '登陆成功'))
+      } else {
+        return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 会员注册
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  async memberRegistAction(req, res, next) {
+    // 校验传入的参数
+    let fields = req.body
+    try {
+      let validateResult = checkMemberRegistFields(fields)
+      if (!validateResult.status) {
+        return res.status(500).send(renderApiErr(req, res, 500, validateResult.msg))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+
+    const obj = {
+      username: fields.username,
+      nickname: fields.nickname,
+      email: fields.email,
+      password: fields.password,
+      role: 'member'
+    }
+
+    const newUser = new User(obj)
+
+    try {
+      // 查询数据库中是否已经存在邮箱
+      let _user = await User.findOne({email: obj.email})
+      if (_user) {
+        return res.status(500).send(renderApiErr(req, res, 500, '邮箱已被占用'))
+      }
+      
+      let userObj = await newUser.save()
+      return res.send(renderApiData(res, 200, '注册成功', { id: userObj._id }))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
   }
+
 }

@@ -3,8 +3,9 @@
     <div class="swiper flex-1">
       <el-carousel trigger="click" height="320px">
         <el-carousel-item v-for="(item, index) in swiper" :key="index">
-          <nuxt-link :to="'/post/' + item._id ">
+          <nuxt-link class="swiper-link" :to="'/post/' + item._id ">
             <img :src="item.cover" :alt="item.title">
+            <p class="title"><span>{{ item.title }}</span></p>
           </nuxt-link>
         </el-carousel-item>
       </el-carousel>
@@ -24,14 +25,14 @@
 export default {
   props: ['swiperList'],
   computed: {
-    swiper: function () {
+    swiper: function() {
       if (this.swiperList.length > 3) {
         return this.swiperList.slice(0, 3)
       } else {
         return this.swiperList
       }
     },
-    topList: function () {
+    topList: function() {
       if (this.swiperList.length > 3) {
         return this.swiperList.slice(3)
       } else {
@@ -44,43 +45,43 @@ export default {
 
 
 <style lang="scss" scoped>
-.swiper-wrap{
+.swiper-wrap {
   margin-bottom: 20px;
   justify-content: space-between;
   @media screen and (max-width: 767px) {
     margin-bottom: 15px;
     margin-right: -15px;
     margin-left: -15px;
-    .el-carousel{
+    .el-carousel {
       height: 200px;
-      /deep/ .el-carousel__container{
+      /deep/ .el-carousel__container {
         height: 200px !important;
       }
     }
   }
-  .swiper{
+  .swiper {
     margin-right: 10px;
     @media screen and (max-width: 767px) {
       margin-right: 0px;
     }
   }
-  .list{
+  .list {
     width: 180px;
     justify-content: space-between;
-    .listitem{
+    .listitem {
       position: relative;
       height: 100px;
       overflow: hidden;
-      &:hover{
-        img{
+      &:hover {
+        img {
           transform: scale(1.05);
         }
       }
-      img{
+      img {
         transform: scale(1);
-        transition: all .5s;
+        transition: all 0.5s;
       }
-      span{
+      span {
         position: absolute;
         bottom: 0;
         left: 0;
@@ -91,7 +92,7 @@ export default {
         line-height: 26px;
         color: #fff;
         font-size: 12px;
-        background-color: rgba(0,0,0,.3);
+        background-color: rgba(0, 0, 0, 0.3);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -100,16 +101,47 @@ export default {
     }
   }
 }
+.swiper-link {
+  position: relative;
+  display: block;
+  height: 100%;
+  overflow: hidden;
+  .title {
+    margin: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    line-height: 36px;
+    background-color: rgba(0, 0, 0, 0.3);
+    span{
+      display: block;
+      width: 60%;
+      color: #fff;
+      text-indent: 15px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+.el-carousel /deep/ .el-carousel__indicators{
+  left: unset;
+  right: 0;
+  bottom: 5px;
+  transform: unset;
+}
 .el-carousel__item img {
-    display: block;
-    width: 100%;
-  }
+  display: block;
+  width: 100%;
+}
 
-  .el-carousel__item:nth-child(2n) {
-     background-color: #99a9bf;
-  }
-  
-  .el-carousel__item:nth-child(2n+1) {
-     background-color: #d3dce6;
-  }
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
 </style>

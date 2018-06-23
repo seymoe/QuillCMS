@@ -1,6 +1,9 @@
 <template>
   <div class="app-page">
-    <app-header :topMenuData="topMenu" :currentNav="cateName"></app-header>
+    <app-header 
+      :topMenuData="topMenu" 
+      :currentNav="cateName"
+      :loginState="loginState"></app-header>
     <section class="app-wrap">
       <el-row class="container main" type="flex" justify="space-between">
         <el-col class="content" :xs="24" :sm="18">
@@ -119,7 +122,7 @@ export default {
     }
   },
 
-  computed: mapState(['topMenu']),
+  computed: mapState(['topMenu', 'loginState']),
 
   components: {
     AppHeader,

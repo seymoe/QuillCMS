@@ -52,5 +52,10 @@ export default {
   appPostDetail: `${siteConf.api_url}/client${siteConf.api_path}/post`,
 
   // 上传图片
-  appUploadImage: `${siteConf.api_url}/client${siteConf.api_path}/upload`
+  appUploadImage: `${siteConf.api_url}/client${siteConf.api_path}/upload`,
+
+  // 会员登陆
+  memberLogin: `${siteConf.api_url}/client${siteConf.api_path}/member/login`,
+  memberLogout: `${siteConf.api_url}/client${siteConf.api_path}/member/logout`,
+  memberRegist: `${siteConf.api_url}/client${siteConf.api_path}/member/regist`
 }

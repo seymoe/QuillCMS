@@ -17,10 +17,19 @@
               v-model="form.email">
             </el-input>
           </el-form-item>
+          <el-form-item prop="username">
+            <el-input class="input"
+              minlength="4"
+              maxlength="16"
+              placeholder="用户名，格式由4-16位字母、数字、_、-组成"
+              prefix-icon="el-icon-mobile-phone"
+              v-model="form.username">
+            </el-input>
+          </el-form-item>
           <el-form-item prop="nickname">
             <el-input class="input"
               minlength="1"
-              maxlength="20"
+              maxlength="10"
               placeholder="你的昵称"
               prefix-icon="el-icon-mobile-phone"
               v-model="form.nickname">
@@ -29,7 +38,7 @@
           <el-form-item prop="password">
             <el-input class="input"
               type="password"
-              minlength="6"
+              minlength="8"
               maxlength="16"
               placeholder="设置密码"
               prefix-icon="el-icon-mobile-phone"
@@ -39,7 +48,7 @@
           <el-form-item prop="confirmPassword">
             <el-input class="input"
               type="password"
-              minlength="6"
+              minlength="8"
               maxlength="16"
               placeholder="确认密码"
               prefix-icon="el-icon-mobile-phone"
@@ -52,7 +61,7 @@
         </el-form>
       </div>
       <div class="info">
-        <p>点击 “注册” 即表示您同意并愿意遵守跨界猿用户协议和隐私政策。</p>
+        <p>点击 “注册” 即表示您同意并愿意遵守QuillCMS用户协议和隐私政策。</p>
       </div>
     </div>
   </section>
@@ -60,16 +69,15 @@
 
 <script>
 import validate from '~/utils/validate'
+import API from '~/config/api'
+import { log } from '~/utils/util'
 
 export default {
   layout: 'single',
   data() {
     // 校验邮箱
     let validateEmail = (rule, value, callback) => {
-      value = value.trim()
-      if (value === '') {
-        callback(new Error('邮箱不能为空'))
-      } else if (!validate.checkEmail(value)) {
+      if (!validate.checkEmail(value)) {
         callback(new Error('邮箱格式错误'))
       } else {
         callback()
@@ -77,33 +85,40 @@ export default {
     }
     // 校验昵称
     let validateNickname = (rule, value, callback) => {
-      value = value.trim()
-      if (value === '') {
-        callback(new Error('请填写昵称'))
+      if (value.length > 10) {
+        callback(new Error('昵称不能超过10个字符'))
       } else {
         callback()
       }
     }
+
+    // 校验用户名
+    let validateUsername = (rule, value, callback) => {
+      if (!validate.checkUserName(value)) {
+        callback(new Error('用户名格式由4-16位字母、数字、_、-组成'))
+      } else {
+        callback()
+      }
+    }
+
     // 校验密码
     let validatePasswd = (rule, value, callback) => {
-      value = value.trim()
-      if (value === '') {
-        callback(new Error('密码不能为空'))
-      } else if (!validate.checkPass(value)) {
+      if (!validate.checkPass(value)) {
         callback(new Error('密码格式错误'))
       } else {
         callback()
       }
     }
+
     // 校验再次确认密码
     let confirmPasswd = (rule, value, callback) => {
-      value = value.trim()
       if (value !== this.form.password) {
         callback(new Error('两次输入密码不一致'))
       } else {
         callback()
       }
     }
+
     return {
       form: {
         email: '',
@@ -113,45 +128,55 @@ export default {
       },
       rule: {
         email: [
+          { required: true, message: '请输入邮箱' },
           { validator: validateEmail, trigger: 'blur' }
         ],
+        username: [
+          { required: true, message: '请输入用户名' },
+          { validator: validateUsername, trigger: 'blur' }
+        ],
         nickname: [
+          { required: true, message: '请输入昵称' },
           { validator: validateNickname, trigger: 'blur' }
         ],
         password: [
+          { required: true, message: '请输入密码' },
           { validator: validatePasswd, trigger: 'blur' }
         ],
         confirmPassword: [
+          { required: true, message: '请确认密码' },
           { validator: confirmPasswd, trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
-    // submitForm(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       signupApi(this.form).then(res => {
-    //         if (res.success) {
-    //           this.$message({
-    //             message: '注册成功',
-    //             type: 'success'
-    //           })
-    //           setTimeout(() => {
-    //             location.replace('/')
-    //           }, 1500)
-    //         } else {
-    //           this.$message.error(res.msg)
-    //         }
-    //       }).catch(e => {
-    //         this.$message.error('未知错误，请稍后再试')
-    //       })
-    //     } else {
-    //       console.log('error submit!!')
-    //       return false
-    //     }
-    //   })
-    // }
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let data = this.form
+          data.fakemark = 'quillcms_user_mark_' + Date.now()
+          this.$request.post(API.memberRegist, data).then(res => {
+            log(res.data)
+            if (res.data.success) {
+              this.$message({
+                message: '注册成功，赶快登陆去吧',
+                type: 'success'
+              })
+              this.$refs[formName].resetFields()
+              setTimeout(() => {
+                location.replace('/login')
+              }, 500)
+            }
+          }).catch(e => {
+            this.$message.error('未知错误，请重试')
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    }
   }
 }
 </script>

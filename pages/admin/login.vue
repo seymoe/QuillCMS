@@ -77,7 +77,7 @@ export default {
         if (valid) {
           let data = this.form
           data.fakemark = 'quillcms_login_mark_' + Date.now()
-          this.$request.post(API.userLogin, this.form).then(res => {
+          this.$request.post(API.userLogin, data).then(res => {
             if (res.data.success) {
               this.$notify({
                 title: '成功',
@@ -95,6 +95,7 @@ export default {
               message: err.message,
               type: 'danger'
             })
+            this.$refs[formName].resetFields()
           })
         } else {
           console.log('error submit!!')

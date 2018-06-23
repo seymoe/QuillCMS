@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import PostController from '../../controllers/post'
+import UserController from '../../controllers/user'
 import PostCategoryController from '../../controllers/postCategory'
 import FriendLinkController from '../../controllers/friendLink'
 import AdvertisementController from '../../controllers/advertisement'
@@ -24,5 +25,10 @@ router.get('/post/:id', PostController.getOne)
 
 router.post('/cards/new', PostController.createOne)
 router.delete('/cards/:id', PostController.deleteOne)
+
+/* 用户相关 */
+router.post('/member/login', UserController.memberLoginAction)
+router.post('/member/logout', UserController.logoutAction)
+router.post('/member/regist', UserController.memberRegistAction)
 
 export default router

@@ -31,79 +31,135 @@
         </nav>
       </el-col>
       <el-col :span="6" class="head-right flex-row">
-        <div class="unloigin-box flex-row">
+        <div v-if="!loginState.hasLogin" class="unloigin-box flex-row">
           <el-button type="text" class="btn" @click="handleSignin">登陆</el-button>
           <el-button type="text" class="btn" @click="handleSignup">注册</el-button>
         </div>
-        <div class="login-box"></div>
+        <div v-else class="login-box flex-row">
+          <el-dropdown>
+            <div class="avatar">
+              <img v-if="loginState.userInfo.avatar" :src="loginState.userInfo.avatar" :alt="loginState.userInfo.nickname">
+              <img v-else src="~assets/img/avatar.png" :alt="loginState.userInfo.nickname">
+            </div>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <nuxt-link :to="'/user/' + loginState.userInfo.id">我的主页</nuxt-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <span @click="clientMemberLogout">退出</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
       </el-col>
     </el-row>
   </header>
 </template>
 
 <script>
+import API from '~/config/api'
+
 export default {
-  props: ['topMenuData', 'currentNav'],
+  data() {
+    return {}
+  },
+  props: ['topMenuData', 'currentNav', 'loginState'],
   methods: {
     handleSignin() {
       this.$router.push('/signin')
     },
     handleSignup() {
       this.$router.push('/signup')
+    },
+
+    // 会员退出登陆
+    clientMemberLogout() {
+      this.$request
+        .post(API.memberLogout)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            setTimeout(() => {
+              location.reload()
+            }, 300)
+          }
+        })
+        .catch(err => {
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
+          setTimeout(() => {
+            location.reload()
+          }, 300)
+        })
     }
   }
 }
 </script>
 
-
 <style lang="scss" scoped>
-.app-header{
+.app-header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   background-color: #fff;
-  box-shadow: 0 0 3px 1px rgba(0,0,0,.1);
+  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1);
   z-index: 100;
 }
-.head-left{
+.head-left {
   align-items: center;
 }
-.head-right{
+.head-right {
+  position: relative;
   align-items: center;
   justify-content: flex-end;
 }
-.app-logo{
+.app-logo {
   margin: 0;
   padding: 10px 0;
-  img{
+  img {
     display: block;
     height: 40px;
   }
 }
-.app-nav{
+.app-nav {
   margin-left: 20px;
-  .nav-link{
+  .nav-link {
     display: block;
     height: 60px;
     line-height: 60px;
     padding: 0 15px;
     font-size: 15px;
-    transition: all .3s;
+    transition: all 0.3s;
     color: #333;
-    &:hover{
+    &:hover {
       color: #409eff;
     }
   }
-  .active{
+  .active {
     color: #409eff;
   }
 }
-.unloigin-box{
+.unloigin-box {
   align-items: center;
   height: 60px;
-  .btn{
-
+}
+.login-box {
+  height: 60px;
+  align-items: center;
+  .avatar {
+    cursor: pointer;
+    height: 34px;
+    width: 34px;
+    img {
+      display: block;
+    }
   }
 }
 </style>

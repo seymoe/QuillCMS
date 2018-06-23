@@ -38,7 +38,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="other-way">
+      <!-- <div class="other-way">
         <div class="title">
           <span>社交账号登录</span>
         </div>
@@ -52,13 +52,15 @@
             <span>Github登录</span>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>
 
 <script>
 import validate from '~/utils/validate'
+import API from '~/config/api'
+import { log } from '~/utils/util'
 
 export default {
   layout: 'single',
@@ -99,39 +101,37 @@ export default {
     }
   },
   methods: {
-    // submitForm(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       signinApi(this.form).then(res => {
-    //         if (res.success) {
-    //           this.$message({
-    //             message: '登陆成功',
-    //             type: 'success'
-    //           })
-    //           let _form = {
-    //             source: 'form',
-    //             email: this.form.email,
-    //             password: this.form.password
-    //           }
-    //           signinApi(_form).then(res => {
-    //             if (res.msg === 'ok') {
-    //               setTimeout(() => {
-    //                 location.replace('/')
-    //               }, 1500)
-    //             }
-    //           })
-    //         } else {
-    //           this.$message.error(res.msg)
-    //         }
-    //       }).catch(e => {
-    //         this.$message.error('未知错误，请稍后再试')
-    //       })
-    //     } else {
-    //       console.log('error submit!!')
-    //       return false
-    //     }
-    //   })
-    // }
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let data = this.form
+          data.fakemark = 'quillcms_login_mark_' + Date.now()
+          this.$request.post(API.memberLogin, data).then(res => {
+            if (res.data.success) {
+              this.$notify({
+                title: '成功',
+                message: res.data.message,
+                type: 'success'
+              })
+              setTimeout(() => {
+                location.href = '/'
+              }, 300)
+            }
+          }).catch(err => {
+            log(err)
+            this.$notify({
+              title: '错误',
+              message: err.message,
+              type: 'danger'
+            })
+            this.$refs[formName].resetFields()
+          })
+        } else {
+          log('error submit!!')
+          return false
+        }
+      })
+    }
   }
 }
 </script>
