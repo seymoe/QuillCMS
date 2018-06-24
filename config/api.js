@@ -51,6 +51,10 @@ export default {
   // 文章列表
   appPostList: `${siteConf.api_url}/client${siteConf.api_path}/post/list`,
   appPostDetail: `${siteConf.api_url}/client${siteConf.api_path}/post`,
+  appPostNew: `${siteConf.api_url}/client${siteConf.api_path}/post/new`,
+
+  // 文章标签
+  appTagList: `${siteConf.api_url}/client${siteConf.api_path}/tag/list`,
 
   // 上传图片
   appUploadImage: `${siteConf.api_url}/client${siteConf.api_path}/upload`,

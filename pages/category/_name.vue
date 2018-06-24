@@ -46,6 +46,11 @@ let serverGetMenuData = () => {
       log(res.data)
       if (res.data.success) {
         let _tree = arrayToTree(res.data.data.list)
+        _tree.forEach(item => {
+          if (item.children.length === 0) {
+            delete item.children
+          }
+        })
         return _tree
       }
     })

@@ -33,7 +33,7 @@ let toolbars = {
   undo: true, // 上一步
   redo: true, // 下一步
   trash: true, // 清空
-  save: true, // 保存（触发events中的save事件）
+  // save: true, // 保存（触发events中的save事件）
   /* 1.4.2 */
   // navigation: true, // 导航目录
   /* 2.1.8 */
@@ -57,6 +57,12 @@ export default {
 <style lang="scss" scoped>
 .editor {
   min-height: 500px;
+  /deep/ .shadow{
+    box-shadow: none !important;
+  }
+  /deep/ .content-input-wrapper{
+    padding: 8px 15px 15px 15px !important;
+  }
 }
 </style>
 

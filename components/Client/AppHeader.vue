@@ -11,7 +11,7 @@
           <nuxt-link :class="{'nav-link': true, 'active': currentNav === '首页'}" to="/">首页</nuxt-link>
           <template v-for="item in topMenuData">
             <nuxt-link 
-              v-if="item.children.length <= 0"
+              v-if="!item.children || item.children.length <= 0"
               :class="{'nav-link': true, 'active': currentNav === item.name}"
               :to="'/category/' + item.name"
               :key="item._id">{{ item.name }}</nuxt-link>

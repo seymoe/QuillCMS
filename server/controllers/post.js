@@ -22,26 +22,37 @@ Marked.setOptions({
 })
 
 let checkCreatePostFields = (formData, req) => {
-  // 管理员用户才可以创建文章
   let hasLogin = req.session.userLogined
   let userInfo = req.session.userInfo
   if (!hasLogin || userInfo.id !== formData.author) {
-    return false
+    return {
+      status: false,
+      msg: '身份验证失败'
+    }
   }
 
   if (!/^quillcms_post_mark_\d{13}$/.test(formData.fakemark)) {
-    return false
+    return {
+      status: false,
+      msg: '参数错误'
+    }
   }
 
   if (formData.title.length === 0
     || formData.title.length > 40
-    || formData.sub_title.length > 40
+    || (formData.sub_title && formData.sub_title.length > 40)
     || formData.description.length === 0
     || formData.description.length > 80
     || formData.content.length === 0) {
-    return false
+    return {
+      status: false,
+      msg: '标题或简介长度校验不通过'
+    }
   }
-  return true
+  return {
+    status: true,
+    msg: '校验成功'
+  }
 }
 
 export default {
@@ -240,8 +251,8 @@ export default {
     let fields = req.body
     try {
       let validateResult = checkCreatePostFields(fields, req)
-      if (!validateResult) {
-        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      if (!validateResult.status) {
+        return res.status(500).send(renderApiErr(req, res, 500, validateResult.msg))
       }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
@@ -249,13 +260,13 @@ export default {
 
     const obj = {
       title: fields.title,
-      sub_title: fields.sub_title,
+      sub_title: fields.sub_title || '',
       description: fields.description,
       cover: fields.cover,
       content: fields.content,
       auth: fields.auth === 'secret' ? 'secret' : 'public',
       state: fields.state === 'draft' ? 'draft' : 'published',
-      isTop: fields.isTop === false ? false : true,
+      isTop: fields.isTop === 'true' ? true : false,
       from: fields.from === '1' ? 1 : 0,
       categories: fields.categories,
       tags: fields.tags,
@@ -264,51 +275,6 @@ export default {
     }
 
     log(obj)
-
-    // 标签相关的操作
-    if (obj.tags.length > 0) {
-      let tagIdArr = []
-      let result = obj.tags.map(async (item, index) => {
-        if (!shortid.isValid(item)) {
-          let _tag = new PostTag({
-            name: item,
-            alias: '',
-            cover: '',
-            enable: true
-          })
-          try {
-            let _o = await _tag.save()
-            log('tag -> ', _o)
-            return _o._id
-          } catch (err) {
-            log('create tag err ->', err)
-          }
-        } else {
-          try {
-            let tagResult = await PostTag.findOne({_id: item})
-            if (!tagResult) {
-              let _tag = new PostTag({
-                name: item,
-                alias: '',
-                cover: '',
-                enable: true
-              })
-              let _o = await _tag.save()
-              log('tag -> ', _o)
-              return _o._id
-            } else {
-              log('tag -> ', item)
-              return item
-            }
-          } catch (err) {
-            log('create tag err ->', err) 
-          }
-        }
-      })
-      log('result-> ', result)
-      log('obj.tags -> ', obj.tags)
-      // obj.tags = tagIdArr
-    }
 
     const newPost = new Post(obj)
 
