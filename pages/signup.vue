@@ -1,7 +1,9 @@
 <template>
   <section class="wrap">
     <div class="head">
-      <img src="../assets/img/logo.png" alt="">
+      <nuxt-link to="/">
+        <img src="../assets/img/logo.png" alt="">
+      </nuxt-link>
     </div>
     <div class="signin-box">
       <div class="top">
@@ -13,7 +15,7 @@
           <el-form-item prop="email">
             <el-input class="input"
               placeholder="邮箱地址"
-              prefix-icon="el-icon-mobile-phone"
+              prefix-icon="el-icon-message"
               v-model="form.email">
             </el-input>
           </el-form-item>
@@ -21,9 +23,9 @@
             <el-input class="input"
               minlength="4"
               maxlength="16"
-              placeholder="用户名，格式由4-16位字母、数字、_、-组成"
-              prefix-icon="el-icon-mobile-phone"
+              placeholder="用户名，4-16位字母 数字 _ - 组成"
               v-model="form.username">
+              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 5px;">&#xe604;</i>
             </el-input>
           </el-form-item>
           <el-form-item prop="nickname">
@@ -31,8 +33,8 @@
               minlength="1"
               maxlength="10"
               placeholder="你的昵称"
-              prefix-icon="el-icon-mobile-phone"
               v-model="form.nickname">
+              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 5px;">&#xe604;</i>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
@@ -41,8 +43,8 @@
               minlength="8"
               maxlength="16"
               placeholder="设置密码"
-              prefix-icon="el-icon-mobile-phone"
               v-model="form.password">
+              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 5px;">&#xe62d;</i>
             </el-input>
           </el-form-item>
           <el-form-item prop="confirmPassword">
@@ -51,8 +53,8 @@
               minlength="8"
               maxlength="16"
               placeholder="确认密码"
-              prefix-icon="el-icon-mobile-phone"
               v-model="form.confirmPassword">
+              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 5px;">&#xe62d;</i>
             </el-input>
           </el-form-item>
           <el-form-item>

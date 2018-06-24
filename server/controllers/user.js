@@ -432,6 +432,7 @@ export default {
   async memberGetBaseInfo(req, res, next) {
     try {
       let targetId = req.params.id
+      let _session = req.session
       let files = {
         _id: 1,
         username: 1,
@@ -440,10 +441,89 @@ export default {
         signature: 1
       }
 
+      if (_session.userLogined && _session.userInfo.id === targetId) {
+        // 登陆用户请求自己的个人资料
+        files = {
+          _id: 1,
+          username: 1,
+          nickname: 1,
+          avatar: 1,
+          signature: 1,
+          email: 1,
+          phone: 1,
+          role: 1,
+          enable: 1,
+          sex: 1,
+          age: 1,
+          province: 1,
+          city: 1,
+          address: 1,
+          coin: 1
+        }
+      }
+
       let queryObj = { _id: targetId }
       const user = await User.findOne(queryObj, files).exec()
 
       return res.send(renderApiData(res, 200, '获取成功', user || {}))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 更新会员头像
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns
+   */
+  async memberUpdateAvatar(req, res, next) {
+    let fields = req.body
+    let _session = req.session
+    if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id || _session.userInfo.role !== 'member') {
+      return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+    } else if (!fields.avatar || fields.avatar.length > 40) {
+      return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+    }
+
+    let obj = {
+      avatar: fields.avatar
+    }
+
+    try {
+      let item_id = fields._id
+      await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
+      return res.send(renderApiData(res, 200, '头像更新成功', { id: item_id }))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 更新会员资料
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns
+   */
+  async memberUpdateProfile(req, res, next) {
+    let fields = req.body
+    let _session = req.session
+    if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id || _session.userInfo.role !== 'member') {
+      return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+    } else if (!fields.avatar || fields.avatar.length > 40) {
+      return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+    }
+
+    let obj = {
+      avatar: fields.avatar
+    }
+
+    try {
+      let item_id = fields._id
+      await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
+      return res.send(renderApiData(res, 200, '头像更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

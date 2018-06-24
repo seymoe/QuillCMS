@@ -1,7 +1,9 @@
 <template>
   <section class="wrap">
     <div class="head">
-      <img src="../assets/img/logo.png" alt="">
+      <nuxt-link to="/">
+        <img src="../assets/img/logo.png" alt="">
+      </nuxt-link>
     </div>
     <div class="signin-box">
       <div class="top">
@@ -14,7 +16,7 @@
             <el-input 
               class="input"
               placeholder="邮箱地址"
-              prefix-icon="el-icon-email"
+              prefix-icon="el-icon-message"
               v-model="form.email">
             </el-input>
           </el-form-item>
@@ -25,8 +27,8 @@
               class="input"
               type="password"
               placeholder="密码"
-              prefix-icon="el-icon-mobile-phone"
               v-model="form.password">
+              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 3px;">&#xe62d;</i>
             </el-input>
           </el-form-item>
           <div class="form-foot">
@@ -122,6 +124,12 @@ export default {
                 message: res.data.message,
                 type: 'success'
               })
+              // 如果记住密码的选项为选中状态，则本地存储Email账户
+              if (this.checked) {
+                localStorage.setItem('login_email', data.email)
+              } else {
+                localStorage.removeItem('login_email')
+              }
               setTimeout(() => {
                 let url = '/'
                 if (this.fromUrl) {
@@ -144,6 +152,14 @@ export default {
           return false
         }
       })
+    }
+  },
+
+  mounted() {
+    // 如果存储了Email，则取出来
+    let localEmail = localStorage.getItem('login_email')
+    if (localEmail && validate.checkEmail(localEmail)) {
+      this.form.email = localEmail
     }
   }
 }
