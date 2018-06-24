@@ -30,7 +30,8 @@
     "request": "^2.83.0",
     "shortid": "^2.2.8",
     "source-map-support": "^0.4.15",
-    "validator": "^9.1.2"
+    "validator": "^9.1.2",
+    "xss": "^1.0.3"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",

@@ -7,6 +7,12 @@
       <el-row class="container main" type="flex" justify="space-between">
         <el-col class="content" :xs="24" :sm="18">
           <post-detail :postData="postData"></post-detail>
+          <comment-box 
+            :commentList="commentList"
+            :loginState="loginState"
+            :postId="postId"
+            @post-comment="clientPostComment"
+            @toggle-replybox="handleToggleReplybox"></comment-box>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
           <advertise-box></advertise-box>
@@ -31,6 +37,7 @@ import HotTags from '~/components/Client/HotTags'
 import HotCreaters from '~/components/Client/HotCreaters'
 
 import PostDetail from '~/components/Client/Post/PostDetail'
+import CommentBox from '~/components/Client/Post/CommentBox'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -93,7 +100,9 @@ export default {
     return {
       postId: '',
       postData: {},
-      hotPostList: []
+      hotPostList: [],
+      // 评论列表
+      commentList: []
     }
   },
 
@@ -122,13 +131,73 @@ export default {
     'loginState'
   ]),
 
+  methods: {
+    // 客户端拉取评论列表
+    clientGetCommentList() {
+      this.$request.get(API.comments, {
+        params: {
+          postId: this.postId
+        }
+      }).then(res => {
+        let _list = res.data.data.list
+        if (_list.length > 0) {
+          _list.forEach(item => {
+            item.showReplyBox = false
+          })
+        }
+        this.commentList = _list
+      }).catch(err => {
+        log(err)
+      })
+    },
+
+    // 切换回复框显示隐藏
+    handleToggleReplybox(index, bool) {
+      let list = this.commentList
+      list.forEach((item, idx) => {
+        item.showReplyBox = false
+        if (idx === index) {
+          item.showReplyBox = bool
+        }
+      })
+    },
+
+    // 发表评论
+    clientPostComment(data, successCB, failedCB) {
+      data.fakemark = 'quillcms_comment_mark_' + Date.now()
+      log(data)
+      this.$request.post(API.commentNew, data).then(res => {
+        log(res.data)
+        this.$notify({
+          title: '成功',
+          message: res.data.message,
+          type: 'success'
+        })
+        successCB && successCB()
+        this.clientGetCommentList()
+      }).catch(err => {
+        log(err)
+        this.$notify.error({
+          title: '错误',
+          message: err.message
+        })
+        failedCB && failedCB()
+      })
+    }
+  },
+
+  mounted() {
+    this.clientGetCommentList()
+  },
+
   components: {
     AppHeader,
     AdvertiseBox,
     HotPosts,
     HotTags,
     HotCreaters,
-    PostDetail
+    PostDetail,
+    CommentBox
   }
 }
 </script>

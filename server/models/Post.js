@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 import PostCategory from './PostCategory'
 import PostTag from './PostTag'
-import PostComment from './PostComment'
 import User from './User'
 import shortid from 'shortid'
 import moment from 'moment'
@@ -62,13 +61,11 @@ const PostSchema = new Schema({
       ref: 'PostTag'
     }
   ],
-  // 评论
-  comments: [
-    {
-      type: String,
-      ref: 'PostComment'
-    }
-  ],
+  // 评论次数
+  commentsNum: {
+    type: Number,
+    default: 0
+  },
   // 喜欢次数
   likesNum: {
     type: Number,
@@ -79,7 +76,7 @@ const PostSchema = new Schema({
     type: Number,
     default: 0
   },
-  // 收藏
+  // 收藏次数
   collectionsNum: {
     type: Number,
     default: 0

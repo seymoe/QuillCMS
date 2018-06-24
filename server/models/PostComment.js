@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import shortid from 'shortid'
+import moment from 'moment'
 import User from './User'
 import Post from './Post'
 
@@ -11,17 +12,18 @@ const PostCommentSchema = new Schema({
     type: String,
     'default': shortid.generate
   },
-  post_id: {
-    type: String, //评论的目标
+  //评论目标文章
+  post: {
+    type: String,
     ref: 'Post'
   },
-  //发表评论的用户
-  owner_user: {
+  //评论用户ID
+  owner: {
     type: String,
     ref: 'User'
   },
-  //评论的目标用户
-  replay_user: {
+  //被回复用户ID
+  replyer: {
     type: String,
     ref: 'User'
   },
@@ -31,12 +33,34 @@ const PostCommentSchema = new Schema({
     default: ''
   },
   //该评论被点赞的数量
-  likes: {
+  likes_num: {
     type: Number,
     default: 0
   },
-  created_date: Date, //创建时间
-  created_ip: String  // 创建ip
+  // 喜欢该评论的用户列表
+  like_users: [
+    {
+      type: String,
+      default: []
+    }
+  ],
+  //创建时间
+  create_time: {
+    type: Date,
+    default: Date.now
+  },
+  // 是否显示
+  enable: {
+    type: Boolean,
+    default: true
+  },
+  create_ip: String  // 创建ip
+})
+
+PostCommentSchema.set('toJSON', { getters: true, virtuals: true })
+PostCommentSchema.set('toObject', { getters: true, virtuals: true })
+PostCommentSchema.path('create_time').get(function (v) {
+  return moment(v).startOf('hour').fromNow()
 })
 
 export default mongoose.model('PostComment', PostCommentSchema)

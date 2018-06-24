@@ -85,6 +85,7 @@ export default {
       }
     }
     return {
+      formUrl: '',
       form: {
         email: '',
         password: ''
@@ -100,6 +101,14 @@ export default {
       }
     }
   },
+
+  asyncData({ query }) {
+    log(query)
+    return {
+      fromUrl: query.fromUrl
+    }
+  },
+
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -114,7 +123,11 @@ export default {
                 type: 'success'
               })
               setTimeout(() => {
-                location.href = '/'
+                let url = '/'
+                if (this.fromUrl) {
+                  url = this.fromUrl
+                }
+                location.href = url
               }, 300)
             }
           }).catch(err => {

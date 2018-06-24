@@ -59,5 +59,9 @@ export default {
   memberLogin: `${siteConf.api_url}/client${siteConf.api_path}/member/login`,
   memberLogout: `${siteConf.api_url}/client${siteConf.api_path}/member/logout`,
   memberRegist: `${siteConf.api_url}/client${siteConf.api_path}/member/regist`,
-  member: `${siteConf.api_url}/client${siteConf.api_path}/member`
+  member: `${siteConf.api_url}/client${siteConf.api_path}/member`,
+
+  // 评论
+  comments: `${siteConf.api_url}/client${siteConf.api_path}/comments`,
+  commentNew: `${siteConf.api_url}/client${siteConf.api_path}/comments/new`
 }

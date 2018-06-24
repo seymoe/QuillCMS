@@ -1,9 +1,11 @@
 import { Router } from 'express'
+import { checkUserSession } from '../../../utils/util'
 import PostController from '../../controllers/post'
 import UserController from '../../controllers/user'
 import PostCategoryController from '../../controllers/postCategory'
 import FriendLinkController from '../../controllers/friendLink'
 import AdvertisementController from '../../controllers/advertisement'
+import PostComment from '../../controllers/postComment'
 
 const router = Router()
 
@@ -23,8 +25,10 @@ router.get('/post/list', PostController.getList)
 // 文章详情
 router.get('/post/:id', PostController.getOne)
 
-router.post('/cards/new', PostController.createOne)
-router.delete('/cards/:id', PostController.deleteOne)
+/* 评论相关 */
+// 评论列表
+router.get('/comments', PostComment.getCommens)
+router.post('/comments/new', checkUserSession, PostComment.postComment)
 
 /* 用户相关 */
 router.get('/member/:id', UserController.memberGetBaseInfo)
