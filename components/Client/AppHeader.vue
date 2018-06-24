@@ -31,6 +31,7 @@
         </nav>
       </el-col>
       <el-col :span="6" class="head-right flex-row">
+        <el-button type="primary" size="mini" class="btn-write" @click="toNewPostPage">写文章</el-button>
         <div v-if="!loginState.hasLogin" class="unloigin-box flex-row">
           <el-button type="text" class="btn" @click="handleSignin">登陆</el-button>
           <el-button type="text" class="btn" @click="handleSignup">注册</el-button>
@@ -97,6 +98,31 @@ export default {
             location.reload()
           }, 300)
         })
+    },
+
+    // 跳转至发布文章页
+    toNewPostPage() {
+      if (!this.loginState.hasLogin || !this.loginState.userInfo.id) {
+        this.showConfirmBox()
+        return false
+      } else {
+        this.$router.push('/post/new')
+      }
+    },
+
+    // 提示登陆注册
+    showConfirmBox() {
+      this.$confirm('您还未登录，请登录后再进行相关操作', '请登陆', {
+        confirmButtonText: '去登陆',
+        cancelButtonText: '放弃了',
+        type: 'info',
+        center: true
+      })
+        .then(() => {
+          let fromUrl = '/post/new'
+          this.$router.push('/signin?fromUrl=' + fromUrl)
+        })
+        .catch(() => {})
     }
   }
 }
@@ -147,10 +173,12 @@ export default {
   }
 }
 .unloigin-box {
+  margin-left: 15px;
   align-items: center;
   height: 60px;
 }
 .login-box {
+  margin-left: 15px;
   height: 60px;
   align-items: center;
   .avatar {
