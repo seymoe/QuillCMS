@@ -286,7 +286,8 @@ export default {
             id: user._id,
             email: user.email,
             nickname: user.nickname,
-            role: user.role
+            role: user.role,
+            avatar: user.avatar
           }
 
         // 更新登陆信息
@@ -362,7 +363,8 @@ export default {
             id: user._id,
             email: user.email,
             nickname: user.nickname,
-            role: user.role
+            role: user.role,
+            avatar: user.avatar
           }
 
         // 更新登陆信息

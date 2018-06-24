@@ -75,7 +75,9 @@ export default {
   async uploadImage(req, res, next) {
     try {
       let uploadName = req.query.name
+      log(uploadName)
       if (uploadName !== 'cover' && uploadName !== 'avatar') {
+        log('参数错了？',uploadName)
         return res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
       }
 

@@ -6,7 +6,11 @@
     <section class="app-wrap">
       <el-row class="container main" type="flex" justify="space-between">
         <el-col class="content" :xs="24" :sm="18">
-          <user-head :userData="userData"></user-head>
+          <user-head 
+            :userData="userData"
+            :loginState="loginState"
+            :uploadAction="uploadAction"
+            @update-avatar="handleUpdateAvatar"></user-head>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
           <hot-posts :hotPosts="hotPostList"></hot-posts>
@@ -56,7 +60,7 @@ let serverGetMenuData = () => {
 }
 
 // 用户详情
-let serverGetUserData = (userId) => {
+let serverGetUserData = userId => {
   return axios
     .get(API.member + '/' + userId)
     .then(res => {
@@ -96,7 +100,9 @@ export default {
     return {
       userId: '',
       userData: {},
-      hotPostList: []
+      hotPostList: [],
+      // 用户图像相关
+      uploadAction: API.appUploadImage
     }
   },
 
@@ -106,10 +112,7 @@ export default {
   },
 
   async asyncData({ params }) {
-    let [
-      hotPostList,
-      userData
-    ] = await Promise.all([
+    let [hotPostList, userData] = await Promise.all([
       serverGetHotPosts(),
       serverGetUserData(params.id)
     ])
@@ -120,10 +123,46 @@ export default {
     }
   },
 
-  computed: mapState([
-    'topMenu',
-    'loginState'
-  ]),
+  methods: {
+    // 更新会员头像
+    handleUpdateAvatar(data) {
+      this.$request
+        .post(API.member + '/avatar', data)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.clientGetUserData(data._id)
+          }
+        })
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
+        })
+    },
+
+    // 拉取用户资料
+    clientGetUserData(userId) {
+      this.$request
+        .get(API.member + '/' + userId)
+        .then(res => {
+          if (res.data.success) {
+            this.userData = res.data.data
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
+    }
+  },
+
+  computed: mapState(['topMenu', 'loginState']),
 
   components: {
     AppHeader,
@@ -136,7 +175,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sidebar{
+.sidebar {
   padding-left: 20px;
   @media screen and (max-width: 767px) {
     padding-left: 0;

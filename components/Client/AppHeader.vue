@@ -183,8 +183,8 @@ export default {
   align-items: center;
   .avatar {
     cursor: pointer;
-    height: 34px;
-    width: 34px;
+    height: 28px;
+    width: 28px;
     img {
       display: block;
     }
