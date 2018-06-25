@@ -11,8 +11,10 @@
             :loginState="loginState"
             :uploadAction="uploadAction"
             @update-avatar="handleUpdateAvatar"></user-head>
+          <user-index-tab></user-index-tab>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
+          <user-profile-panel :userData="userData"></user-profile-panel>
           <hot-posts :hotPosts="hotPostList"></hot-posts>
           <hot-creaters></hot-creaters>
           <hot-tags></hot-tags>
@@ -33,6 +35,8 @@ import HotTags from '~/components/Client/HotTags'
 import HotCreaters from '~/components/Client/HotCreaters'
 
 import UserHead from '~/components/Client/User/UserHead'
+import UserProfilePanel from '~/components/Client/User/UserProfilePanel'
+import UserIndexTab from '~/components/Client/User/UserIndexTab'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -169,7 +173,9 @@ export default {
     HotPosts,
     HotTags,
     HotCreaters,
-    UserHead
+    UserHead,
+    UserProfilePanel,
+    UserIndexTab
   }
 }
 </script>

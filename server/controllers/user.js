@@ -440,7 +440,11 @@ export default {
         username: 1,
         nickname: 1,
         avatar: 1,
-        signature: 1
+        signature: 1,
+        sex: 1,
+        age: 1,
+        province: 1,
+        city: 1
       }
 
       if (_session.userLogined && _session.userInfo.id === targetId) {
