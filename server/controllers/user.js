@@ -500,6 +500,8 @@ export default {
     try {
       let item_id = fields._id
       await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
+      // 更新session
+      req.session.userInfo.avatar = fields.avatar
       return res.send(renderApiData(res, 200, '头像更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))

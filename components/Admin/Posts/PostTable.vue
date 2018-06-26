@@ -68,7 +68,7 @@
           width="80"
           label="评论数">
           <template slot-scope="scope">
-            {{ scope.row.comments.length }}
+            {{ scope.row.commentsNum }}
           </template>
         </el-table-column>
         <el-table-column

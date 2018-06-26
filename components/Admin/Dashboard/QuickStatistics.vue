@@ -39,7 +39,7 @@
         <div class="box">
           <div>
             <p>收入统计</p>
-            <h3 style="color: #F56C6C">¥{{ quickData.incomeCount }}</h3>
+            <h3 style="color: #F56C6C">¥ {{ quickData.incomeCount }}</h3>
           </div>
           <div class="inicon">
             <i class="iconfont">&#xe645;</i>

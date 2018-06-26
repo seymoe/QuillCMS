@@ -19,7 +19,8 @@
             <p class="desc">{{ item.description }}</p>
             <div class="foot flex-row">
               <nuxt-link :to="'/user/' + item.author._id" class="author-box flex-row hidden-xs-only">
-                <img src="~/assets/img/avatar.png" alt="">
+                <img v-if="!item.author.avatar" src="~/assets/img/avatar.png" alt="">
+                <img v-else :src="item.author.avatar" :alt="item.author.nickname">
                 <span>{{ item.author.nickname }}</span>
               </nuxt-link>
               <div class="action-box">
