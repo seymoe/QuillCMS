@@ -11,11 +11,11 @@
             :loginState="loginState"
             :uploadAction="uploadAction"
             @update-avatar="handleUpdateAvatar"></user-head>
-          <user-index-tab></user-index-tab>
+          <user-index-tab
+            :articleList="userPostList"></user-index-tab>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
           <user-profile-panel :userData="userData"></user-profile-panel>
-          <hot-posts :hotPosts="hotPostList"></hot-posts>
           <hot-creaters></hot-creaters>
           <hot-tags></hot-tags>
         </el-col>
@@ -30,7 +30,6 @@ import axios from 'axios'
 import API from '~/config/api'
 import { log, arrayToTree } from '~/utils/util'
 import AppHeader from '~/components/Client/AppHeader'
-import HotPosts from '~/components/Client/HotPosts'
 import HotTags from '~/components/Client/HotTags'
 import HotCreaters from '~/components/Client/HotCreaters'
 
@@ -78,14 +77,14 @@ let serverGetUserData = userId => {
     })
 }
 
-// 热门文章
-let serverGetHotPosts = () => {
+// 用户发布的文章
+let serverGetUserPosts = userId => {
   return axios
     .get(API.appPostList, {
       params: {
-        sortBy: 'clicks',
-        mode: 'simple',
-        limit: 5
+        mode: 'normal',
+        limit: 10,
+        user: userId
       }
     })
     .then(res => {
@@ -104,9 +103,11 @@ export default {
     return {
       userId: '',
       userData: {},
-      hotPostList: [],
       // 用户图像相关
-      uploadAction: API.appUploadImage
+      uploadAction: API.appUploadImage,
+
+      // 用户最近文章
+      userPostList: []
     }
   },
 
@@ -116,13 +117,13 @@ export default {
   },
 
   async asyncData({ params }) {
-    let [hotPostList, userData] = await Promise.all([
-      serverGetHotPosts(),
-      serverGetUserData(params.id)
+    let [userData, userPostList] = await Promise.all([
+      serverGetUserData(params.id),
+      serverGetUserPosts(params.id)
     ])
     return {
-      hotPostList,
       userData,
+      userPostList,
       userId: params.id
     }
   },
@@ -170,7 +171,6 @@ export default {
 
   components: {
     AppHeader,
-    HotPosts,
     HotTags,
     HotCreaters,
     UserHead,

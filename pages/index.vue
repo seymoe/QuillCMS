@@ -15,7 +15,7 @@
           <advertise-box></advertise-box>
           <hot-posts :hotPosts="hotPostList"></hot-posts>
           <hot-creaters></hot-creaters>
-          <hot-tags></hot-tags>
+          <hot-tags :tagList="hotTagList"></hot-tags>
         </el-col>
       </el-row>
     </section>
@@ -108,7 +108,7 @@ let serverGetNewestPosts = () => {
       params: {
         mode: 'normal',
         isTop: false,
-        limit: 5
+        limit: 10
       }
     })
     .then(res => {
@@ -123,7 +123,24 @@ let serverGetNewestPosts = () => {
 }
 
 // 热门标签
-
+let serverGetHotTags = () => {
+  return axios
+    .get(API.appTagList, {
+      params: {
+        isHot: true,
+        limit: 5
+      }
+    })
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data.list
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
 // 热门文章
 let serverGetHotPosts = () => {
   return axios
@@ -151,7 +168,8 @@ export default {
     return {
       swiperTopList: [],
       newestPostList: [],
-      hotPostList: []
+      hotPostList: [],
+      hotTagList: []
     }
   },
 
@@ -166,16 +184,19 @@ export default {
     let [
       swiperTopList,
       newestPostList,
-      hotPostList
+      hotPostList,
+      hotTagList
     ] = await Promise.all([
       serverGetTopPosts(),
       serverGetNewestPosts(),
-      serverGetHotPosts()
+      serverGetHotPosts(),
+      serverGetHotTags()
     ])
     return {
       swiperTopList,
       hotPostList,
-      newestPostList
+      newestPostList,
+      hotTagList
     }
   },
 

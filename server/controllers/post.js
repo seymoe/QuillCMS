@@ -161,6 +161,10 @@ export default {
         }
       }
 
+      if (user && shortid.isValid(user)) {
+        queryObj.author = user
+      }
+
       log('queryObj-> ', queryObj)
 
       // 查询文档

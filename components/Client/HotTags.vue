@@ -4,24 +4,19 @@
       <h1>热门标签</h1>
     </div>
     <div class="tags flex-row">
-      <nuxt-link to="/">
-      <el-button plain class="tag" size="mini">NodeJS</el-button>
-    </nuxt-link>
-    <nuxt-link to="/">
-      <el-button plain class="tag" size="mini">JavaScript</el-button>
-    </nuxt-link>
-    <nuxt-link to="/">
-      <el-button plain class="tag" size="mini">NodeJS</el-button>
-    </nuxt-link>
-    <nuxt-link to="/">
-      <el-button plain class="tag" size="mini">PHP</el-button>
-    </nuxt-link>
-    <nuxt-link to="/">
-      <el-button plain class="tag" size="mini">Pyhton</el-button>
-    </nuxt-link>
+      <nuxt-link v-for="(item, index) in tagList" :key="index" :to="'/tag/' + item.name">
+        <el-button plain class="tag" size="mini">{{ item.name }}</el-button>
+      </nuxt-link>
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  props: ['tagList']
+}
+</script>
+
 
 <style lang="scss" scoped>
 .hot-tags-wrap{

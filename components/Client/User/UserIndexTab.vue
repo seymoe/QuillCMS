@@ -6,15 +6,42 @@
         <el-radio-button label="action">动态</el-radio-button>
       </el-radio-group>
     </div>
+    <div class="body">
+      <template v-if="currentTab === 'article'">
+        <user-post-list :postList="articleList"></user-post-list>
+      </template>
+      <template v-if="currentTab === 'action'">
+        <user-post-list :postList="actionList"></user-post-list>
+      </template>
+    </div>
   </section>
 </template>
 
 <script>
+import UserPostList from '~/components/Client/User/UserPostList'
+
 export default {
   data() {
     return {
       currentTab: 'article'
     }
+  },
+  props: {
+    articleList: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    },
+    actionList: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
+  components: {
+    UserPostList
   }
 }
 </script>
