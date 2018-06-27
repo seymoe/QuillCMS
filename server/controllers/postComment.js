@@ -52,6 +52,57 @@ let checkCreateCommentFields = (formData, req) => {
 }
 
 export default {
+  // 管理员功能
+  // 开启或禁用
+  async updateOne(req, res, next) {
+    let fields = req.body
+    let _session = req.session
+    if (!shortid.isValid(fields._id) || !_session.userLogined || (_session.userInfo.role !== 'super' && _session.userInfo.role !== 'admin')) {
+      return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+    } else if (fields.enable !== 'true' && fields.enable !== 'false') {
+      return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+    }
+
+    let obj = {
+      enable: fields.enable === false ? false : true
+    }
+    let successMsg = obj.enable ? '已开启' : '已禁用'
+
+    try {
+      let item_id = fields._id
+      await PostComment.findOneAndUpdate({ _id: item_id }, { $set: obj })
+      return res.send(renderApiData(res, 200, successMsg, { id: item_id }))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  // 删除一个
+  async deleteOne(req, res, next) {
+    try {
+      let userInfo = req.session.userInfo
+      let errMsg = ''
+      let id = req.params.id
+      log(id)
+      if (!shortid.isValid(id)) {
+        errMsg = 'ID格式校验失败'
+      }
+
+      if (userInfo.role !== 'super' && userInfo.role !== 'admin') {
+        errMsg = '没有操作权限'
+      }
+
+      if (errMsg) {
+        return res.status().send(renderApiErr(req, res, 500, errMsg))
+      }
+
+      await PostComment.remove({ _id: id })
+      return res.send(renderApiData(res, 200, '删除成功', {}))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
   // 会员发表评论
   async postComment(req, res, next) {
     // 校验传入的参数

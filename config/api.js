@@ -35,6 +35,11 @@ export default {
   postDelete: `${siteConf.api_url}/server${siteConf.api_path}/post`,
   uploadImage: `${siteConf.api_url}/server${siteConf.api_path}/upload`,
 
+  // 评论相关
+  commentUpdate: `${siteConf.api_url}/server${siteConf.api_path}/comments/update`,
+  commentList: `${siteConf.api_url}/server${siteConf.api_path}/comments/list`,
+  commentDelete: `${siteConf.api_url}/server${siteConf.api_path}/comments`,
+
   // 用户相关
   userLogin: `${siteConf.api_url}/server${siteConf.api_path}/user/login`,
   userLogout: `${siteConf.api_url}/server${siteConf.api_path}/user/logout`,
@@ -43,7 +48,7 @@ export default {
   userDelete: `${siteConf.api_url}/server${siteConf.api_path}/user`,
   userUpdate: `${siteConf.api_url}/server${siteConf.api_path}/user/update`,
 
-  /** 客户端 ------------------ */
+  /** 客户端 ------------------------------------------------------------------- */
   topMenu: `${siteConf.api_url}/client${siteConf.api_path}/category/list`,
   friendLink: `${siteConf.api_url}/client${siteConf.api_path}/friendlinks`,
   advertisement: `${siteConf.api_url}/server${siteConf.api_path}/ads`,
