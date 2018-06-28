@@ -3,6 +3,7 @@ import User from '../models/User'
 import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, getClientIp } from '../../utils/util'
 import valiObj from '../../utils/validate'
+import xss from 'xss'
 
 // 检验登陆请求
 let checkLoginActionFields = (formData) => {
@@ -73,6 +74,32 @@ let checkMemberRegistFields = (formData) => {
   }
 }
 
+// 检验会员更新请求
+let checkMemberUpdateProfileFields = (formData) => {
+  // fakemark 防伪标识， 值为 quillcms_login_mark_[时间戳]
+  let { nickname, province, city, address, fakemark } = formData
+
+  if (!/^quillcms_user_mark_\d{13}$/.test(fakemark)) {
+    return {
+      status: false,
+      msg: '未知错误'
+    }
+  } else if (nickname.length > 10 || nickname.length <= 0) {
+    return {
+      status: false,
+      msg: '昵称不能超过10个字符'
+    }
+  } else if (province.length > 10 || city.length > 10 || address.length > 40) {
+    return {
+      status: false,
+      msg: '省份、城市或地址的长度超出'
+    }
+  }
+  return {
+    status: true,
+    msg: '校验成功'
+  }
+}
 export default {
   /**
    * 创建一个用户，创建需要最高权限，超级管理员只允许一个存在
@@ -435,6 +462,7 @@ export default {
     try {
       let targetId = req.params.id
       let _session = req.session
+      log(_session, targetId)
       let files = {
         _id: 1,
         username: 1,
@@ -449,6 +477,7 @@ export default {
 
       if (_session.userLogined && _session.userInfo.id === targetId) {
         // 登陆用户请求自己的个人资料
+        log('!!不进这里？')
         files = {
           _id: 1,
           username: 1,
@@ -467,6 +496,8 @@ export default {
           coin: 1
         }
       }
+
+      log('结果呢', files)
 
       let queryObj = { _id: targetId }
       const user = await User.findOne(queryObj, files).exec()
@@ -532,21 +563,32 @@ export default {
    */
   async memberUpdateProfile(req, res, next) {
     let fields = req.body
-    let _session = req.session
-    if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id || _session.userInfo.role !== 'member') {
-      return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
-    } else if (!fields.avatar || fields.avatar.length > 40) {
-      return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+    try {
+      let _session = req.session
+      if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id || _session.userInfo.role !== 'member') {
+        return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+      }
+      let validateResult = checkMemberUpdateProfileFields(fields)
+      if (!validateResult.status) {
+        return res.status(500).send(renderApiErr(req, res, 500, validateResult.msg))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
     }
 
     let obj = {
-      avatar: fields.avatar
+      nickname: fields.nickname,
+      sex: parseInt(fields.sex) === 2 ? 2 : 1,
+      age: parseInt(fields.age),
+      province: fields.province,
+      city: fields.province,
+      address: xss(fields.address)
     }
 
     try {
       let item_id = fields._id
       await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, '头像更新成功', { id: item_id }))
+      return res.send(renderApiData(res, 200, '资料更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

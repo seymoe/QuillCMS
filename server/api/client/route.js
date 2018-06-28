@@ -44,5 +44,6 @@ router.post('/member/login', UserController.memberLoginAction)
 router.post('/member/logout', UserController.logoutAction)
 router.post('/member/regist', UserController.memberRegistAction)
 router.post('/member/avatar', UserController.memberUpdateAvatar)
+router.post('/member/profile', UserController.memberUpdateProfile)
 
 export default router

@@ -22,7 +22,7 @@
       <h1>{{ userData.nickname }}</h1>
       <p>{{ userData.signature ? userData.signature : '该用户还没有个性签名' }}</p>
     </div>
-    <i class="icon el-icon-setting" @click="editProfile"></i>
+    <i v-if="loginState.hasLogin && loginState.userInfo.id === userData._id" class="icon el-icon-setting" @click="editProfile"></i>
   </section>
 </template>
 

@@ -25,7 +25,7 @@
     </section>
     <update-user-profile 
       :dialogFormVisible="updateFormVisible"
-      :form="userData"
+      :form="updateForm"
       @edit-profile="handleToggleUpdateDialog"
       @update-user="clientUpdateOne"></update-user-profile>
   </div>
@@ -111,6 +111,7 @@ export default {
     return {
       userId: '',
       userData: {},
+      updateForm: {},
       // 用户图像相关
       uploadAction: API.appUploadImage,
 
@@ -135,6 +136,7 @@ export default {
     return {
       userData,
       userPostList,
+      updateForm: userData,
       userId: params.id
     }
   },
@@ -170,6 +172,7 @@ export default {
         .then(res => {
           if (res.data.success) {
             this.userData = res.data.data
+            this.updateForm = res.data.data
           }
         })
         .catch(e => {
@@ -186,7 +189,7 @@ export default {
     clientUpdateOne(data, successCB, failCB) {
       log(data)
       this.$request
-        .post(API.userUpdate, data)
+        .post(API.member + '/profile', data)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -195,7 +198,7 @@ export default {
               type: 'success'
             })
             successCB && successCB()
-            this.clientGetUserList()
+            this.clientGetUserData(data._id)
           }
         })
         .catch(err => {

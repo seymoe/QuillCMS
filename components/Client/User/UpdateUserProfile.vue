@@ -15,7 +15,8 @@
         <el-input v-model="form.nickname" size="small" placeholder="请输入昵称"></el-input>
       </el-form-item>
       <el-form-item label="性 别" prop="sex">
-        <el-input v-model="form.sex" size="small" placeholder="请输入昵称"></el-input>
+        <el-radio v-model="form.sex" :label="1">男</el-radio>
+        <el-radio v-model="form.sex" :label="2">女</el-radio>
       </el-form-item>
       <el-form-item label="年 龄" prop="age">
         <el-input type="number" v-model="form.age" size="small" placeholder="请输入年龄"></el-input>
@@ -33,13 +34,6 @@
           v-model="form.city" 
           size="small" 
           placeholder="请输入城市"></el-input>
-      </el-form-item>
-      <el-form-item label="省 份" prop="email">
-        <el-input 
-          type="text"
-          v-model="form.province" 
-          size="small" 
-          placeholder="请输入省份"></el-input>
       </el-form-item>
       <el-form-item label="地 址" prop="address">
         <el-input 
@@ -73,9 +67,32 @@ export default {
         callback()
       }
     }
+    // 城市 省份
+    let validateCity = (rule, value, callback) => {
+      if (value === '') {
+        callback()
+      } else if (value.length > 10) {
+        callback(new Error('长度必须小于10'))
+      } else {
+        callback()
+      }
+    }
+    // 地址
+    let validateAddress = (rule, value, callback) => {
+      if (value === '') {
+        callback()
+      } else if (value.length > 40) {
+        callback(new Error('地址不能超过40个字'))
+      } else {
+        callback()
+      }
+    }
     return {
       addUserRules: {
-        phone: [{ validator: validateNickname, trigger: 'blur' }]
+        phone: [{ validator: validateNickname, trigger: 'blur' }],
+        province: [{ validator: validateCity, trigger: 'blur' }],
+        city: [{ validator: validateCity, trigger: 'blur' }],
+        address: [{ validator: validateAddress, trigger: 'blur' }]
       }
     }
   },
