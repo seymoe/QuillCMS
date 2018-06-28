@@ -22,7 +22,7 @@
       <h1>{{ userData.nickname }}</h1>
       <p>{{ userData.signature ? userData.signature : '该用户还没有个性签名' }}</p>
     </div>
-    <i class="icon el-icon-setting"></i>
+    <i class="icon el-icon-setting" @click="editProfile"></i>
   </section>
 </template>
 
@@ -109,6 +109,9 @@ export default {
         .catch(err => {
           log(err)
         })
+    },
+    editProfile() {
+      this.$emit('edit-profile', true)
     }
   }
 }

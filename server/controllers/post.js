@@ -1,3 +1,4 @@
+import fs from 'fs'
 import Post from '../models/Post'
 import PostTag from '../models/PostTag'
 import PostCategory from '../models/PostCategory'
@@ -332,6 +333,20 @@ export default {
 
     try {
       let item_id = fields._id
+      let oldPost = await Post.findOne({_id: item_id})
+      // 如果新传来的图片路径和之前的图片路径不同，则删掉之前的图片并更新
+      if (oldPost.cover !== obj.cover) {
+        if (oldPost.cover.indexOf('/upload/images/') >= 0) {
+          // 文件存储于服务器
+          let _path = process.cwd() + '/static' + oldPost.cover
+          log('imgpath -> ', _path)
+          if (fs.existsSync(_path)) {
+            // 存在，删掉
+            fs.unlinkSync(_path)
+          }
+        }
+      }
+
       await Post.findOneAndUpdate({ _id: item_id }, { $set: obj })
       return res.send(renderApiData(res, 200, '文章更新成功', { id: item_id }))
     } catch (err) {

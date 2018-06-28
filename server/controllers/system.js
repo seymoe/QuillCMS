@@ -7,6 +7,7 @@ import Post from '../models/Post'
 import PostCategory from '../models/PostCategory'
 import User from '../models/User'
 
+// 上传至七牛
 const uploadToQiniu = (req, res, imgkey, imgname) => {
   // 鉴权凭证
   let { openqn, accessKey, secretKey, bucket, computerRoom, origin, fsizeLimit } = conf
@@ -77,13 +78,15 @@ export default {
       let uploadName = req.query.name
       log(uploadName)
       if (uploadName !== 'cover' && uploadName !== 'avatar') {
-        log('参数错了？',uploadName)
         return res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
       }
 
+      // 根据上传的name决定上传至哪个文件夹
+      let lastDir = uploadName
+
       let storage = multer.diskStorage(
         {
-          destination: 'static/upload/images',
+          destination: 'static/upload/images' + '/' + lastDir,
           fileFilter: (req, files, callback) => {
             // 只允许上传jpg|png|jpeg|gif格式的文件
             let type = '|' + files.mimetype.slice(files.mimetype.lastIndexOf('/') + 1) + '|'
@@ -110,10 +113,10 @@ export default {
             //设置上传到七牛云的文件命名
             let filePath = req.file.path
             log(filePath)
-            uploadToQiniu(req, res, filePath, req.file.filename)
+            uploadToQiniu(req, res, filePath, lastDir + '/' + req.file.filename)
           } else {
             // 未开启七牛云，返回服务器上的图片链接
-            return res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${req.file.filename}`))
+            return res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${lastDir}/${req.file.filename}`))
           }
         }
       })

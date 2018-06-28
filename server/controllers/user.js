@@ -1,5 +1,5 @@
+import fs from 'fs'
 import User from '../models/User'
-import validator from 'validator'
 import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, getClientIp } from '../../utils/util'
 import valiObj from '../../utils/validate'
@@ -499,6 +499,21 @@ export default {
 
     try {
       let item_id = fields._id
+
+      let oldUser = await User.findOne({_id: item_id})
+      // 如果新传来的图片路径和之前的图片路径不同，则删掉之前的图片并更新
+      if (oldUser.cover !== obj.cover) {
+        if (oldUser.cover.indexOf('/upload/images/') >= 0) {
+          // 文件存储于服务器
+          let _path = process.cwd() + '/static' + oldUser.cover
+          log('imgpath -> ', _path)
+          if (fs.existsSync(_path)) {
+            // 存在，删掉
+            fs.unlinkSync(_path)
+          }
+        }
+      }
+
       await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
       // 更新session
       req.session.userInfo.avatar = fields.avatar

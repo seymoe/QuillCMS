@@ -10,17 +10,24 @@
             :userData="userData"
             :loginState="loginState"
             :uploadAction="uploadAction"
-            @update-avatar="handleUpdateAvatar"></user-head>
+            @update-avatar="handleUpdateAvatar"
+            @edit-profile="handleToggleUpdateDialog"></user-head>
           <user-index-tab
             :articleList="userPostList"></user-index-tab>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
-          <user-profile-panel :userData="userData"></user-profile-panel>
+          <user-profile-panel 
+            :userData="userData"></user-profile-panel>
           <hot-creaters></hot-creaters>
           <hot-tags></hot-tags>
         </el-col>
       </el-row>
     </section>
+    <update-user-profile 
+      :dialogFormVisible="updateFormVisible"
+      :form="userData"
+      @edit-profile="handleToggleUpdateDialog"
+      @update-user="clientUpdateOne"></update-user-profile>
   </div>
 </template>
 
@@ -36,6 +43,7 @@ import HotCreaters from '~/components/Client/HotCreaters'
 import UserHead from '~/components/Client/User/UserHead'
 import UserProfilePanel from '~/components/Client/User/UserProfilePanel'
 import UserIndexTab from '~/components/Client/User/UserIndexTab'
+import UpdateUserProfile from '~/components/Client/User/UpdateUserProfile'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -107,7 +115,10 @@ export default {
       uploadAction: API.appUploadImage,
 
       // 用户最近文章
-      userPostList: []
+      userPostList: [],
+
+      // 更新
+      updateFormVisible: false
     }
   },
 
@@ -164,6 +175,37 @@ export default {
         .catch(e => {
           log(e)
         })
+    },
+
+    // 弹窗
+    handleToggleUpdateDialog(bool) {
+      this.updateFormVisible = bool
+    },
+
+    // 更新用户
+    clientUpdateOne(data, successCB, failCB) {
+      log(data)
+      this.$request
+        .post(API.userUpdate, data)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            successCB && successCB()
+            this.clientGetUserList()
+          }
+        })
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
+          failCB && failCB()
+        })
     }
   },
 
@@ -175,7 +217,8 @@ export default {
     HotCreaters,
     UserHead,
     UserProfilePanel,
-    UserIndexTab
+    UserIndexTab,
+    UpdateUserProfile
   }
 }
 </script>
