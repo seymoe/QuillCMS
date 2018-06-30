@@ -1,5 +1,4 @@
 import shortid from 'shortid'
-import xss from 'xss'
 import validator from 'validator'
 import valiObj from '../../utils/validate'
 import { log, renderApiData, renderApiErr, getClientIp } from '../../utils/util'
@@ -118,7 +117,7 @@ export default {
 
     const commentObj = {
       post: fields.post,
-      content: xss(fields.content),
+      content: fields.content,
       owner: fields.owner,
       replyer: fields.replyer,
       create_ip: getClientIp(req)

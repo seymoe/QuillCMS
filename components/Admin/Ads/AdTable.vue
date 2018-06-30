@@ -38,7 +38,7 @@
           label="图标"
           width="80">
           <template slot-scope="scope">
-            {{ scope.row.cover}}
+            <img :src="scope.row.cover" alt="">
           </template>
         </el-table-column>
         <el-table-column

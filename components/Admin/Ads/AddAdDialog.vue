@@ -20,8 +20,24 @@
       <el-form-item label="链接" prop="link">
         <el-input v-model="form.link" size="small" placeholder="请输入链接地址"></el-input>
       </el-form-item>
-      <el-form-item label="图标" prop="cover">
-        <el-input v-model="form.cover" size="small" placeholder="iconfont图标"></el-input>
+      <!-- 上传图片 -->
+      <el-form-item label="图片" prop="cover">
+        <el-upload
+          class="upload-box"
+          drag
+          :action="uploadAction"
+          :before-upload="beforeAvatarUpload"
+          :http-request="uploadImage"
+          :show-file-list="false"
+          >
+          <template v-if="form.cover">
+            <img :src="form.cover" alt="">
+          </template>
+          <template v-else>
+            <i class="el-icon-upload"></i>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em>任何JPG,JPEG,PNG,或GIF最高可达1MB</div>
+          </template>
+        </el-upload>
       </el-form-item>
       <el-form-item label="是否启用" prop="enable">
         <el-switch
@@ -41,24 +57,13 @@
 <script>
 import { log } from '~/utils/util'
 import validator from 'validator'
+import API from '~/config/api'
 
 export default {
   data() {
     let checkTitle = (rule, value, callback) => {
       if (value.length > 40) {
         return callback(new Error('标题不能超过40字符'))
-      } else {
-        callback()
-      }
-    }
-
-    let checkCover = (rule, value, callback) => {
-      if (value) {
-        if (value.length > 20) {
-          return callback(new Error('图标不能超过20字符'))
-        } else {
-          callback()
-        }
       } else {
         callback()
       }
@@ -92,7 +97,6 @@ export default {
           { required: true, message: '名称不能为空' },
           { validator: checkTitle, trigger: 'blur' }
         ],
-        cover: [{ validator: checkCover, trigger: 'blur' }],
         desc: [
           { required: true, message: '描述不能为空' },
           { validator: checkDesc, trigger: 'blur' }
@@ -101,7 +105,9 @@ export default {
           { required: true, message: '链接地址不能为空' },
           { validator: checkLink, trigger: 'blur' }
         ]
-      }
+      },
+      // 文件上传API
+      uploadAction: API.uploadImage
     }
   },
   props: {
@@ -130,6 +136,47 @@ export default {
         enable: true
       }
       this.$emit('add-ad', false)
+    },
+
+    // 上传图片相关方法
+    beforeAvatarUpload(file) {
+      const isJPG =
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/gif'
+      const isLt1M = file.size / 1024 / 1024 < 1
+
+      if (!isJPG) {
+        this.$message({
+          message: '上传图片只能是JPG、JPEG、GIF或PNG格式!',
+          type: 'error'
+        })
+      }
+      if (!isLt1M) {
+        this.$message({
+          message: '上传图片大小不能超过 1MB!',
+          type: 'error'
+        })
+      }
+      return isJPG && isLt1M
+    },
+
+    // 上传图片
+    uploadImage(content) {
+      log(content)
+      let formData = new FormData()
+      formData.append('advertise', content.file)
+      this.$request
+        .post(content.action + '?name=advertise', formData)
+        .then(res => {
+          if (res.data.success) {
+            log('上传成功')
+            this.form.cover = res.data.data
+          }
+        })
+        .catch(err => {
+          log(err)
+        })
     },
 
     // 确定添加，添加成功后关闭Dialog

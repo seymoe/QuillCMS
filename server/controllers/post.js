@@ -1,4 +1,5 @@
 import fs from 'fs'
+import xss from 'xss'
 import Post from '../models/Post'
 import PostTag from '../models/PostTag'
 import PostCategory from '../models/PostCategory'
@@ -268,7 +269,7 @@ export default {
       sub_title: fields.sub_title || '',
       description: fields.description,
       cover: fields.cover,
-      content: fields.content,
+      content: xss(fields.content),
       auth: fields.auth === 'secret' ? 'secret' : 'public',
       state: fields.state === 'draft' ? 'draft' : 'published',
       isTop: fields.isTop === 'true' ? true : false,
@@ -318,7 +319,7 @@ export default {
       sub_title: fields.sub_title,
       description: fields.description,
       cover: fields.cover,
-      content: fields.content,
+      content: xss(fields.content),
       auth: fields.auth === 'secret' ? 'secret' : 'public',
       state: fields.state === 'draft' ? 'draft' : 'published',
       isTop: fields.isTop === false ? false : true,

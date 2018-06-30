@@ -1,3 +1,4 @@
+import fs from 'fs'
 import Advertisement from '../models/Advertisement'
 import validator from 'validator'
 import shortid from 'shortid'
@@ -17,7 +18,7 @@ let checkAdsFields = (formData, req) => {
     return false
   } else if (desc.length > 40) {
     return false
-  } else if (cover.length > 20) {
+  } else if (cover.length > 80) {
     return false
   } else if (!validator.isURL(link)) {
     return false
@@ -181,6 +182,21 @@ export default {
 
     try {
       let item_id = fields._id
+
+      let oldAd = await Advertisement.findOne({_id: item_id})
+      // 如果新传来的图片路径和之前的图片路径不同，则删掉之前的图片并更新
+      if (oldAd.cover !== obj.cover) {
+        if (oldAd.cover.indexOf('/upload/images/') >= 0) {
+          // 文件存储于服务器
+          let _path = process.cwd() + '/static' + oldAd.cover
+          log('imgpath -> ', _path)
+          if (fs.existsSync(_path)) {
+            // 存在，删掉
+            fs.unlinkSync(_path)
+          }
+        }
+      }
+
       await Advertisement.findOneAndUpdate({ _id: item_id }, { $set: obj })
       return res.send(renderApiData(res, 200, '广告更新成功', { id: item_id }))
     } catch (err) {

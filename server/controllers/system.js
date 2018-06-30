@@ -77,7 +77,7 @@ export default {
     try {
       let uploadName = req.query.name
       log(uploadName)
-      if (uploadName !== 'cover' && uploadName !== 'avatar') {
+      if (uploadName !== 'cover' && uploadName !== 'avatar' && uploadName !== 'advertise') {
         return res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
       }
 
