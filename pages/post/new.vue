@@ -17,7 +17,10 @@
             </el-input>
           </div>
           <div class="content-box">
-            <markdown-editor :data="postFormData"></markdown-editor>
+            <markdown-editor 
+              :data="postFormData"
+              @insert-image="handleInsertImage"
+              ></markdown-editor>
           </div>
         </el-col>
         <el-col :xs="24" :sm="6" style="background: #fff">
@@ -227,6 +230,22 @@ export default {
         })
       }
       return isJPG && isLt1M
+    },
+
+    // 编辑器上传图片
+    handleInsertImage(data, successCB) {
+      this.$request
+        .post(this.uploadAction + '?name=cover', data)
+        .then(res => {
+          if (res.data.success) {
+            log('上传成功')
+            let _url = res.data.data
+            successCB && successCB(_url)
+          }
+        })
+        .catch(err => {
+          log(err)
+        })
     },
 
     // 上传图片

@@ -4,7 +4,9 @@
       class="editor"
       v-model="data.content"
       :toolbars="toolbars"
-      placeholder="输入正文..."/>
+      placeholder="输入正文..."
+      ref=md
+      @imgAdd="$imgAdd"/>
   </section>
 </template>
 
@@ -50,6 +52,17 @@ export default {
       toolbars: toolbars
     }
   },
+  methods: {
+    $imgAdd(pos, $file) {
+      let formData = new FormData()
+      formData.append('cover', $file)
+      let successCallback = url => {
+        this.$refs.md.$img2Url(pos, url)
+      }
+      // 触发图片上传事件
+      this.$emit('insert-image', formData, successCallback)
+    }
+  },
   props: ['data']
 }
 </script>
@@ -57,10 +70,10 @@ export default {
 <style lang="scss" scoped>
 .editor {
   min-height: 500px;
-  /deep/ .shadow{
+  /deep/ .shadow {
     box-shadow: none !important;
   }
-  /deep/ .content-input-wrapper{
+  /deep/ .content-input-wrapper {
     padding: 8px 15px 15px 15px !important;
   }
 }
