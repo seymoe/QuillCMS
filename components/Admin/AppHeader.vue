@@ -31,7 +31,7 @@
             <p>{{ loginState.userInfo.role === 'super' ? '超级管理员' : '' }}</p>
             <p>{{ loginState.userInfo.role === 'admin' ? '管理员' : '' }}</p>
             <div class="foot">
-              <el-button type="text" class="button">设置</el-button>
+              <el-button type="text" class="button" @click="clickToFrontEnd">前台</el-button>
               <el-button type="text" class="button" @click="clientUserLogout">退出</el-button>
             </div>
           </el-card>
@@ -85,6 +85,9 @@ export default {
           location.reload()
         }, 300)
       })
+    },
+    clickToFrontEnd() {
+      location.href = '/'
     }
   }
 }

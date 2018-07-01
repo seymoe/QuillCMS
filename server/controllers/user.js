@@ -377,6 +377,7 @@ export default {
           return res.status(401).send(renderApiErr(req, res, 401, '账号已被禁用'))
         }
 
+        // 管理员不可在前台登陆
         if (user.role !== 'member') {
           return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
         }
@@ -477,7 +478,6 @@ export default {
 
       if (_session.userLogined && _session.userInfo.id === targetId) {
         // 登陆用户请求自己的个人资料
-        log('!!不进这里？')
         files = {
           _id: 1,
           username: 1,
@@ -496,8 +496,6 @@ export default {
           coin: 1
         }
       }
-
-      log('结果呢', files)
 
       let queryObj = { _id: targetId }
       const user = await User.findOne(queryObj, files).exec()
@@ -518,9 +516,9 @@ export default {
   async memberUpdateAvatar(req, res, next) {
     let fields = req.body
     let _session = req.session
-    if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id || _session.userInfo.role !== 'member') {
+    if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id) {
       return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
-    } else if (!fields.avatar || fields.avatar.length > 40) {
+    } else if (!fields.avatar || fields.avatar.length > 80) {
       return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
     }
 
@@ -565,7 +563,7 @@ export default {
     let fields = req.body
     try {
       let _session = req.session
-      if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id || _session.userInfo.role !== 'member') {
+      if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id) {
         return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
       }
       let validateResult = checkMemberUpdateProfileFields(fields)

@@ -204,48 +204,6 @@ export default {
     }
   },
 
-  async getListByCateId(req, res, next) {
-    try {
-      log(req.query)
-      let fields = req.query
-      let queryObj = {}
-      let cateId = fields.cateid
-      let page = Number(fields.page) || 1
-      let pageSize = Number(fields.pageSize) || 10
-      let clickSort = fields.click_sort
-
-      // 判断分类ID是否为有效值
-      if (!checkCurrentId(cateId)) {
-        return res.status(404).send(renderApiErr(req, res, 500, '无效分类ID'))
-      } else {
-        queryObj['categories'] = cateId
-      }
-
-      // 排序
-      let sortObj = { data: -1 }
-      if (clickSort === -1 || clickSort === 1) {
-        sortObj = { clicks: clickSort }
-      }
-
-      // 查询文档
-      const postList = await Post.find(queryObj).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).exec()
-      const totalCounts = await Post.count(queryObj)
-
-      log(postList, totalCounts)
-
-      let postObj = {
-        list: postList,
-        page: page,
-        lastPage: Math.ceil(totalCounts / pageSize),
-        pageSize: pageSize,
-        totalCounts: totalCounts
-      }
-      return res.send(renderApiData(res, 200, '文章列表获取成功', tagObj))
-    } catch (err) {
-      return res.status(500).send(renderApiErr(req, res, 500, err))
-    }
-  },
-
   /**
    * 创建一篇文章
    * @param {*} req 

@@ -27,7 +27,7 @@ let checkCreateCommentFields = (formData, req) => {
       status: false,
       msg: '无效用户ID'
     }
-  } else if (owner !== _session.userInfo.id || _session.userInfo.role !== 'member') {
+  } else if (owner !== _session.userInfo.id) {
     return {
       status: false,
       msg: '身份验证失败'
