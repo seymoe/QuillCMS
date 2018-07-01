@@ -12,9 +12,9 @@
             :tabPostList="newestPostList"></index-post-tab>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
-          <advertise-box></advertise-box>
+          <advertise-box :adobj="indexAdvertise"></advertise-box>
           <hot-posts :hotPosts="hotPostList"></hot-posts>
-          <hot-creaters></hot-creaters>
+          <hot-creaters :hotCreaters="hotCreaters"></hot-creaters>
           <hot-tags :tagList="hotTagList"></hot-tags>
         </el-col>
       </el-row>
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
 import { mapState } from 'vuex'
 import axios from 'axios'
 import API from '~/config/api'
@@ -169,7 +170,12 @@ export default {
       swiperTopList: [],
       newestPostList: [],
       hotPostList: [],
-      hotTagList: []
+      hotTagList: [],
+
+      // 首页广告位
+      indexAdvertise: {},
+      // 热门创作人
+      hotCreaters: []
     }
   },
 
@@ -200,11 +206,45 @@ export default {
     }
   },
 
-  computed: mapState([
-    'loginState',
-    'topMenu',
-    'friendLink'
-  ]),
+  computed: mapState(['loginState', 'topMenu', 'friendLink']),
+
+  methods: {
+    clientGetAdvertise() {
+      this.$request
+        .get(API.advertisement + '/' + siteConf.indexAd)
+        .then(res => {
+          if (res.data.success) {
+            this.indexAdvertise = res.data.data
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
+    },
+    clientGetHotCreaters() {
+      this.$request
+        .get(API.member, {
+          params: {
+            role: 'member',
+            sortBy: 'postsNum',
+            limit: 5
+          }
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.hotCreaters = res.data.data.list
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
+    }
+  },
+
+  mounted() {
+    this.clientGetAdvertise()
+    this.clientGetHotCreaters()
+  },
 
   components: {
     AppHeader,
@@ -220,7 +260,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sidebar{
+.sidebar {
   padding-left: 20px;
   @media screen and (max-width: 767px) {
     padding-left: 0;

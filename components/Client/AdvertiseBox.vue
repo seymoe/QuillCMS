@@ -1,10 +1,16 @@
 <template>
-  <section class="advertise-box">
-    <a href="#">
-      <img src="~/assets/img/place.png" alt="">
+  <section class="advertise-box" v-if="adobj">
+    <a :href="adobj.link" target="_blank">
+      <img :src="adobj.cover" :alt="adobj.title">
     </a>
   </section>
 </template>
+
+<script>
+export default {
+  props: ['adobj']
+}
+</script>
 
 <style lang="scss" scoped>
 .advertise-box{

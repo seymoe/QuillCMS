@@ -3,7 +3,7 @@ import xss from 'xss'
 import Post from '../models/Post'
 import PostTag from '../models/PostTag'
 import PostCategory from '../models/PostCategory'
-// import validator from 'validator'
+import User from '../models/User'
 import shortid from 'shortid'
 import Marked from 'marked'
 const highlight = require('highlight.js')
@@ -244,6 +244,9 @@ export default {
 
     try {
       let postObj = await newPost.save()
+      // 更新用户发文数
+      await User.findOneAndUpdate({_id: obj.author}, {'$inc': {postsNum: 1}})
+
       return res.send(renderApiData(res, 200, '文章创建成功', { id: postObj._id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))

@@ -8,7 +8,7 @@
       <div class="item flex-row">
         <span>粉丝：30</span>
         <span>关注：12</span>
-        <span>发文：7</span>
+        <span>发文：{{ userData.postsNum }}</span>
       </div>
       <div class="item" v-if="userData.email">邮箱：{{ userData.email }}</div>
       <div class="item" v-if="userData.phone">手机：{{ userData.phone }}</div>

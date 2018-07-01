@@ -4,18 +4,29 @@
       <h1>创作达人</h1>
     </div>
     <div class="creaters">
-      <div class="creater flex-row">
-        <nuxt-link to="'/user/'" class="imgbox">
-          <img src="~/assets/img/avatar.png" alt="">
+      <div
+        v-for="(item, index) in hotCreaters"
+        :key="index"
+        class="creater flex-row">
+        <nuxt-link :to="'/user/' + item._id" class="imgbox">
+          <img v-if="item.avatar" :src="item.avatar" :alt="item.nickname">
+          <img v-else src="~/assets/img/avatar.png" :alt="item.nickname">
         </nuxt-link>
         <div class="txtbox flex-column flex-1">
-          <h2>曦莫琅</h2>
-          <p>发文量: 300 | 粉丝数：200</p>
+          <h2><nuxt-link :to="'/user/' + item._id">{{ item.nickname }}</nuxt-link></h2>
+          <p>发文量: {{ item.postsNum ? item.postsNum : 0 }} | 粉丝数：200</p>
         </div>
       </div>
     </div>
   </section>
 </template>
+
+<script>
+export default {
+  props: ['hotCreaters']
+}
+</script>
+
 
 <style lang="scss" scoped>
 .hot-creater-wrap{
@@ -60,8 +71,14 @@
     justify-content: space-around;
     h2{
       margin: 0;
-      font-size: 16px;
-      color: #666;
+      a{
+        font-size: 16px;
+        color: #666;
+        transition: all .3s;
+        &:hover{
+          color: #409eff;
+        }
+      }
     }
     p{
       color: #999;

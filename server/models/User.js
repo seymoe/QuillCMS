@@ -66,6 +66,11 @@ const UserSchema = new Schema({
     type: Number,
     default: 0
   },
+  // 发文数
+  postsNum: {
+    type: Number,
+    default: 0
+  },
   // 统计字段
   register_time: {
     type: Date,

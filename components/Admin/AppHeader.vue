@@ -20,13 +20,15 @@
           <div class="avatar" 
             @click="handleTogglePanel"
             v-click-outside="handleOutsideClickMenu">
-            <img src="~/assets/img/avatar.png" alt="">
+            <img v-if="loginState.userInfo.avatar" :src="loginState.userInfo.avatar" :alt="loginState.userInfo.nickname">
+            <img v-else src="~/assets/img/avatar.png" :alt="loginState.userInfo.nickname">
             <span>{{ loginState.userInfo.nickname ? loginState.userInfo.nickname : '' }}</span>
           </div>
         </div>
         <transition name="fade">
           <el-card v-show="showPanel" class="panal" :body-style="{ padding: '0px' }">
-            <img src="~/assets/img/avatar.png" alt="">
+            <img v-if="loginState.userInfo.avatar" :src="loginState.userInfo.avatar" :alt="loginState.userInfo.nickname">
+            <img v-else src="~/assets/img/avatar.png" :alt="loginState.userInfo.nickname">
             <h2>{{ loginState.userInfo.nickname ? loginState.userInfo.nickname : '' }}</h2>
             <p>{{ loginState.userInfo.role === 'super' ? '超级管理员' : '' }}</p>
             <p>{{ loginState.userInfo.role === 'admin' ? '管理员' : '' }}</p>
@@ -167,6 +169,7 @@ export default {
       width: 30px;
       height: 30px;
       margin-top: 10px;
+      border-radius: 100%;
     }
     > span {
       display: block;

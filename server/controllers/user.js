@@ -221,19 +221,26 @@ export default {
     try {
       log(req.query)
       let fields = req.query
-      let queryObj = {}
+      let queryObj = {}, sortObj = {create_time: -1}
       let page = Number(fields.page) || 1
       let pageSize = Number(fields.pageSize) || 10
       let role = fields.role  // 角色 super/admin/member
+      let sortBy = fields.sortBy  // 排序参数
 
       if (role === 'super' || role === 'admin' || role === 'member') {
         queryObj.role = role
       }
 
+      // 排序
+      if (sortBy) {
+        delete sortObj.create_time
+        sortObj[sortBy] = -1
+      }
+
       log(queryObj)
 
       // 查询文档
-      const userList = await User.find(queryObj, { password: 0 }).sort({ date: -1 }).skip((page - 1) * pageSize).limit(pageSize).exec()
+      const userList = await User.find(queryObj, { password: 0 }).sort(sortObj).skip((page - 1) * pageSize).limit(pageSize).exec()
       const totalCounts = await User.count(queryObj)
 
       log(userList, totalCounts)
@@ -473,7 +480,8 @@ export default {
         sex: 1,
         age: 1,
         province: 1,
-        city: 1
+        city: 1,
+        postsNum: 1
       }
 
       if (_session.userLogined && _session.userInfo.id === targetId) {
@@ -493,7 +501,8 @@ export default {
           province: 1,
           city: 1,
           address: 1,
-          coin: 1
+          coin: 1,
+          postsNum: 1
         }
       }
 

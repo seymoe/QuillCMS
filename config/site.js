@@ -57,5 +57,10 @@ export default {
   secret: 'quillcms',
   resave: false,
   saveUninitialized: false,
-  maxAge: 3600000
+  maxAge: 3600000,
+
+  /**
+   * 广告配置 id
+   */
+  indexAd: 'rJH_KzSfm'
 }

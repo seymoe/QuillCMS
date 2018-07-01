@@ -22,6 +22,7 @@ router.get('/friendlinks', FriendLinkController.getList)
 
 /* 广告 */
 router.get('/ads', AdvertisementController.getList)
+router.get('/ads/:id', AdvertisementController.getOne)
 
 /* 文章相关 */
 // 发布文章
@@ -39,6 +40,7 @@ router.get('/comments', PostCommentController.getCommens)
 router.post('/comments/new', checkUserSession, PostCommentController.postComment)
 
 /* 用户相关 */
+router.get('/member', UserController.getUsers)
 router.get('/member/:id', UserController.memberGetBaseInfo)
 router.post('/member/login', UserController.memberLoginAction)
 router.post('/member/logout', UserController.logoutAction)

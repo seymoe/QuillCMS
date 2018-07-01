@@ -51,7 +51,9 @@ export default {
   /** 客户端 ------------------------------------------------------------------- */
   topMenu: `${siteConf.api_url}/client${siteConf.api_path}/category/list`,
   friendLink: `${siteConf.api_url}/client${siteConf.api_path}/friendlinks`,
-  advertisement: `${siteConf.api_url}/server${siteConf.api_path}/ads`,
+
+  // 广告
+  advertisement: `${siteConf.api_url}/client${siteConf.api_path}/ads`,
 
   // 文章列表
   appPostList: `${siteConf.api_url}/client${siteConf.api_path}/post/list`,
