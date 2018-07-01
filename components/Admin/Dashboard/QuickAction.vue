@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 export default {
   data() {
     return {
@@ -22,31 +24,31 @@ export default {
           id: 1,
           name: '添加文章',
           type: 'primary',
-          url: '/admin/posts/new'
+          url: siteConf.adminPath + '/posts/new'
         },
         {
           id: 2,
           name: '查看用户',
           type: 'success',
-          url: '/admin/users'
+          url: siteConf.adminPath + '/users'
         },
         {
           id: 3,
           name: '查看分类',
           type: 'info',
-          url: '/admin/categories'
+          url: siteConf.adminPath + '/categories'
         },
         {
           id: 4,
           name: '查看评论',
           type: 'warning',
-          url: '/admin/comments'
+          url: siteConf.adminPath + '/comments'
         },
         {
           id: 5,
           name: '系统设置',
           type: 'danger',
-          url: '/admin/system/site'
+          url: siteConf.adminPath + '/system/site'
         }
       ]
     }

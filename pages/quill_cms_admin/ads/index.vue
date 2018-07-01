@@ -6,27 +6,27 @@
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
       <app-menu 
-        activeIndex="/admin/tags"
+        :activeIndex="routePath + '/ads'"
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
-        <link-top
-          @add-link="handleToggleAddDialog"></link-top>
-        <link-table 
-          :linkTableData="linkList"
-          :pageSize="linkMeta.pageSize"
-          :totalCounts="linkMeta.totalCounts"
-          @delete-link="clientDeleteOneLink"
-          @update-link="handleToggleUpdateDialog"></link-table>
-        <add-link-dialog 
+        <ad-top
+          @add-ad="handleToggleAddDialog"></ad-top>
+        <ad-table 
+          :adsTableData="adsList"
+          :pageSize="adsMeta.pageSize"
+          :totalCounts="adsMeta.totalCounts"
+          @delete-ad="clientDeleteOneAd"
+          @update-ad="handleToggleUpdateDialog"></ad-table>
+        <add-ad-dialog 
           :dialogFormVisible="dialogFormVisible"
-          @add-link="handleToggleAddDialog"
-          @create-new-link="clientCreateOneLink"></add-link-dialog>
-        <edit-link-dialog 
+          @add-ad="handleToggleAddDialog"
+          @create-new-ad="clientCreateOneAd"></add-ad-dialog>
+        <edit-ad-dialog 
           :dialogFormVisible="updateFormVisible"
-          :form="currentLinkData"
-          @add-link="handleToggleUpdateDialog"
-          @update-link="clientUpdateOneLink"></edit-link-dialog>
+          :form="currentAdData"
+          @add-ad="handleToggleUpdateDialog"
+          @update-ad="clientUpdateOneAd"></edit-ad-dialog>
       </main>
     </div>
     <app-footer></app-footer>
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 import { mapState } from 'vuex'
 import API from '~/config/api'
 import { log } from '~/utils/util'
@@ -41,24 +43,25 @@ import AppHeader from '~/components/Admin/AppHeader'
 import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
 import AppPageTitle from '~/components/Admin/AppPageTitle'
-import LinkTop from '~/components/Admin/Links/LinkTop'
-import LinkTable from '~/components/Admin/Links/LinkTable'
-import AddLinkDialog from '~/components/Admin/Links/AddLinkDialog'
-import EditLinkDialog from '~/components/Admin/Links/EditLinkDialog'
+import AdTop from '~/components/Admin/Ads/AdTop'
+import AdTable from '~/components/Admin/Ads/AdTable'
+import AddAdDialog from '~/components/Admin/Ads/AddAdDialog'
+import EditAdDialog from '~/components/Admin/Ads/EditAdDialog'
 
 export default {
   data() {
     return {
+      routePath: siteConf.adminPath,
       cateObj: {
-        cateName: '友链管理',
+        cateName: '广告管理',
         pathArray: [
           {
             name: '首页',
-            path: '/admin'
+            path: siteConf.adminPath
           },
           {
-            name: '友链管理',
-            path: '/admin/links'
+            name: '广告管理',
+            path: siteConf.adminPath + '/ads'
           }
         ]
       },
@@ -69,8 +72,8 @@ export default {
 
       // ------- 以上为每个页面固定状态值 -------
       // 友链列表
-      linkList: [],
-      linkMeta: {
+      adsList: [],
+      adsMeta: {
         page: 1,
         pageSize: 10,
         totalCounts: 0
@@ -80,7 +83,7 @@ export default {
       // 是否显示更新框
       updateFormVisible: false,
       // 当前选中的链接对象
-      currentLinkData: {}
+      currentAdData: {}
     }
   },
 
@@ -132,7 +135,7 @@ export default {
 
       if (bool) {
         // 拉取详情成功后，显示弹窗，注入数据
-        this.clientGetOneLink(data, () => {
+        this.clientGetOneAd(data, () => {
           this.updateFormVisible = bool
         })
       } else {
@@ -141,10 +144,10 @@ export default {
     },
 
     // 客户端发送增加友链请求
-    clientCreateOneLink(data, successCB, failCB) {
+    clientCreateOneAd(data, successCB, failCB) {
       log(data)
       this.$request
-        .post(API.linkAdd, data)
+        .post(API.adAdd, data)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -153,7 +156,7 @@ export default {
               type: 'success'
             })
             successCB && successCB()
-            this.clientGetLinkList()
+            this.clientGetAdList()
           }
         })
         .catch(err => {
@@ -167,10 +170,10 @@ export default {
     },
 
     // 客户端更新友链
-    clientUpdateOneLink(data, successCB, failCB) {
+    clientUpdateOneAd(data, successCB, failCB) {
       log(data)
       this.$request
-        .post(API.linkUpdate, data)
+        .post(API.adUpdate, data)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -179,7 +182,7 @@ export default {
               type: 'success'
             })
             successCB && successCB()
-            this.clientGetLinkList()
+            this.clientGetAdList()
           }
         })
         .catch(err => {
@@ -193,16 +196,16 @@ export default {
     },
 
     // 客户端拉取标签列表请求
-    clientGetLinkList() {
+    clientGetAdList() {
       this.$request
-        .get(API.linkList, {
+        .get(API.adList, {
           params: {
             mode: 'full'
           }
         })
         .then(res => {
           if (res.data.success) {
-            this.linkList = res.data.data.list
+            this.adsList = res.data.data.list
           }
         })
         .catch(e => {
@@ -213,7 +216,7 @@ export default {
     },
 
     // 客户端拉取单个详情
-    clientGetOneLink(linkNode, callback) {
+    clientGetOneAd(adNode, callback) {
       // 只有超级管理员才能编辑链接
       if (
         this.loginState.userInfo.role !== 'super' &&
@@ -226,13 +229,13 @@ export default {
         return false
       }
 
-      log(linkNode)
+      log(adNode)
 
       this.$request
-        .get(API.linkDelete + '/' + linkNode._id)
+        .get(API.adDelete + '/' + adNode._id)
         .then(res => {
           if (res.data.success) {
-            this.currentLinkData = res.data.data
+            this.currentAdData = res.data.data
             callback && callback()
           } else {
             this.$notify({
@@ -248,7 +251,7 @@ export default {
     },
 
     // 客户端发起删除友链请求
-    clientDeleteOneLink(linkNode) {
+    clientDeleteOneAd(adNode) {
       // 只有超级管理员才能删除分类
       if (
         this.loginState.userInfo.role !== 'super' &&
@@ -261,10 +264,10 @@ export default {
         return false
       }
 
-      log(linkNode)
+      log(adNode)
 
       this.$request
-        .delete(API.linkDelete + '/' + linkNode._id)
+        .delete(API.adDelete + '/' + adNode._id)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -272,7 +275,7 @@ export default {
               message: res.data.message,
               type: 'success'
             })
-            this.clientGetLinkList()
+            this.clientGetAdList()
           } else {
             this.$notify({
               title: '错误',
@@ -288,17 +291,17 @@ export default {
   },
   computed: mapState(['loginState']),
   mounted() {
-    this.clientGetLinkList()
+    this.clientGetAdList()
   },
   components: {
     AppHeader,
     AppFooter,
     AppMenu,
     AppPageTitle,
-    LinkTop,
-    LinkTable,
-    AddLinkDialog,
-    EditLinkDialog
+    AdTop,
+    AdTable,
+    AddAdDialog,
+    EditAdDialog
   }
 }
 </script>

@@ -22,6 +22,16 @@ export default {
   api_url: 'http://127.0.0.1:4000',
 
   /**
+   * 后台设置
+  */
+  // 后台管理路径
+  // !!! ⚠️ 在此配置路径之后，需要更改pages下对应的admin文件夹名称
+  // 如果此配置路径深度大于一级，则pages下admin文件夹也要相应创建对应深度
+  // 例： adminPath为 /quillcms/admin, 需要将pages下的admin文件夹更名为quillcms，并创建一个名为admin的子文件夹来盛放其他文件夹
+  // 具体见 nuxt.js
+  adminPath: '/quill_cms_admin',
+
+  /**
    * 数据库配置
    */
   DB_URL: 'mongodb://127.0.0.1:27017/zhejingxuan',

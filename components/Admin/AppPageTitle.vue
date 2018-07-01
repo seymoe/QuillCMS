@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 export default {
   props: {
     cateObj: {
@@ -23,7 +25,7 @@ export default {
           pathArray: [
             {
               name: '首页',
-              path: '/admin'
+              path: siteConf.adminPath
             },
             {
               name: '仪表盘',

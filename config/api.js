@@ -1,4 +1,4 @@
-import siteConf from './index.default'
+import siteConf from './site'
 
 export default {
   /** 管理端 ----------------- */

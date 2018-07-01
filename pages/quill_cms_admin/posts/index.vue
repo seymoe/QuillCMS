@@ -6,7 +6,7 @@
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
       <app-menu 
-        activeIndex="/admin/posts"
+        :activeIndex="routePath + '/posts'"
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 import { mapState } from 'vuex'
 import API from '~/config/api'
 import { log } from '~/utils/util'
@@ -35,16 +37,17 @@ import PostTable from '~/components/Admin/Posts/PostTable'
 export default {
   data() {
     return {
+      routePath: siteConf.adminPath,
       cateObj: {
         cateName: '文章管理',
         pathArray: [
           {
             name: '首页',
-            path: '/admin'
+            path: siteConf.adminPath
           },
           {
             name: '文章管理',
-            path: '/admin/posts'
+            path: siteConf.adminPath + '/posts'
           }
         ]
       },
@@ -128,7 +131,7 @@ export default {
         return false
       }
 
-      this.$router.push('/admin/posts/new')
+      this.$router.push(siteConf.adminPath + '/posts/new')
     }
   },
   computed: mapState([

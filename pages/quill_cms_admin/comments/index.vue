@@ -6,7 +6,7 @@
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
       <app-menu 
-        activeIndex="/admin/comments"
+        :activeIndex="routePath + '/comments'"
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 import { mapState } from 'vuex'
 import API from '~/config/api'
 import { log } from '~/utils/util'
@@ -36,16 +38,17 @@ import CommentTable from '~/components/Admin/Comments/CommentTable'
 export default {
   data() {
     return {
+      routePath: siteConf.adminPath,
       cateObj: {
         cateName: '评论管理',
         pathArray: [
           {
             name: '首页',
-            path: '/admin'
+            path: siteConf.adminPath
           },
           {
             name: '评论管理',
-            path: '/admin/comments'
+            path: siteConf.adminPath + '/comments'
           }
         ]
       },

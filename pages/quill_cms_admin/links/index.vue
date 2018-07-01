@@ -6,28 +6,27 @@
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
       <app-menu 
-        activeIndex="/admin/users"
+        :activeIndex="routePath + '/tags'"
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
-        <user-top
-          @toggle-role="clientGetUserList"
-          @add-user="handleToggleAddDialog"></user-top>
-        <user-table 
-          :userTableData="userList"
-          :pageSize="userMeta.pageSize"
-          :totalCounts="userMeta.totalCounts"
-          @delete-user="clientDeleteOneUser"
-          @update-user="handleToggleUpdateDialog"></user-table>
-        <add-user-dialog
+        <link-top
+          @add-link="handleToggleAddDialog"></link-top>
+        <link-table 
+          :linkTableData="linkList"
+          :pageSize="linkMeta.pageSize"
+          :totalCounts="linkMeta.totalCounts"
+          @delete-link="clientDeleteOneLink"
+          @update-link="handleToggleUpdateDialog"></link-table>
+        <add-link-dialog 
           :dialogFormVisible="dialogFormVisible"
-          @add-user="handleToggleAddDialog"
-          @create-new-user="clientCreateOneUser"></add-user-dialog>
-        <edit-user-dialog 
+          @add-link="handleToggleAddDialog"
+          @create-new-link="clientCreateOneLink"></add-link-dialog>
+        <edit-link-dialog 
           :dialogFormVisible="updateFormVisible"
-          :form="currentUserData"
-          @add-user="handleToggleUpdateDialog"
-          @update-user="clientUpdateOne"></edit-user-dialog>
+          :form="currentLinkData"
+          @add-link="handleToggleUpdateDialog"
+          @update-link="clientUpdateOneLink"></edit-link-dialog>
       </main>
     </div>
     <app-footer></app-footer>
@@ -35,6 +34,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 import { mapState } from 'vuex'
 import API from '~/config/api'
 import { log } from '~/utils/util'
@@ -42,24 +43,25 @@ import AppHeader from '~/components/Admin/AppHeader'
 import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
 import AppPageTitle from '~/components/Admin/AppPageTitle'
-import UserTop from '~/components/Admin/Users/UserTop'
-import UserTable from '~/components/Admin/Users/UserTable'
-import AddUserDialog from '~/components/Admin/Users/AddUserDialog'
-import EditUserDialog from '~/components/Admin/Users/EditUserDialog'
+import LinkTop from '~/components/Admin/Links/LinkTop'
+import LinkTable from '~/components/Admin/Links/LinkTable'
+import AddLinkDialog from '~/components/Admin/Links/AddLinkDialog'
+import EditLinkDialog from '~/components/Admin/Links/EditLinkDialog'
 
 export default {
   data() {
     return {
+      routePath: siteConf.adminPath,
       cateObj: {
-        cateName: '用户管理',
+        cateName: '友链管理',
         pathArray: [
           {
             name: '首页',
-            path: '/admin'
+            path: siteConf.adminPath
           },
           {
-            name: '用户管理',
-            path: '/admin/users'
+            name: '友链管理',
+            path: siteConf.adminPath + '/links'
           }
         ]
       },
@@ -67,18 +69,21 @@ export default {
         btnPosition: 145,
         isCollapse: false
       },
-      userList: [],
-      userMeta: {
+
+      // ------- 以上为每个页面固定状态值 -------
+      // 友链列表
+      linkList: [],
+      linkMeta: {
         page: 1,
         pageSize: 10,
         totalCounts: 0
       },
-      // 是否显示添加用户弹框
+      // 是否显示添加标签弹框
       dialogFormVisible: false,
-
-      // 更新
+      // 是否显示更新框
       updateFormVisible: false,
-      currentUserData: {}
+      // 当前选中的链接对象
+      currentLinkData: {}
     }
   },
 
@@ -92,15 +97,18 @@ export default {
       }
     },
 
-    // 切换增加用户弹框显示
+    // 切换增加友链弹框显示
     /*
     * bool { Boolean } 是否显示弹窗
     */
     handleToggleAddDialog(bool) {
       if (this.dialogFormVisible === bool) return false
 
-      // 只有超级管理员才能添加用户
-      if (this.loginState.userInfo.role !== 'super') {
+      // 只有管理员才能添加添加友链
+      if (
+        this.loginState.userInfo.role !== 'super' &&
+        this.loginState.userInfo.role !== 'admin'
+      ) {
         this.$message({
           type: 'warning',
           message: '权限不足'
@@ -111,11 +119,13 @@ export default {
       this.dialogFormVisible = bool
     },
 
-    // 更新弹窗
     handleToggleUpdateDialog(bool, data) {
       if (this.updateFormVisible === bool) return false
       // 只有管理员才能添加添加友链
-      if (this.loginState.userInfo.role !== 'super') {
+      if (
+        this.loginState.userInfo.role !== 'super' &&
+        this.loginState.userInfo.role !== 'admin'
+      ) {
         this.$message({
           type: 'warning',
           message: '权限不足'
@@ -125,7 +135,7 @@ export default {
 
       if (bool) {
         // 拉取详情成功后，显示弹窗，注入数据
-        this.clientGetOne(data, () => {
+        this.clientGetOneLink(data, () => {
           this.updateFormVisible = bool
         })
       } else {
@@ -133,12 +143,11 @@ export default {
       }
     },
 
-    // 客户端发送增加用户请求
-    clientCreateOneUser(data, successCB, failCB) {
-      data.fakemark = 'quillcms_user_mark_' + Date.now()
+    // 客户端发送增加友链请求
+    clientCreateOneLink(data, successCB, failCB) {
       log(data)
       this.$request
-        .post(API.userAdd, data)
+        .post(API.linkAdd, data)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -147,7 +156,7 @@ export default {
               type: 'success'
             })
             successCB && successCB()
-            this.clientGetUserList()
+            this.clientGetLinkList()
           }
         })
         .catch(err => {
@@ -160,41 +169,11 @@ export default {
         })
     },
 
-    // 客户端获取用户列表
-    clientGetUserList(role) {
+    // 客户端更新友链
+    clientUpdateOneLink(data, successCB, failCB) {
+      log(data)
       this.$request
-        .get(API.userList, {
-          params: {
-            role: role || 'all'
-          }
-        })
-        .then(res => {
-          if (res.data.success) {
-            this.userList = res.data.data.list
-            this.userMeta.page = res.data.data.page
-            this.userMeta.pageSize = res.data.data.pageSize
-            this.userMeta.totalCounts = res.data.data.totalCounts
-          }
-        })
-        .catch(e => {
-          log(e)
-        })
-    },
-
-    // 客户端发起删除用户请求
-    clientDeleteOneUser(userObj) {
-      // 只有超级管理员才能删除用户
-      if (this.loginState.userInfo.role !== 'super') {
-        this.$message({
-          type: 'warning',
-          message: '权限不足'
-        })
-        return false
-      }
-
-      log(userObj)
-      this.$request
-        .delete(API.userDelete + '/' + userObj._id)
+        .post(API.linkUpdate, data)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -202,7 +181,62 @@ export default {
               message: res.data.message,
               type: 'success'
             })
-            this.clientGetUserList()
+            successCB && successCB()
+            this.clientGetLinkList()
+          }
+        })
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
+          failCB && failCB()
+        })
+    },
+
+    // 客户端拉取标签列表请求
+    clientGetLinkList() {
+      this.$request
+        .get(API.linkList, {
+          params: {
+            mode: 'full'
+          }
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.linkList = res.data.data.list
+          }
+        })
+        .catch(e => {
+          log(e)
+          // 发生错误则刷新页面从服务端重新拉取列表
+          // location.reload()
+        })
+    },
+
+    // 客户端拉取单个详情
+    clientGetOneLink(linkNode, callback) {
+      // 只有超级管理员才能编辑链接
+      if (
+        this.loginState.userInfo.role !== 'super' &&
+        this.loginState.userInfo.role !== 'admin'
+      ) {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
+      log(linkNode)
+
+      this.$request
+        .get(API.linkDelete + '/' + linkNode._id)
+        .then(res => {
+          if (res.data.success) {
+            this.currentLinkData = res.data.data
+            callback && callback()
           } else {
             this.$notify({
               title: '错误',
@@ -216,36 +250,13 @@ export default {
         })
     },
 
-    // 客户端更新用户
-    clientUpdateOne(data, successCB, failCB) {
-      log(data)
-      this.$request
-        .post(API.userUpdate, data)
-        .then(res => {
-          if (res.data.success) {
-            this.$notify({
-              title: '成功',
-              message: res.data.message,
-              type: 'success'
-            })
-            successCB && successCB()
-            this.clientGetUserList()
-          }
-        })
-        .catch(err => {
-          log(err)
-          this.$notify.error({
-            title: '错误',
-            message: err.message
-          })
-          failCB && failCB()
-        })
-    },
-
-    // 客户端拉取单个详情
-    clientGetOne(node, callback) {
-      // 只有超级管理员才能编辑链接
-      if (this.loginState.userInfo.role !== 'super') {
+    // 客户端发起删除友链请求
+    clientDeleteOneLink(linkNode) {
+      // 只有超级管理员才能删除分类
+      if (
+        this.loginState.userInfo.role !== 'super' &&
+        this.loginState.userInfo.role !== 'admin'
+      ) {
         this.$message({
           type: 'warning',
           message: '权限不足'
@@ -253,14 +264,18 @@ export default {
         return false
       }
 
-      log(node)
+      log(linkNode)
 
       this.$request
-        .get(API.userDelete + '/' + node._id)
+        .delete(API.linkDelete + '/' + linkNode._id)
         .then(res => {
           if (res.data.success) {
-            this.currentUserData = res.data.data
-            callback && callback()
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.clientGetLinkList()
           } else {
             this.$notify({
               title: '错误',
@@ -276,18 +291,17 @@ export default {
   },
   computed: mapState(['loginState']),
   mounted() {
-    // 拉取用户列表
-    this.clientGetUserList('all')
+    this.clientGetLinkList()
   },
   components: {
     AppHeader,
     AppFooter,
     AppMenu,
     AppPageTitle,
-    UserTop,
-    UserTable,
-    AddUserDialog,
-    EditUserDialog
+    LinkTop,
+    LinkTable,
+    AddLinkDialog,
+    EditLinkDialog
   }
 }
 </script>

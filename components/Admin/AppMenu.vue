@@ -14,56 +14,63 @@
       @open="handleOpen"
       @close="handleClose"
       :collapse="isCollapse">
-      <el-menu-item index="/admin">
+      <el-menu-item :index="routePath">
         <i class="iconfont">&#xe61a;</i>
         <span slot="title">仪表盘</span>
       </el-menu-item>
-      <el-menu-item index="/admin/users">
+      <el-menu-item :index="routePath + '/users'">
         <i class="iconfont">&#xe602;</i>
         <span slot="title">用户管理</span>
       </el-menu-item>
-      <el-menu-item index="/admin/posts">
+      <el-menu-item :index="routePath + '/posts'">
         <i class="iconfont">&#xe67d;</i>
         <span slot="title">文章管理</span>
       </el-menu-item>
-      <el-menu-item index="/admin/categories">
+      <el-menu-item :index="routePath + '/categories'">
         <i class="iconfont">&#xe601;</i>
         <span slot="title">分类管理</span>
       </el-menu-item>
-      <el-menu-item index="/admin/comments">
+      <el-menu-item :index="routePath + '/comments'">
         <i class="iconfont">&#xe69a;</i>
         <span slot="title">评论管理</span>
       </el-menu-item>
-      <el-menu-item index="/admin/tags">
+      <el-menu-item :index="routePath + '/tags'">
         <i class="iconfont">&#xe6a4;</i>
         <span slot="title">标签管理</span>
       </el-menu-item>
-      <el-menu-item index="/admin/ads">
+      <el-menu-item :index="routePath + '/ads'">
         <i class="iconfont">&#xe674;</i>
         <span slot="title">广告管理</span>
       </el-menu-item>
-      <el-menu-item index="/admin/links">
+      <el-menu-item :index="routePath + '/links'">
         <i class="iconfont">&#xe636;</i>
         <span slot="title">友链管理</span>
       </el-menu-item>
-      <el-submenu index="/admin/system">
+      <el-submenu :index="routePath + '/system'">
         <template slot="title">
           <i class="el-icon-setting"></i>
           <span>系统管理</span>
         </template>
-        <el-menu-item index="/admin/system/site">站点设置</el-menu-item>
-        <el-menu-item index="/admin/system/slider">轮播管理</el-menu-item>
+        <el-menu-item :index="routePath + '/system/site'">站点设置</el-menu-item>
+        <el-menu-item :index="routePath + '/system/slider'">轮播管理</el-menu-item>
       </el-submenu>
     </el-menu>
   </aside>
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 export default {
+  data() {
+    return {
+      routePath: siteConf.adminPath
+    }
+  },
   props: {
     activeIndex: {
       type: String,
-      default: '/admin'
+      default: siteConf.adminPath
     },
     isCollapse: {
       type: Boolean,

@@ -6,21 +6,21 @@
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
       <app-menu 
-        activeIndex="/admin/tags"
+        :activeIndex="routePath + '/categories'"
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
-        <tag-top
-          @add-tag="handleToggleAddDialog"></tag-top>
-        <tag-table 
-          :tagTableData="tagList"
-          :pageSize="tagMeta.pageSize"
-          :totalCounts="tagMeta.totalCounts"
-          @delete-tag="clientDeleteOneTag"></tag-table>
-        <add-tag-dialog 
+        <categories-top
+          @add-cate="handleToggleAddDialog"></categories-top>
+        <categories-tree 
+          :categoryTree="categoryList"
+          @add-cate="handleToggleAddDialog"
+          @delete-cate="clientDeleteOneCate"></categories-tree>
+        <add-cate-dialog 
           :dialogFormVisible="dialogFormVisible"
-          @add-tag="handleToggleAddDialog"
-          @create-new-tag="clientCreateOneTag"></add-tag-dialog>
+          :dialogParentNode="dialogParentNode"
+          @add-cate="handleToggleAddDialog"
+          @create-new-cate="clientCreateOneCate"></add-cate-dialog>
       </main>
     </div>
     <app-footer></app-footer>
@@ -28,30 +28,33 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 import { mapState } from 'vuex'
 import API from '~/config/api'
-import { log } from '~/utils/util'
+import { log, arrayToTree } from '~/utils/util'
 import AppHeader from '~/components/Admin/AppHeader'
 import AppFooter from '~/components/Admin/AppFooter'
 import AppMenu from '~/components/Admin/AppMenu'
 import AppPageTitle from '~/components/Admin/AppPageTitle'
-import TagTop from '~/components/Admin/Tags/TagTop'
-import TagTable from '~/components/Admin/Tags/TagTable'
-import AddTagDialog from '~/components/Admin/Tags/AddTagDialog'
+import CategoriesTop from '~/components/Admin/Categories/CategoriesTop'
+import CategoriesTree from '~/components/Admin/Categories/CategoriesTree'
+import AddCateDialog from '~/components/Admin/Categories/AddCateDialog'
 
 export default {
   data() {
     return {
+      routePath: siteConf.adminPath,
       cateObj: {
-        cateName: '标签管理',
+        cateName: '分类管理',
         pathArray: [
           {
             name: '首页',
-            path: '/admin'
+            path: siteConf.adminPath
           },
           {
-            name: '标签管理',
-            path: '/admin/tags'
+            name: '分类管理',
+            path: siteConf.adminPath + '/categories'
           }
         ]
       },
@@ -61,15 +64,11 @@ export default {
       },
 
       // ------- 以上为每个页面固定状态值 -------
-      // 标签列表
-      tagList: [],
-      tagMeta: {
-        page: 1,
-        pageSize: 10,
-        totalCounts: 0
-      },
-      // 是否显示添加标签弹框
-      dialogFormVisible: false
+      // 分类列表
+      categoryList: [],
+      // 是否显示添加分类弹框
+      dialogFormVisible: false,
+      dialogParentNode: {}
     }
   },
 
@@ -83,15 +82,16 @@ export default {
       }
     },
 
-    // 切换增加标签弹框显示
+    // 切换增加分类弹框显示
     /*
     * bool { Boolean } 是否显示弹窗
+    * topCateNode { String } 父级分类ID，默认为0
     */
-    handleToggleAddDialog(bool) {
+    handleToggleAddDialog(bool, topCateNode) {
       if (this.dialogFormVisible === bool) return false
 
-      // 只有管理员才能添加添加分类
-      if (this.loginState.userInfo.role !== 'super' && this.loginState.userInfo.role !== 'admin') {
+      // 只有超级管理员才能添加添加分类
+      if (this.loginState.userInfo.role !== 'super') {
         this.$message({
           type: 'warning',
           message: '权限不足'
@@ -100,13 +100,14 @@ export default {
       }
 
       this.dialogFormVisible = bool
+      this.dialogParentNode = topCateNode || {}
     },
 
-    // 客户端发送增加标签请求
-    clientCreateOneTag(data, successCB, failCB) {
+    // 客户端发送增加分类请求
+    clientCreateOneCate(data, successCB, failCB) {
       log(data)
       this.$request
-        .post(API.tagAdd, data)
+        .post(API.categoryAdd, data)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -115,7 +116,7 @@ export default {
               type: 'success'
             })
             successCB && successCB()
-            this.clientGetTagList()
+            this.clientGetCategoryList()
           }
         })
         .catch(err => {
@@ -128,17 +129,18 @@ export default {
         })
     },
 
-    // 客户端拉取标签列表请求
-    clientGetTagList() {
+    // 客户端拉取分类列表请求
+    clientGetCategoryList() {
       this.$request
-        .get(API.tagList, {
+        .get(API.categoryList, {
           params: {
             mode: 'full'
           }
         })
         .then(res => {
           if (res.data.success) {
-            this.tagList = res.data.data.list
+            let _tree = arrayToTree(res.data.data.list)
+            this.categoryList = _tree
           }
         })
         .catch(e => {
@@ -148,10 +150,10 @@ export default {
         })
     },
 
-    // 客户端发起删除标签请求
-    clientDeleteOneTag(tagNode) {
+    // 客户端发起删除分类请求
+    clientDeleteOneCate(cateNode) {
       // 只有超级管理员才能删除分类
-      if (this.loginState.userInfo.role !== 'super' && this.loginState.userInfo.role !== 'admin') {
+      if (this.loginState.userInfo.role !== 'super') {
         this.$message({
           type: 'warning',
           message: '权限不足'
@@ -159,10 +161,9 @@ export default {
         return false
       }
 
-      log(tagNode)
-
+      log(cateNode)
       this.$request
-        .delete(API.tagDelete + '/' + tagNode._id)
+        .delete(API.categoryDelete + '/' + cateNode._id)
         .then(res => {
           if (res.data.success) {
             this.$notify({
@@ -170,7 +171,7 @@ export default {
               message: res.data.message,
               type: 'success'
             })
-            this.clientGetTagList()
+            this.clientGetCategoryList()
           } else {
             this.$notify({
               title: '错误',
@@ -188,16 +189,16 @@ export default {
     'loginState'
   ]),
   mounted() {
-    this.clientGetTagList()
+    this.clientGetCategoryList()
   },
   components: {
     AppHeader,
     AppFooter,
     AppMenu,
     AppPageTitle,
-    TagTop,
-    TagTable,
-    AddTagDialog
+    CategoriesTop,
+    CategoriesTree,
+    AddCateDialog
   }
 }
 </script>

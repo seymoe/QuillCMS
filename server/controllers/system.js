@@ -1,5 +1,5 @@
 import { log, renderApiData, renderApiErr } from '../../utils/util'
-import conf from '../../config/index.default'
+import conf from '../../config/site'
 import multer from 'multer'
 import qiniu from 'qiniu'
 import Post from '../models/Post'

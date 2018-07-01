@@ -86,6 +86,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 export default {
   data() {
     return {
@@ -110,7 +112,7 @@ export default {
     },
     handleEditPost(id) {
       console.log(id)
-      this.$router.push('/admin/posts/' + id)
+      this.$router.push(siteConf.adminPath + '/posts/' + id)
     }
   }
 }

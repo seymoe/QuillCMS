@@ -1,5 +1,5 @@
 import shortid from 'shortid'
-import siteConf from '../config/index.default'
+import siteConf from '../config/site'
 
 export const log = siteConf.dev ? console.log.bind(console) : () => { }
 

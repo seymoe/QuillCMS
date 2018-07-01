@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 import { Nuxt, Builder } from 'nuxt'
 import session from 'express-session'
 import config from '../nuxt.config'
-import siteConf from '../config/index.default'
+import siteConf from '../config/site'
 import { log } from '../utils/util'
 import serverAPI from './api/server'
 import clientAPI from './api/client'
@@ -34,6 +34,7 @@ app.use(session({
   saveUninitialized: siteConf.saveUninitialized,
   cookie: { maxAge: siteConf.maxAge }
 }))
+
 app.set('port', port)
 
 // Import API Routes

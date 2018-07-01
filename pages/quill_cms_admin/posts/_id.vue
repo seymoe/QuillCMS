@@ -6,7 +6,7 @@
       @toggle-appmenu="handleToggleAppmenu"></app-header>
     <div class="admin-main-content">
       <app-menu 
-        activeIndex="/admin/posts"
+        :activeIndex="routePath + '/posts'"
         :isCollapse="menuSetting.isCollapse"></app-menu>
       <main class="admin-main-wrap">
         <app-page-title :cateObj="cateObj"></app-page-title>
@@ -93,6 +93,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 import { mapState } from 'vuex'
 import API from '~/config/api'
 import { log, arrayToTree } from '~/utils/util'
@@ -127,20 +129,21 @@ export default {
       }
     }
     return {
+      routePath: siteConf.adminPath,
       cateObj: {
-        cateName: '新增文章',
+        cateName: '编辑文章',
         pathArray: [
           {
             name: '首页',
-            path: '/admin'
+            path: siteConf.adminPath
           },
           {
             name: '文章管理',
-            path: '/admin/posts'
+            path: siteConf.adminPath + '/posts'
           },
           {
-            name: '新增',
-            path: '/admin/posts/new'
+            name: '编辑',
+            path: ''
           }
         ]
       },
@@ -174,6 +177,7 @@ export default {
       tagList: [],
 
       // 文章相关
+      postId: '',
       postFormData: {
         title: '',
         sub_title: '',
@@ -194,6 +198,13 @@ export default {
       uploadAction: API.uploadImage
     }
   },
+
+  async asyncData({ params }) {
+    return {
+      postId: params.id
+    }
+  },
+
   methods: {
     handleToggleAppmenu() {
       this.menuSetting.isCollapse = !this.menuSetting.isCollapse
@@ -212,6 +223,39 @@ export default {
         })
         this.postFormData.tags = value.slice(0, 3)
       }
+    },
+
+    // 客户端拉取文章详情
+    clientGetPostDetail(postId) {
+      this.$request
+        .get(API.postDelete + '/' + postId, {
+          params: {
+            getFrom: 'server'
+          }
+        })
+        .then(res => {
+          if (res.data.success) {
+            let _data = res.data.data
+            if (_data.categories.length > 0) {
+              let _ids = []
+              _data.categories.forEach(item => {
+                _ids.push(item._id)
+              })
+              _data.categories = _ids
+            }
+            if (_data.tags.length > 0) {
+              let _ids = []
+              _data.tags.forEach(item => {
+                _ids.push(item._id)
+              })
+              _data.tags = _ids
+            }
+            this.postFormData = _data
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
     },
 
     // 客户端拉取分类列表请求
@@ -321,7 +365,7 @@ export default {
             this.$refs[formName].resetFields()
 
             setTimeout(() => {
-              this.$router.push('/admin/posts')
+              this.$router.push(siteConf.adminPath + '/posts')
             })
           }
           // 校验文章内容是否为空
@@ -334,10 +378,11 @@ export default {
 
           data.fakemark = 'quillcms_post_mark_' + Date.now()
           data.author = this.loginState.userInfo.id
+          data._id = this.postId
 
           log(data)
           this.$request
-            .post(API.postAdd, data)
+            .post(API.postUpdate, data)
             .then(res => {
               if (res.data.success) {
                 this.$notify({
@@ -365,6 +410,7 @@ export default {
   mounted() {
     this.clientGetCategoryList()
     this.clientGetTagList()
+    this.clientGetPostDetail(this.postId)
   },
   components: {
     AppHeader,

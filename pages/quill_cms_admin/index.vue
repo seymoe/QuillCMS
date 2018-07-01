@@ -19,6 +19,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 import { mapState } from 'vuex'
 import API from '~/config/api'
 import { log } from '~/utils/util'
@@ -38,11 +40,11 @@ export default {
         pathArray: [
           {
             name: '首页',
-            path: '/admin'
+            path: siteConf.adminPath
           },
           {
             name: '仪表盘',
-            path: '/admin'
+            path: siteConf.adminPath
           }
         ]
       },

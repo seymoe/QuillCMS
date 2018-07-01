@@ -1,6 +1,6 @@
 import axios from 'axios'
 import Vue from 'vue'
-import siteConf from '~/config/index.default'
+import siteConf from '~/config/site'
 
 const instance = axios.create({
   baseURL: siteConf.api_url,

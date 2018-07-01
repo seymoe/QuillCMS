@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import siteConf from '~/config/site'
+
 import validate from '~/utils/validate'
 import API from '~/config/api'
 import { log } from '~/utils/util'
@@ -85,7 +87,7 @@ export default {
                 type: 'success'
               })
               setTimeout(() => {
-                location.href = '/admin'
+                location.href = siteConf.adminPath
               }, 300)
             }
           }).catch(err => {
