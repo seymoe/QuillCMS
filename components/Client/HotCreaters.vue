@@ -14,7 +14,7 @@
         </nuxt-link>
         <div class="txtbox flex-column flex-1">
           <h2><nuxt-link :to="'/user/' + item._id">{{ item.nickname }}</nuxt-link></h2>
-          <p>发文量: {{ item.postsNum ? item.postsNum : 0 }} | 粉丝数：200</p>
+          <p>发文量: {{ item.postsNum ? item.postsNum : 0 }} | 粉丝数：{{ item.fansNum ? item.fansNum : 0 }}</p>
         </div>
       </div>
     </div>

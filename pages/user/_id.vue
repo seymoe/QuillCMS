@@ -16,8 +16,11 @@
             :articleList="userPostList"></user-index-tab>
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
-          <user-profile-panel 
-            :userData="userData"></user-profile-panel>
+          <user-profile-panel
+            :loginState="loginState"
+            :userData="userData"
+            @follow-user="clientFollowUser"
+            @unfollow-user="clientUnFollowUser"></user-profile-panel>
           <hot-creaters></hot-creaters>
           <hot-tags></hot-tags>
         </el-col>
@@ -208,6 +211,58 @@ export default {
             message: err.message
           })
           failCB && failCB()
+        })
+    },
+
+    // 关注用户
+    clientFollowUser(id) {
+      if (!id) return false
+      this.$request
+        .post(API.member + '/follow', {
+          id: id
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.clientGetUserData(id)
+          }
+        })
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
+        })
+    },
+
+    // 取消关注用户
+    clientUnFollowUser(id) {
+      if (!id) return false
+      this.$request
+        .post(API.member + '/unfollow', {
+          id: id
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            this.clientGetUserData(id)
+          }
+        })
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
         })
     }
   },

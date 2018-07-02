@@ -71,6 +71,30 @@ const UserSchema = new Schema({
     type: Number,
     default: 0
   },
+  // 关注人的数量
+  followsNum: {
+    type: Number,
+    default: 0
+  },
+  // 粉丝的数量
+  fansNum: {
+    type: Number,
+    default: 0
+  },
+  // 关注的用户ID集合
+  follow_users: [
+    {
+      type: String,
+      default: []
+    }
+  ],
+  // 粉丝ID集合
+  fans_users: [
+    {
+      type: String,
+      default: []
+    }
+  ],
   // 统计字段
   register_time: {
     type: Date,

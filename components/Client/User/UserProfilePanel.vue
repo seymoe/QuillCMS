@@ -3,11 +3,14 @@
     <el-card class="box-card" shadow="never">
       <div slot="header" class="clearfix">
         <span>{{ userData.nickname }}</span>
-        <el-button style="float: right; padding: 3px 0" type="text">关注</el-button>
+        <template v-if="loginState.userInfo.id !== userData._id">
+          <el-button @click="handleFollow(userData._id)" v-if="!userData.hasFollow" style="float: right; padding: 3px 0" type="text">关注</el-button>
+          <el-button @click="handleUnFollow(userData._id)" v-else style="float: right; padding: 3px 0" type="text">取消关注</el-button>
+        </template>
       </div>
       <div class="item flex-row">
-        <span>粉丝：30</span>
-        <span>关注：12</span>
+        <span>粉丝：{{ userData.fansNum }}</span>
+        <span>关注：{{ userData.followsNum }}</span>
         <span>发文：{{ userData.postsNum }}</span>
       </div>
       <div class="item" v-if="userData.email">邮箱：{{ userData.email }}</div>
@@ -23,7 +26,17 @@
 
 <script>
   export default {
-    props: ['userData']
+    props: ['userData', 'loginState'],
+    methods: {
+      // 关注
+      handleFollow(id) {
+        this.$emit('follow-user', id)
+      },
+      // 取消关注
+      handleUnFollow(id) {
+        this.$emit('unfollow-user', id)
+      }
+    }
   }
 </script>
 

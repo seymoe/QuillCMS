@@ -52,4 +52,9 @@ router.post('/member/regist', UserController.memberRegistAction)
 router.post('/member/avatar', checkUserSession, UserController.memberUpdateAvatar)
 router.post('/member/profile', checkUserSession, UserController.memberUpdateProfile)
 
+// 关注用户
+router.post('/member/follow', checkUserSession, UserController.memberFollow)
+// 取消关注用户
+router.post('/member/unfollow', checkUserSession, UserController.memberUnFollow)
+
 export default router

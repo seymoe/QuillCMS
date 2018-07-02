@@ -483,11 +483,16 @@ export default {
         age: 1,
         province: 1,
         city: 1,
-        postsNum: 1
+        postsNum: 1,
+        followsNum: 1,
+        fansNum: 1
       }
 
       if (_session.userLogined && _session.userInfo.id === targetId) {
         // 登陆用户请求自己的个人资料
+        req.session.userLogined = _session.userLogined
+        req.session.userInfo = _session.userInfo
+        req.session.save()
         files = {
           _id: 1,
           username: 1,
@@ -504,12 +509,30 @@ export default {
           city: 1,
           address: 1,
           coin: 1,
-          postsNum: 1
+          postsNum: 1,
+          followsNum: 1,
+          fansNum: 1
         }
       }
 
       let queryObj = { _id: targetId }
-      const user = await User.findOne(queryObj, files).exec()
+      let user = await User.findOne(queryObj, files).exec()
+      user = user.toObject()
+
+      // 判断用户间状态返回是否关注的信息
+      if (_session.userLogined && _session.userInfo.id !== targetId) {
+        let targetUser = await User.findOne({_id: targetId})
+        if (targetUser.fans_users.indexOf(_session.userInfo.id) > -1) {
+          // 说明该登陆用户已经关注了访问的用户
+          user.hasFollow = true
+        } else {
+          user.hasFollow = false
+        }
+      } else {
+        user.hasFollow = false
+      }
+
+      log(user)
 
       return res.send(renderApiData(res, 200, '获取成功', user || {}))
     } catch (err) {
@@ -602,5 +625,63 @@ export default {
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
-  }
+  },
+
+  /**
+   * 关注一个用户
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   */
+  async memberFollow(req, res, next) {
+    let targetId = req.body.id
+    let userId = req.session.userInfo.id
+    // 校验数据
+    if (!shortid.isValid(targetId) || !shortid.isValid(userId)) {
+      return res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
+    }
+    try {
+      let oldTargetUser = await User.findOne({ _id: targetId })
+      if (!oldTargetUser) {
+        return res.status(500).send(renderApiErr(req, res, 500, '用户不存在'))
+      } else if ((oldTargetUser.fans_users).indexOf(userId) > -1) {
+        return res.status(500).send(renderApiErr(req, res, 500, '您已经关注了对方'))
+      } else {
+        let newTargetUser = await User.findOneAndUpdate({ _id: targetId }, { '$inc': { 'fansNum': 1 }, '$push': { 'fans_users': userId } })
+        let newUser = await User.findOneAndUpdate({ _id: userId }, { '$inc': { 'followsNum': 1 }, '$push': { 'follow_users': newTargetUser._id } })
+        return res.send(renderApiData(res, 200, '关注成功'))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 取消关注用户
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   */
+  async memberUnFollow(req, res, next) {
+    let targetId = req.body.id
+    let userId = req.session.userInfo.id
+    // 校验数据
+    if (!shortid.isValid(targetId) || !shortid.isValid(userId)) {
+      return res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
+    }
+    try {
+      let oldTargetUser = await User.findOne({ _id: targetId })
+      if (!oldTargetUser) {
+        return res.status(500).send(renderApiErr(req, res, 500, '用户不存在'))
+      } else if ((oldTargetUser.fans_users).indexOf(userId) < 0) {
+        return res.status(500).send(renderApiErr(req, res, 500, '您还没有关注对方'))
+      } else {
+        let newTargetUser = await User.findOneAndUpdate({ _id: targetId }, { '$inc': { 'fansNum': -1 }, '$pull': { 'fans_users': userId } })
+        let newUser = await User.findOneAndUpdate({ _id: userId }, { '$inc': { 'followsNum': -1 }, '$pull': { 'follow_users': newTargetUser._id } })
+        return res.send(renderApiData(res, 200, '取消关注成功'))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
 }
