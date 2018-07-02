@@ -14,6 +14,9 @@
       <el-form-item label="昵 称" prop="nickname">
         <el-input v-model="form.nickname" size="small" placeholder="请输入昵称"></el-input>
       </el-form-item>
+      <el-form-item label="签 名" prop="signature">
+        <el-input v-model="form.signature" size="small" placeholder="请输入个性签名"></el-input>
+      </el-form-item>
       <el-form-item label="性 别" prop="sex">
         <el-radio v-model="form.sex" :label="1">男</el-radio>
         <el-radio v-model="form.sex" :label="2">女</el-radio>
@@ -61,8 +64,16 @@ export default {
       value = value.trim()
       if (value === '') {
         callback(new Error('请填写昵称'))
-      } else if (value.length > 10) {
-        callback(new Error('昵称长度必须小于10'))
+      } else if (value.length > 20) {
+        callback(new Error('昵称长度必须小于20'))
+      } else {
+        callback()
+      }
+    }
+    let validateSignature = (rule, value, callback) => {
+      value = value.trim()
+      if (value.length > 40) {
+        callback(new Error('个性签名长度必须小于40'))
       } else {
         callback()
       }
@@ -81,14 +92,19 @@ export default {
     let validateAddress = (rule, value, callback) => {
       if (value === '') {
         callback()
-      } else if (value.length > 40) {
-        callback(new Error('地址不能超过40个字'))
+      } else if (value.length > 80) {
+        callback(new Error('地址长度不能超过80'))
       } else {
         callback()
       }
     }
     return {
       addUserRules: {
+        nickname: [
+          { required: true, message: '昵称不能为空' },
+          { validator: validateNickname, trigger: 'blur' }
+        ],
+        signature: [{ validator: validateSignature, trigger: 'blur' }],
         phone: [{ validator: validateNickname, trigger: 'blur' }],
         province: [{ validator: validateCity, trigger: 'blur' }],
         city: [{ validator: validateCity, trigger: 'blur' }],
@@ -106,6 +122,8 @@ export default {
       default: function () {
         return {
           _id: '',
+          nickname: '',
+          signature: '',
           phone: '',
           sex: '',
           age: '',

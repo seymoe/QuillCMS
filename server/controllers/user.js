@@ -34,7 +34,7 @@ let checkCreateUserFields = (formData, req) => {
     return false
   } else if (!valiObj.checkEmail(email) || !valiObj.checkPass(password) || !valiObj.checkUserName(username)) {
     return false
-  } else if (nickname.length > 10 || nickname.length <= 0) {
+  } else if (nickname.length > 20 || nickname.length <= 0) {
     return false
   } else if (role !== 'member' && role !== 'admin') {
     return false
@@ -77,22 +77,27 @@ let checkMemberRegistFields = (formData) => {
 // 检验会员更新请求
 let checkMemberUpdateProfileFields = (formData) => {
   // fakemark 防伪标识， 值为 quillcms_login_mark_[时间戳]
-  let { nickname, province, city, address, fakemark } = formData
+  let { nickname, signature, province, city, address, fakemark } = formData
 
   if (!/^quillcms_user_mark_\d{13}$/.test(fakemark)) {
     return {
       status: false,
       msg: '未知错误'
     }
-  } else if (nickname.length > 10 || nickname.length <= 0) {
+  } else if (nickname.length > 20 || nickname.length <= 0) {
     return {
       status: false,
-      msg: '昵称不能超过10个字符'
+      msg: '昵称不能超过20个字符'
     }
-  } else if (province.length > 10 || city.length > 10 || address.length > 40) {
+  } else if (province.length > 10 || city.length > 10 || address.length > 80) {
     return {
       status: false,
       msg: '省份、城市或地址的长度超出'
+    }
+  } else if (signature.length > 40) {
+    return {
+      status: false,
+      msg: '个性签名不能超过40个字符'
     }
   }
   return {
@@ -611,6 +616,7 @@ export default {
 
     let obj = {
       nickname: fields.nickname,
+      signature: xss(fields.signature),
       sex: parseInt(fields.sex) === 2 ? 2 : 1,
       age: parseInt(fields.age),
       province: fields.province,
