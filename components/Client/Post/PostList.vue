@@ -1,21 +1,21 @@
 <template>
   <section class="post-list-wrap">
     <div class="head">
-      <h1>{{ cateName }}</h1>
+      <h1>{{ cateName }} <span v-if="isTag">相关的文章</span></h1>
     </div>
     <div class="post-list" v-if="postList.length > 0">
       <div class="post-img-item flex-row" v-for="item in postList" :key="item._id">
         <div class="imgbox">
-          <nuxt-link :to="'/post/' + item._id">
+          <nuxt-link :to="'/post/' + item._id" tag="a" target="_blank">
             <img  v-if="!item.cover" src="~/assets/img/place.png" alt="">
             <img  v-else :src="item.cover" alt="">
           </nuxt-link>
         </div>
         <div class="txtbox flex-column flex-1">
-          <h2><nuxt-link :to="'/post/' + item._id">{{ item.title }}</nuxt-link></h2>
+          <h2><nuxt-link tag="a" target="_blank" :to="'/post/' + item._id">{{ item.title }}</nuxt-link></h2>
           <p class="desc">{{ item.description }}</p>
           <div class="foot flex-row">
-            <nuxt-link :to="'/user/' + item.author._id" class="author-box flex-row hidden-xs-only">
+            <nuxt-link tag="a" target="_blank" :to="'/user/' + item.author._id" class="author-box flex-row hidden-xs-only">
               <img src="~/assets/img/avatar.png" alt="">
               <span>{{ item.author.nickname }}</span>
             </nuxt-link>
@@ -37,7 +37,7 @@
 
 <script>
 export default {
-  props: ['postList', 'cateName']
+  props: ['postList', 'cateName', 'isTag']
 }
 </script>
 
@@ -53,6 +53,10 @@ export default {
     border-bottom: 1px solid #f0f0f0;
     h1{
       margin: 0;
+      color: #409eff;
+      span{
+        color: #333;
+      }
     }
   }
 }
@@ -67,6 +71,9 @@ export default {
     }
     &:hover{
       background-color: #fafafa;
+    }
+    &:last-child{
+      border-bottom: none;
     }
   }
   .nodata{

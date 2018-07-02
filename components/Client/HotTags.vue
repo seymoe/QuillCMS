@@ -4,7 +4,11 @@
       <h1>热门标签</h1>
     </div>
     <div class="tags flex-row">
-      <nuxt-link v-for="(item, index) in tagList" :key="index" :to="'/tag/' + item.name">
+      <nuxt-link 
+        v-for="(item, index) in tagList" 
+        :key="index" 
+        :to="'/tag/' + item.name"
+        tag="a" target="_blank">
         <el-button plain class="tag" size="mini">{{ item.name }}</el-button>
       </nuxt-link>
     </div>

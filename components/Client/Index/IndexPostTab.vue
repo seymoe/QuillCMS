@@ -9,16 +9,16 @@
       <div class="post-list">
         <div class="post-img-item flex-row" v-for="item in tabPostList" :key="item._id">
           <div class="imgbox">
-            <nuxt-link :to="'/post/' + item._id">
+            <nuxt-link :to="'/post/' + item._id" tag="a" target="_blank">
               <img  v-if="!item.cover" src="~/assets/img/place.png" alt="">
               <img  v-else :src="item.cover" alt="">
             </nuxt-link>
           </div>
           <div class="txtbox flex-column flex-1">
-            <h2><nuxt-link :to="'/post/' + item._id">{{ item.title }}</nuxt-link></h2>
+            <h2><nuxt-link tag="a" target="_blank" :to="'/post/' + item._id">{{ item.title }}</nuxt-link></h2>
             <p class="desc">{{ item.description }}</p>
             <div class="foot flex-row">
-              <nuxt-link :to="'/user/' + item.author._id" class="author-box flex-row hidden-xs-only">
+              <nuxt-link tag="a" target="_blank" :to="'/user/' + item.author._id" class="author-box flex-row hidden-xs-only">
                 <img v-if="!item.author.avatar" src="~/assets/img/avatar.png" alt="">
                 <img v-else :src="item.author.avatar" :alt="item.author.nickname">
                 <span>{{ item.author.nickname }}</span>

@@ -17,12 +17,16 @@
     <div class="posthtml" v-html="postData.content"></div>
     <footer>
       <div class="tag-list" v-if="postData.tags.length > 0">
-        <el-button 
-          class="tagitem"
-          v-for="item in postData.tags"
-          :key="item._id"
-          type="primary" 
-          size="mini">{{ item.name }}</el-button>
+        <nuxt-link 
+          v-for="(item, index) in postData.tags" 
+          :key="index" 
+          :to="'/tag/' + item.name"
+          tag="a" target="_blank">
+          <el-button 
+            class="tagitem"
+            type="primary" 
+            size="mini">{{ item.name }}</el-button>
+        </nuxt-link>
       </div>
     </footer>
     <!-- 喜欢 -->
