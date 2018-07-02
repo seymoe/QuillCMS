@@ -2,11 +2,13 @@ import express from 'express'
 import mongoose from 'mongoose'
 import { Nuxt, Builder } from 'nuxt'
 import session from 'express-session'
+import cookieParser from 'cookie-parser'
 import config from '../nuxt.config'
 import siteConf from '../config/site'
 import { log } from '../utils/util'
 import serverAPI from './api/server'
 import clientAPI from './api/client'
+import sessionMiddleWare from '../middleware/session'
 
 // Init Nuxt.js
 const app = express()
@@ -14,6 +16,7 @@ const host = process.env.HOST || siteConf.host
 const port = process.env.PORT || siteConf.port
 const nuxt = new Nuxt(config)
 const bodyParser = require('body-parser')
+const MongoStore = require('connect-mongo')(session)
 
 mongoose.Promise = global.Promise
 const db = mongoose.connection
@@ -27,15 +30,20 @@ db.once('open', function () {
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use(cookieParser())
 // Sessions 来创建 req.session
 app.use(session({
   secret: siteConf.secret,
   resave: siteConf.resave,
   saveUninitialized: siteConf.saveUninitialized,
-  cookie: { maxAge: siteConf.maxAge }
+  cookie: { maxAge: siteConf.maxAge, secure: false, httpOnly: true },
+  store: new MongoStore({ mongooseConnection: db })
 }))
 
 app.set('port', port)
+
+// 防止浏览器刷新session失效
+app.use(sessionMiddleWare)
 
 // Import API Routes
 app.use(`/server${siteConf.api_path}`, serverAPI)

@@ -315,14 +315,15 @@ export default {
         log(user)
 
         req.session.userLogined = true,
-          req.session.userInfo = {
-            username: user.username,
-            id: user._id,
-            email: user.email,
-            nickname: user.nickname,
-            role: user.role,
-            avatar: user.avatar
-          }
+        req.session.userInfo = {
+          username: user.username,
+          id: user._id,
+          email: user.email,
+          nickname: user.nickname,
+          role: user.role,
+          avatar: user.avatar
+        }
+        req.session.save()
 
         // 更新登陆信息
         let ip = getClientIp(req)
@@ -393,14 +394,15 @@ export default {
         log(user)
 
         req.session.userLogined = true,
-          req.session.userInfo = {
-            username: user.username,
-            id: user._id,
-            email: user.email,
-            nickname: user.nickname,
-            role: user.role,
-            avatar: user.avatar
-          }
+        req.session.userInfo = {
+          username: user.username,
+          id: user._id,
+          email: user.email,
+          nickname: user.nickname,
+          role: user.role,
+          avatar: user.avatar
+        }
+        req.session.save()
 
         // 更新登陆信息
         let ip = getClientIp(req)
@@ -555,6 +557,7 @@ export default {
       await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
       // 更新session
       req.session.userInfo.avatar = fields.avatar
+      req.session.save()
       return res.send(renderApiData(res, 200, '头像更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))

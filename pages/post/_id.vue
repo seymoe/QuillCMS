@@ -6,7 +6,12 @@
     <section class="app-wrap">
       <el-row class="container main" type="flex" justify="space-between">
         <el-col class="content" :xs="24" :sm="18">
-          <post-detail :postData="postData"></post-detail>
+          <post-detail 
+            :postData="postData"
+            :loginState="loginState"
+            @like-post="clientLikePost"
+            @collect-post="clientCollectPost"
+            ></post-detail>
           <comment-box 
             :commentList="commentList"
             :loginState="loginState"
@@ -17,8 +22,8 @@
         <el-col class="sidebar" :xs="24" :sm="6">
           <advertise-box></advertise-box>
           <hot-posts :hotPosts="hotPostList"></hot-posts>
-          <hot-creaters></hot-creaters>
-          <hot-tags></hot-tags>
+          <!-- <hot-creaters></hot-creaters> -->
+          <!-- <hot-tags></hot-tags> -->
         </el-col>
       </el-row>
     </section>
@@ -65,7 +70,7 @@ let serverGetMenuData = () => {
 }
 
 // 文章详情
-let serverGetPostData = (postId) => {
+let serverGetPostData = postId => {
   return axios
     .get(API.appPostDetail + '/' + postId)
     .then(res => {
@@ -117,10 +122,7 @@ export default {
   },
 
   async asyncData({ params }) {
-    let [
-      hotPostList,
-      postData
-    ] = await Promise.all([
+    let [hotPostList, postData] = await Promise.all([
       serverGetHotPosts(),
       serverGetPostData(params.id)
     ])
@@ -131,29 +133,29 @@ export default {
     }
   },
 
-  computed: mapState([
-    'topMenu',
-    'loginState'
-  ]),
+  computed: mapState(['topMenu', 'loginState']),
 
   methods: {
     // 客户端拉取评论列表
     clientGetCommentList() {
-      this.$request.get(API.comments, {
-        params: {
-          postId: this.postId
-        }
-      }).then(res => {
-        let _list = res.data.data.list
-        if (_list.length > 0) {
-          _list.forEach(item => {
-            item.showReplyBox = false
-          })
-        }
-        this.commentList = _list
-      }).catch(err => {
-        log(err)
-      })
+      this.$request
+        .get(API.comments, {
+          params: {
+            postId: this.postId
+          }
+        })
+        .then(res => {
+          let _list = res.data.data.list
+          if (_list.length > 0) {
+            _list.forEach(item => {
+              item.showReplyBox = false
+            })
+          }
+          this.commentList = _list
+        })
+        .catch(err => {
+          log(err)
+        })
     },
 
     // 切换回复框显示隐藏
@@ -171,23 +173,77 @@ export default {
     clientPostComment(data, successCB, failedCB) {
       data.fakemark = 'quillcms_comment_mark_' + Date.now()
       log(data)
-      this.$request.post(API.commentNew, data).then(res => {
-        log(res.data)
-        this.$notify({
-          title: '成功',
-          message: res.data.message,
-          type: 'success'
+      this.$request
+        .post(API.commentNew, data)
+        .then(res => {
+          log(res.data)
+          this.$notify({
+            title: '成功',
+            message: res.data.message,
+            type: 'success'
+          })
+          successCB && successCB()
+          this.clientGetCommentList()
         })
-        successCB && successCB()
-        this.clientGetCommentList()
-      }).catch(err => {
-        log(err)
-        this.$notify.error({
-          title: '错误',
-          message: err.message
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
+          failedCB && failedCB()
         })
-        failedCB && failedCB()
-      })
+    },
+
+    // 喜欢文章
+    clientLikePost(postId, successCB) {
+      this.$request
+        .post(API.appPostLike, {
+          id: postId
+        })
+        .then(res => {
+          log(res.data)
+          // this.$notify({
+          //   title: '成功',
+          //   message: res.data.message,
+          //   type: 'success'
+          // })
+          successCB && successCB(res.data.data)
+          // this.clientGetCommentList()
+        })
+        .catch(err => {
+          log(err)
+          // this.$notify.error({
+          //   title: '错误',
+          //   message: err.message
+          // })
+          // failedCB && failedCB()
+        })
+    },
+    // 收藏文章
+    clientCollectPost(postId, successCB) {
+      this.$request
+        .post(API.appPostCollect, {
+          id: postId
+        })
+        .then(res => {
+          log(res.data)
+          // this.$notify({
+          //   title: '成功',
+          //   message: res.data.message,
+          //   type: 'success'
+          // })
+          successCB && successCB(res.data.data)
+          // this.clientGetCommentList()
+        })
+        .catch(err => {
+          log(err)
+          // this.$notify.error({
+          //   title: '错误',
+          //   message: err.message
+          // })
+          // failedCB && failedCB()
+        })
     }
   },
 
@@ -208,7 +264,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sidebar{
+.sidebar {
   padding-left: 20px;
   @media screen and (max-width: 767px) {
     padding-left: 0;

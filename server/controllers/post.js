@@ -84,7 +84,7 @@ export default {
       // 查询参数配置
       let queryObj = { auth: 'public' }, sortObj = { create_time: -1 }, files = null, postList = [], totalCounts = 0
 
-      log('type of isTop ->', typeof(isTop))
+      log('type of isTop ->', typeof (isTop))
       if (isTop === 'true') {
         queryObj.isTop = true
       } else if (isTop === 'false') {
@@ -108,7 +108,7 @@ export default {
       if (cateId && cateId !== 'AppIndex') {
         queryObj.categories = cateId
       }
-      
+
       // 分类名称
       if (cateName && cateName !== '首页') {
         let targetCateName = await PostCategory.findOne({ name: cateName })
@@ -238,6 +238,50 @@ export default {
       author: fields.author
     }
 
+    // 处理用户自定义添加的标签
+    if (obj.tags.length > 0) {
+      let tagArr = []
+      for (let i = 0; i < obj.tags.length; i++) {
+        tagArr.push((async (index) => {
+          if (!shortid.isValid(obj.tags[i])) {
+            // 如果不是合法id，则进行校验存储
+            if (obj.tags[index].length <= 20) {
+              try {
+                // 存储到数据库
+                let _obj = new PostTag({ name: obj.tags[index] })
+                let newTag = await _obj.save()
+                return newTag._id
+              } catch (err) {
+                log('创建标签出问题', err)
+                return ''
+              }
+            } else {
+              return ''
+            }
+          } else {
+            // 如果是，则查询数据库是否存在
+            try {
+              let _ftag = await PostTag.findOne({ _id: obj.tags[index] })
+              if (_ftag && _ftag._id === obj.tags[index]) {
+                return _ftag._id
+              } else {
+                return ''
+              }
+            } catch (err) {
+              log('查询存在的标签出问题', err)
+              return ''
+            }
+          }
+        })(i))
+      }
+
+      let resultTagArr = await Promise.all(tagArr)
+      resultTagArr = resultTagArr.filter((item) => {
+        return item !== ''
+      })
+      obj.tags = resultTagArr
+    }
+
     log(obj)
 
     const newPost = new Post(obj)
@@ -245,7 +289,7 @@ export default {
     try {
       let postObj = await newPost.save()
       // 更新用户发文数
-      await User.findOneAndUpdate({_id: obj.author}, {'$inc': {postsNum: 1}})
+      await User.findOneAndUpdate({ _id: obj.author }, { '$inc': { postsNum: 1 } })
 
       return res.send(renderApiData(res, 200, '文章创建成功', { id: postObj._id }))
     } catch (err) {
@@ -295,7 +339,7 @@ export default {
 
     try {
       let item_id = fields._id
-      let oldPost = await Post.findOne({_id: item_id})
+      let oldPost = await Post.findOne({ _id: item_id })
       // 如果新传来的图片路径和之前的图片路径不同，则删掉之前的图片并更新
       if (oldPost.cover !== obj.cover) {
         if (oldPost.cover.indexOf('/upload/images/') >= 0) {
@@ -323,6 +367,7 @@ export default {
    * @param {*} next 
    */
   async getOne(req, res, next) {
+    let _session = req.session
     try {
       let targetId = req.params.id
       let getFrom = req.query.getFrom
@@ -334,7 +379,7 @@ export default {
         updateObj = {}
       }
 
-      const content = await Post.findOneAndUpdate(queryObj, updateObj).populate([
+      let content = await Post.findOneAndUpdate(queryObj, updateObj).populate([
         {
           path: 'author',
           select: 'nickname _id'
@@ -349,14 +394,37 @@ export default {
         }]
       ).exec()
 
+      content = content.toObject()
+
       if (getFrom !== 'server') {
-        log('hahahah---------')
         if (content.content) {
           let tok = Marked.lexer(content.content)
           let text = Marked.parser(tok).replace(/<pre>/ig, '<pre class="hljs">')
           content.content = text
         }
+
+        // 更具session判断用户是否登陆，如果是登陆状态则判断是否已经点赞了该文章
+        if (_session.userLogined) {
+          log(_session)
+          let userId = _session.userInfo.id
+          if (userId && content.like_users.indexOf(userId) > -1) {
+            content.hasLiked = true
+          } else {
+            content.hasLiked = false
+          }
+          // 收藏
+          if (userId && content.collect_users.indexOf(userId) > -1) {
+            content.hasCollected = true
+          } else {
+            content.hasCollected = false
+          }
+        } else {
+          content.hasLiked = false
+          content.hasCollected = false
+        }
       }
+
+      log(content.hasLiked, content.hasCollected)
 
       return res.send(renderApiData(res, 200, '获取成功', content || {}))
     } catch (err) {
@@ -385,6 +453,59 @@ export default {
 
       await Post.remove({ _id: id })
       return res.send(renderApiData(res, 200, '删除成功', {}))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 用户喜欢文章
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns
+   */
+  async updateLikeNum(req, res, next) {
+    let postId = req.body.id
+    let userId = req.session.userInfo.id
+    // 校验数据
+    if (!shortid.isValid(postId) || !shortid.isValid(userId)) {
+      return res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
+    }
+    try {
+      let oldPost = await Post.findOne({ _id: postId })
+      if ( !oldPost || (oldPost.like_users).indexOf(userId) > -1) {
+        return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+      } else {
+        let newPost = await Post.findOneAndUpdate({ _id: postId }, { '$inc': { 'likesNum': 1 }, '$push': { 'like_users': userId } })
+        return res.send(renderApiData(res, 200, '更新成功', {likesNum: newPost.likesNum + 1, hasLiked: true}))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /* 用户收藏文章
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns
+   */
+  async updateCollectNum(req, res, next) {
+    let postId = req.body.id
+    let userId = req.session.userInfo.id
+    // 校验数据
+    if (!shortid.isValid(postId) || !shortid.isValid(userId)) {
+      return res.status(500).send(renderApiErr(req, res, 500, '参数错误'))
+    }
+    try {
+      let oldPost = await Post.findOne({ _id: postId })
+      if ( !oldPost || (oldPost.collect_users).indexOf(userId) > -1) {
+        return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
+      } else {
+        let newPost = await Post.findOneAndUpdate({ _id: postId }, { '$inc': { 'collectionsNum': 1 }, '$push': { 'collect_users': userId } })
+        return res.send(renderApiData(res, 200, '更新成功', {collectionsNum: newPost.collectionsNum + 1, hasCollected: true}))
+      }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

@@ -33,6 +33,10 @@ router.get('/post/list', PostController.getList)
 router.get('/post/:id', PostController.getOne)
 // 文章标签
 router.get('/tag/list', PostTagController.getList)
+// 用户喜欢文章
+router.post('/post/like', checkUserSession, PostController.updateLikeNum)
+// 用户收藏文章
+router.post('/post/collect', checkUserSession, PostController.updateCollectNum)
 
 /* 评论相关 */
 // 评论列表
@@ -43,9 +47,9 @@ router.post('/comments/new', checkUserSession, PostCommentController.postComment
 router.get('/member', UserController.getUsers)
 router.get('/member/:id', UserController.memberGetBaseInfo)
 router.post('/member/login', UserController.memberLoginAction)
-router.post('/member/logout', UserController.logoutAction)
+router.post('/member/logout', checkUserSession, UserController.logoutAction)
 router.post('/member/regist', UserController.memberRegistAction)
-router.post('/member/avatar', UserController.memberUpdateAvatar)
-router.post('/member/profile', UserController.memberUpdateProfile)
+router.post('/member/avatar', checkUserSession, UserController.memberUpdateAvatar)
+router.post('/member/profile', checkUserSession, UserController.memberUpdateProfile)
 
 export default router

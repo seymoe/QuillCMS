@@ -74,5 +74,9 @@ export default {
 
   // 评论
   comments: `${siteConf.api_url}/client${siteConf.api_path}/comments`,
-  commentNew: `${siteConf.api_url}/client${siteConf.api_path}/comments/new`
+  commentNew: `${siteConf.api_url}/client${siteConf.api_path}/comments/new`,
+
+  // 文章 喜欢,收藏
+  appPostLike: `${siteConf.api_url}/client${siteConf.api_path}/post/like`,
+  appPostCollect: `${siteConf.api_url}/client${siteConf.api_path}/post/collect`
 }
