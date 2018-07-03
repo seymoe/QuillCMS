@@ -74,7 +74,6 @@ let serverGetPostData = postId => {
   return axios
     .get(API.appPostDetail + '/' + postId)
     .then(res => {
-      log(res.data)
       if (res.data.success) {
         return res.data.data
       }

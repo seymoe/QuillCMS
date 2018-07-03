@@ -1,6 +1,6 @@
+import logUtil from '../../utils/logUtil'
 import shortid from 'shortid'
-import siteConf from '../config/site'
-// import logUtil from './logUtil'
+import siteConf from '../../config/site'
 
 export const log = siteConf.dev ? console.log.bind(console) : () => { }
 
@@ -50,7 +50,7 @@ export const renderApiErr = (req, res, responseCode, responseMessage) => {
   }
 
   // 记录错误日志
-  // logUtil.error(responseMessage, req)
+  logUtil.error(responseMessage, req)
 
   return errorData
 }

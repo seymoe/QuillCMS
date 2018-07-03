@@ -1,32 +1,16 @@
-import PostTag from '../models/PostTag'
+/**
+ * 暂时不做通知了
+*/
+import Notify from '../models/Notify'
+import Post from '../models/Post'
 import validator from 'validator'
 import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, checkCurrentId } from '../utils'
 import valiObj from '../../utils/validate'
 
-let checkTagFields = (formData, req) => {
-  // 管理员用户以上权限才可以创建标签
-  let hasLogin = req.session.userLogined
-  let userInfo = req.session.userInfo
-
-  if (!hasLogin || (userInfo.role !== 'super' && userInfo.role !== 'admin')) {
-    return false
-  }
-
-  let { name, alias, cover, enable } = formData
-  if (name.length <= 0 || name.length > 20) {
-    return false
-  } else if (!/^[a-zA-Z0-9_-]{1,20}$/.test(alias)) {
-    return false
-  } else if (cover.length > 20) {
-    return false
-  }
-  return true
-}
-
 export default {
   /**
-   * 创建标签
+   * 创建
    * @param {*} req 
    * @param {*} res 
    * @param {*} next 

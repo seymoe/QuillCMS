@@ -85,6 +85,6 @@ module.exports = {
   },
 
   router: {
-    middleware: ['adminAuth']
-  },
+    middleware: ['adminAuth', 'cookies']
+  }
 }

@@ -31,6 +31,9 @@ export default {
   // 具体见 nuxt.js
   adminPath: '/quill_cms_admin',
 
+  // 日志文件夹
+  logDir: '/home/logsDir/quillcms',
+
   /**
    * 数据库配置
    */

@@ -7,7 +7,7 @@ import User from '../models/User'
 import shortid from 'shortid'
 import Marked from 'marked'
 const highlight = require('highlight.js')
-import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
+import { log, renderApiData, renderApiErr, checkCurrentId } from '../utils'
 
 Marked.setOptions({
   renderer: new Marked.Renderer(),
@@ -368,6 +368,7 @@ export default {
    */
   async getOne(req, res, next) {
     let _session = req.session
+    log('3 + ', _session)
     try {
       let targetId = req.params.id
       let getFrom = req.query.getFrom

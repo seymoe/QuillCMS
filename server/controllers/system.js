@@ -1,4 +1,4 @@
-import { log, renderApiData, renderApiErr } from '../../utils/util'
+import { log, renderApiData, renderApiErr } from '../utils'
 import conf from '../../config/site'
 import multer from 'multer'
 import qiniu from 'qiniu'

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import User from '../models/User'
 import shortid from 'shortid'
-import { log, renderApiData, renderApiErr, getClientIp } from '../../utils/util'
+import { log, renderApiData, renderApiErr, getClientIp } from '../utils'
 import valiObj from '../../utils/validate'
 import xss from 'xss'
 

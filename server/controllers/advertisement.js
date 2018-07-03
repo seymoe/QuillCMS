@@ -2,7 +2,7 @@ import fs from 'fs'
 import Advertisement from '../models/Advertisement'
 import validator from 'validator'
 import shortid from 'shortid'
-import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
+import { log, renderApiData, renderApiErr, checkCurrentId } from '../utils'
 
 let checkAdsFields = (formData, req) => {
   // 管理员用户以上权限才可以创建标签

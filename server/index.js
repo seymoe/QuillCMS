@@ -8,7 +8,7 @@ import siteConf from '../config/site'
 import { log } from '../utils/util'
 import serverAPI from './api/server'
 import clientAPI from './api/client'
-import sessionMiddleWare from '../middleware/session'
+import logUtil from '../utils/logUtil'
 
 // Init Nuxt.js
 const app = express()
@@ -28,6 +28,9 @@ db.once('open', function () {
   log('database opend!')
 })
 
+// 初始化日志目录
+// logUtil.initPath()
+
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
@@ -40,10 +43,9 @@ app.use(session({
   store: new MongoStore({ mongooseConnection: db })
 }))
 
-app.set('port', port)
+logUtil.initPath()
 
-// 防止浏览器刷新session失效
-app.use(sessionMiddleWare)
+app.set('port', port)
 
 // Import API Routes
 app.use(`/server${siteConf.api_path}`, serverAPI)

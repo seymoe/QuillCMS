@@ -1,7 +1,7 @@
 import FriendLink from '../models/FriendLink'
 import validator from 'validator'
 import shortid from 'shortid'
-import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
+import { log, renderApiData, renderApiErr, checkCurrentId } from '../utils'
 import valiObj from '../../utils/validate'
 
 let checkFriendLinkFields = (formData, req) => {

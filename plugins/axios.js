@@ -4,6 +4,7 @@ import siteConf from '~/config/site'
 
 const instance = axios.create({
   baseURL: siteConf.api_url,
+  withCredentials: true,
   headers: {
     'Authorization': 'Bearer ' + localStorage.getItem('token')
   },

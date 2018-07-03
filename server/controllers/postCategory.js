@@ -1,7 +1,7 @@
 import PostCategory from '../models/PostCategory'
 import validator from 'validator'
 import shortid from 'shortid'
-import { log, renderApiData, renderApiErr, checkCurrentId } from '../../utils/util'
+import { log, renderApiData, renderApiErr, checkCurrentId } from '../utils'
 import valiObj from '../../utils/validate'
 
 // 校验创建分类的参数

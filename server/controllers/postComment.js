@@ -1,7 +1,7 @@
 import shortid from 'shortid'
 import validator from 'validator'
 import valiObj from '../../utils/validate'
-import { log, renderApiData, renderApiErr, getClientIp } from '../../utils/util'
+import { log, renderApiData, renderApiErr, getClientIp } from '../utils'
 import User from '../models/User'
 import Post from '../models/Post'
 import PostComment from '../models/PostComment'
