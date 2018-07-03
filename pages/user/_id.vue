@@ -21,8 +21,12 @@
             :userData="userData"
             @follow-user="clientFollowUser"
             @unfollow-user="clientUnFollowUser"></user-profile-panel>
-          <hot-creaters></hot-creaters>
-          <hot-tags></hot-tags>
+          <user-follow-panel
+            :userData="userData"
+            :loginState="loginState"></user-follow-panel>
+          <user-fans-panel
+            :userData="userData"
+            :loginState="loginState"></user-fans-panel>
         </el-col>
       </el-row>
     </section>
@@ -40,13 +44,12 @@ import axios from 'axios'
 import API from '~/config/api'
 import { log, arrayToTree } from '~/utils/util'
 import AppHeader from '~/components/Client/AppHeader'
-import HotTags from '~/components/Client/HotTags'
-import HotCreaters from '~/components/Client/HotCreaters'
-
 import UserHead from '~/components/Client/User/UserHead'
 import UserProfilePanel from '~/components/Client/User/UserProfilePanel'
 import UserIndexTab from '~/components/Client/User/UserIndexTab'
 import UpdateUserProfile from '~/components/Client/User/UpdateUserProfile'
+import UserFollowPanel from '~/components/Client/User/UserFollowPanel'
+import UserFansPanel from '~/components/Client/User/UserFansPanel'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -271,8 +274,8 @@ export default {
 
   components: {
     AppHeader,
-    HotTags,
-    HotCreaters,
+    UserFansPanel,
+    UserFollowPanel,
     UserHead,
     UserProfilePanel,
     UserIndexTab,

@@ -1,8 +1,7 @@
 <template>
   <div class="app-page">
     <app-header 
-      :topMenuData="topMenu" 
-      :currentNav="''"
+      :topMenuData="topMenu"
       :loginState="loginState"></app-header>
     <section class="app-wrap">
       <el-row class="container main" type="flex" justify="space-between">

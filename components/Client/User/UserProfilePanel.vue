@@ -9,9 +9,9 @@
         </template>
       </div>
       <div class="item flex-row">
+        <span>发文：{{ userData.postsNum }}</span>
         <span>粉丝：{{ userData.fansNum }}</span>
         <span>关注：{{ userData.followsNum }}</span>
-        <span>发文：{{ userData.postsNum }}</span>
       </div>
       <div class="item" v-if="userData.email">邮箱：{{ userData.email }}</div>
       <div class="item" v-if="userData.phone">手机：{{ userData.phone }}</div>

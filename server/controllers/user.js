@@ -490,7 +490,9 @@ export default {
         city: 1,
         postsNum: 1,
         followsNum: 1,
-        fansNum: 1
+        fansNum: 1,
+        follow_users: 1,
+        fans_users: 1
       }
 
       if (_session.userLogined && _session.userInfo.id === targetId) {
@@ -516,12 +518,27 @@ export default {
           coin: 1,
           postsNum: 1,
           followsNum: 1,
-          fansNum: 1
+          fansNum: 1,
+          follow_users: 1,
+          fans_users: 1
         }
       }
 
       let queryObj = { _id: targetId }
-      let user = await User.findOne(queryObj, files).exec()
+      let user = await User.findOne(queryObj, files).populate([
+        {
+          path: 'follow_users',
+          select: 'nickname _id avatar signature',
+          model: User,
+          options: {limit: 5}
+        },
+        {
+          path: 'fans_users',
+          select: 'nickname _id avatar signature',
+          model: User,
+          options: {limit: 5}
+        }
+      ]).exec()
       user = user.toObject()
 
       // 判断用户间状态返回是否关注的信息
