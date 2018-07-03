@@ -1,6 +1,7 @@
 import log4js from 'log4js'
 import fs from 'fs'
 import logConfig from '../config/log'
+import SystemLog from '../server/models/SystemLog'
 
 log4js.configure(logConfig)
 

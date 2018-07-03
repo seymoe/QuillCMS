@@ -36,11 +36,14 @@ export const renderApiData = (res, responseCode, responseMessage, data = {}) => 
 
 // 封装api返回的错误数据
 export const renderApiErr = (req, res, responseCode, responseMessage) => {
+  // 记录错误日志
+  logUtil.error(responseMessage, req)
+
   if (typeof responseMessage === 'object') {
-    responseMessage = siteConf.dev ? responseMessage : '悲哀！未知错误'
+    // 如果是生产模式，不返回具体的报错信息
+    responseMessage = siteConf.dev ? responseMessage : '未知错误!'
   }
 
-  // 如果是生产模式，不返回具体的报错信息
   let errorData = {
     status: responseCode,
     success: false,
@@ -48,10 +51,6 @@ export const renderApiErr = (req, res, responseCode, responseMessage) => {
     request_time: (new Date()).getTime(),
     data: {}
   }
-
-  // 记录错误日志
-  logUtil.error(responseMessage, req)
-
   return errorData
 }
 
