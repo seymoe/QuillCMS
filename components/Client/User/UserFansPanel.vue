@@ -63,11 +63,12 @@ export default {
 .creater{
   padding: 10px 0;
   justify-content: space-between;
+  align-items: center;
   .imgbox{
     margin-right: 15px;
     display: block;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 100%;
     overflow: hidden;
     transform: rotate(0deg);
@@ -77,15 +78,14 @@ export default {
     }
     img{
       display: block;
-      width: 50px;
-      height: 50px;
+      width: 40px;
+      height: 40px;
     }
   }
   .txtbox{
     justify-content: center;
-    h2{
-      margin: 0;
-      a{
+      h2{
+        margin: 0;
         font-size: 16px;
         color: #666;
         transition: all .3s;
@@ -93,12 +93,11 @@ export default {
           color: #409eff;
         }
       }
-    }
-    p{
-      color: #999;
-      margin: 0;
-      font-size: 12px;
-    }
+      p{
+        color: #999;
+        margin: 0;
+        font-size: 12px;
+      }
   }
 }
 </style>

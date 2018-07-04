@@ -83,26 +83,6 @@ let serverGetPostData = postId => {
     })
 }
 
-// 热门文章
-let serverGetHotPosts = () => {
-  return axios
-    .get(API.appPostList, {
-      params: {
-        sortBy: 'clicks',
-        mode: 'simple',
-        limit: 5
-      }
-    })
-    .then(res => {
-      if (res.data.success) {
-        return res.data.data.list
-      }
-    })
-    .catch(e => {
-      return []
-    })
-}
-
 export default {
   layout: 'app',
   data() {
@@ -121,12 +101,10 @@ export default {
   },
 
   async asyncData({ params }) {
-    let [hotPostList, postData] = await Promise.all([
-      serverGetHotPosts(),
+    let [postData] = await Promise.all([
       serverGetPostData(params.id)
     ])
     return {
-      hotPostList,
       postData,
       postId: params.id
     }
@@ -135,6 +113,27 @@ export default {
   computed: mapState(['topMenu', 'loginState']),
 
   methods: {
+    // 客户端拉取用户相关文章
+    clientGetRelativePosts() {
+      this.$request
+        .get(API.appPostList, {
+          params: {
+            author: this.postData.author._id,
+            sortBy: 'clicks',
+            mode: 'simple',
+            limit: 5
+          }
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.hotPostList = res.data.data.list
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
+    },
+
     // 客户端拉取评论列表
     clientGetCommentList() {
       this.$request
@@ -248,6 +247,7 @@ export default {
 
   mounted() {
     this.clientGetCommentList()
+    this.clientGetRelativePosts()
   },
 
   components: {

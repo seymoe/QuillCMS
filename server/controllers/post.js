@@ -223,7 +223,7 @@ export default {
     }
 
     const obj = {
-      title: fields.title,
+      title: fields.title.trim(),
       sub_title: fields.sub_title || '',
       description: fields.description,
       cover: fields.cover,

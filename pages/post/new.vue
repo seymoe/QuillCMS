@@ -301,6 +301,13 @@ export default {
       data.fakemark = 'quillcms_post_mark_' + Date.now()
       data.author = this.loginState.userInfo.id
 
+      // 标签去空格
+      if (data.tags.length > 0) {
+        data.tags = data.tags.map(item => {
+          return item.trim()
+        })
+      }
+
       log(data)
       this.$request
         .post(API.appPostNew, data)

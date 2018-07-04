@@ -14,8 +14,8 @@
         <el-col class="sidebar" :xs="24" :sm="6">
           <advertise-box></advertise-box>
           <hot-posts :hotPosts="hotPostList"></hot-posts>
-          <hot-creaters></hot-creaters>
-          <hot-tags></hot-tags>
+          <hot-creaters :hotCreaters="hotCreaters"></hot-creaters>
+          <hot-tags :tagList="hotTagList"></hot-tags>
         </el-col>
       </el-row>
     </section>
@@ -81,16 +81,37 @@ let serverGetPostsBycateName = name => {
 }
 
 // 热门文章
-let serverGetHotPosts = () => {
+let serverGetHotPosts = name => {
   return axios
     .get(API.appPostList, {
       params: {
         sortBy: 'clicks',
         mode: 'simple',
+        cateName: name,
         limit: 5
       }
     })
     .then(res => {
+      if (res.data.success) {
+        return res.data.data.list
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
+
+// 热门标签
+let serverGetHotTags = () => {
+  return axios
+    .get(API.appTagList, {
+      params: {
+        isHot: true,
+        limit: 5
+      }
+    })
+    .then(res => {
+      log(res.data)
       if (res.data.success) {
         return res.data.data.list
       }
@@ -106,7 +127,10 @@ export default {
     return {
       cateName: '',
       postsList: [], // 文章列表
-      hotPostList: []
+      hotPostList: [],
+      hotTagList: [],
+      // 热门创作人
+      hotCreaters: []
     }
   },
 
@@ -116,15 +140,42 @@ export default {
   },
 
   async asyncData({ params }) {
-    let [postsList, hotPostList] = await Promise.all([
+    let [postsList, hotPostList, hotTagList] = await Promise.all([
       serverGetPostsBycateName(params.name),
-      serverGetHotPosts()
+      serverGetHotPosts(params.name),
+      serverGetHotTags()
     ])
     return {
       postsList,
       hotPostList,
+      hotTagList,
       cateName: params.name
     }
+  },
+
+  methods: {
+    clientGetHotCreaters() {
+      this.$request
+        .get(API.member, {
+          params: {
+            role: 'member',
+            sortBy: 'postsNum',
+            limit: 5
+          }
+        })
+        .then(res => {
+          if (res.data.success) {
+            this.hotCreaters = res.data.data.list
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
+    }
+  },
+
+  mounted() {
+    this.clientGetHotCreaters()
   },
 
   computed: mapState(['topMenu', 'loginState']),
