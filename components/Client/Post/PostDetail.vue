@@ -194,6 +194,7 @@ export default {
 .tag-list{
   padding: 15px 0;
   .tagitem{
+    margin: 0 5px;
     background-color: transparent;
     border-color: #666;
     color: #666;

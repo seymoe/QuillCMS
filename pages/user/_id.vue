@@ -35,6 +35,7 @@
       :form="updateForm"
       @edit-profile="handleToggleUpdateDialog"
       @update-user="clientUpdateOne"></update-user-profile>
+    <friend-link-box :friendLinks="friendLink"></friend-link-box>
   </div>
 </template>
 
@@ -50,6 +51,7 @@ import UserIndexTab from '~/components/Client/User/UserIndexTab'
 import UpdateUserProfile from '~/components/Client/User/UpdateUserProfile'
 import UserFollowPanel from '~/components/Client/User/UserFollowPanel'
 import UserFansPanel from '~/components/Client/User/UserFansPanel'
+import FriendLinkBox from '~/components/Client/FriendLinkBox'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -69,6 +71,25 @@ let serverGetMenuData = () => {
           }
         })
         return _tree
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
+
+// 友情链接
+let serverGetFriendLinks = () => {
+  return axios
+    .get(API.friendLink, {
+      params: {
+        limit: 10
+      }
+    })
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data.list
       }
     })
     .catch(e => {
@@ -131,6 +152,8 @@ export default {
 
   async fetch({ store, params }) {
     let topMenuData = await serverGetMenuData()
+    let friendLinkData = await serverGetFriendLinks()
+    store.commit('SET_FRIEND_LINK', friendLinkData)
     store.commit('SET_TOP_MENU', topMenuData)
   },
 
@@ -270,7 +293,7 @@ export default {
     }
   },
 
-  computed: mapState(['topMenu', 'loginState']),
+  computed: mapState(['topMenu', 'loginState', 'friendLink']),
 
   components: {
     AppHeader,
@@ -279,7 +302,8 @@ export default {
     UserHead,
     UserProfilePanel,
     UserIndexTab,
-    UpdateUserProfile
+    UpdateUserProfile,
+    FriendLinkBox
   }
 }
 </script>

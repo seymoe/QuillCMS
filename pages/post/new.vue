@@ -81,6 +81,7 @@
         </el-col>
       </el-row>
     </section>
+    <friend-link-box :friendLinks="friendLink"></friend-link-box>
   </div>
 </template>
 
@@ -91,6 +92,7 @@ import API from '~/config/api'
 import { log, arrayToTree } from '~/utils/util'
 import AppHeader from '~/components/Client/AppHeader'
 import MarkdownEditor from '~/components/Common/MarkdownEditor'
+import FriendLinkBox from '~/components/Client/FriendLinkBox'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -109,6 +111,25 @@ let serverGetMenuData = () => {
           }
         })
         return _tree
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
+
+// 友情链接
+let serverGetFriendLinks = () => {
+  return axios
+    .get(API.friendLink, {
+      params: {
+        limit: 10
+      }
+    })
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data.list
       }
     })
     .catch(e => {
@@ -180,6 +201,8 @@ export default {
 
   async fetch({ store, params }) {
     let topMenuData = await serverGetMenuData()
+    let friendLinkData = await serverGetFriendLinks()
+    store.commit('SET_FRIEND_LINK', friendLinkData)
     store.commit('SET_TOP_MENU', topMenuData)
   },
 
@@ -188,7 +211,7 @@ export default {
     // return {}
   },
 
-  computed: mapState(['topMenu', 'loginState']),
+  computed: mapState(['topMenu', 'loginState', 'friendLink']),
 
   methods: {
     // 客户端拉取标签列表
@@ -368,7 +391,8 @@ export default {
 
   components: {
     AppHeader,
-    MarkdownEditor
+    MarkdownEditor,
+    FriendLinkBox
   }
 }
 </script>

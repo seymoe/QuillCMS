@@ -29,6 +29,7 @@
         </el-col>
       </el-row>
     </section>
+    <friend-link-box :friendLinks="friendLink"></friend-link-box>
   </div>
 </template>
 
@@ -45,6 +46,7 @@ import HotCreaters from '~/components/Client/HotCreaters'
 
 import PostDetail from '~/components/Client/Post/PostDetail'
 import CommentBox from '~/components/Client/Post/CommentBox'
+import FriendLinkBox from '~/components/Client/FriendLinkBox'
 
 // 服务端请求数据
 let serverGetMenuData = () => {
@@ -64,6 +66,25 @@ let serverGetMenuData = () => {
           }
         })
         return _tree
+      }
+    })
+    .catch(e => {
+      return []
+    })
+}
+
+// 友情链接
+let serverGetFriendLinks = () => {
+  return axios
+    .get(API.friendLink, {
+      params: {
+        limit: 10
+      }
+    })
+    .then(res => {
+      log(res.data)
+      if (res.data.success) {
+        return res.data.data.list
       }
     })
     .catch(e => {
@@ -99,6 +120,8 @@ export default {
 
   async fetch({ store, params }) {
     let topMenuData = await serverGetMenuData()
+    let friendLinkData = await serverGetFriendLinks()
+    store.commit('SET_FRIEND_LINK', friendLinkData)
     store.commit('SET_TOP_MENU', topMenuData)
   },
 
@@ -112,7 +135,7 @@ export default {
     }
   },
 
-  computed: mapState(['topMenu', 'loginState']),
+  computed: mapState(['topMenu', 'loginState', 'friendLink']),
 
   methods: {
     // 客户端拉取用户相关文章
@@ -260,7 +283,8 @@ export default {
     HotTags,
     HotCreaters,
     PostDetail,
-    CommentBox
+    CommentBox,
+    FriendLinkBox
   }
 }
 </script>
