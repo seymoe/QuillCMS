@@ -4,6 +4,8 @@ import moment from 'moment'
 import User from './User'
 import Post from './Post'
 
+moment.locale('zh-cn')
+
 const Schema = mongoose.Schema
 
 const PostCommentSchema = new Schema({
@@ -60,7 +62,7 @@ const PostCommentSchema = new Schema({
 PostCommentSchema.set('toJSON', { getters: true, virtuals: true })
 PostCommentSchema.set('toObject', { getters: true, virtuals: true })
 PostCommentSchema.path('create_time').get(function (v) {
-  return moment(v).startOf('hour').fromNow()
+  return moment(v).utc().zone(-8).startOf('hour').fromNow()
 })
 
 export default mongoose.model('PostComment', PostCommentSchema)

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const shortid = require('shortid')
-
+import moment from 'moment'
 const Schema = mongoose.Schema
 
 const UserSchema = new Schema({
@@ -118,4 +118,17 @@ const UserSchema = new Schema({
   }
 })
 
-module.exports = mongoose.model('User', UserSchema)
+UserSchema.set('toJSON', { getters: true, virtuals: true })
+UserSchema.set('toObject', { getters: true, virtuals: true })
+
+UserSchema.path('register_time').get(function (v) {
+  return moment(v).utc().zone(-8).format("YYYY-MM-DD HH:mm:ss")
+})
+UserSchema.path('update_time').get(function (v) {
+  return moment(v).utc().zone(-8).format("YYYY-MM-DD HH:mm:ss")
+})
+UserSchema.path('last_login_time').get(function (v) {
+  return moment(v).utc().zone(-8).format("YYYY-MM-DD HH:mm:ss")
+})
+
+export default mongoose.model('User', UserSchema)

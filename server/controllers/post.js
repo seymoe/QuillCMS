@@ -119,7 +119,7 @@ export default {
 
       // 文章标签
       if (tagName) {
-        let targetTag = await PostTag.findOne({ name: tagName })
+        let targetTag = await PostTag.findOneAndUpdate({ name: tagName }, { '$inc': { 'clicks': 1 } })
         if (targetTag) {
           queryObj.tags = targetTag._id
           // 如果有标签，则查询全部类别

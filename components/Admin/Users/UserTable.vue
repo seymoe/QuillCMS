@@ -18,13 +18,6 @@
         </el-table-column>
         <el-table-column
           width="100"
-          label="用户名">
-          <template slot-scope="scope">
-            {{ scope.row.username }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="100"
           label="昵称">
           <template slot-scope="scope">
             {{ scope.row.nickname }}
@@ -39,16 +32,28 @@
             {{ scope.row.role === 'member' ? '普通会员' : '' }}
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           label="手机号">
           <template slot-scope="scope">
             {{ scope.row.phone ? scope.row.phone : '无' }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           label="邮箱">
           <template slot-scope="scope">
             {{ scope.row.email }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="上次登陆时间">
+          <template slot-scope="scope">
+            {{ scope.row.last_login_time }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="上次登陆IP">
+          <template slot-scope="scope">
+            {{ scope.row.last_login_ip }}
           </template>
         </el-table-column>
         <el-table-column

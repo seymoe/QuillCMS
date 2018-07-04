@@ -1,7 +1,7 @@
 <template>
   <section class="hot-post">
     <div class="title">
-      <h1>热门文章</h1>
+      <h1>{{ (author && author._id) ? (author.nickname + '的其他文章') : '热门文章' }}</h1>
     </div>
     <div class="post-list">
       <div 
@@ -34,7 +34,7 @@
 
 <script>
 export default {
-  props: ['hotPosts']
+  props: ['hotPosts', 'author']
 }
 </script>
 

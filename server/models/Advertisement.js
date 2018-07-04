@@ -4,6 +4,8 @@
 
 import mongoose from 'mongoose'
 import shortid from 'shortid'
+import moment from 'moment'
+
 const Schema = mongoose.Schema
 
 const AdvertisementSchema = new Schema({
@@ -28,6 +30,10 @@ const AdvertisementSchema = new Schema({
     type: Boolean,
     default: true
   }
+})
+
+AdvertisementSchema.path('create_time').get(function (v) {
+  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
 })
 
 export default mongoose.model('Advertisement', AdvertisementSchema)

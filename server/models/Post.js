@@ -109,10 +109,10 @@ PostSchema.set('toJSON', { getters: true, virtuals: true })
 PostSchema.set('toObject', { getters: true, virtuals: true })
 
 PostSchema.path('create_time').get(function (v) {
-  return moment(v).format("YYYY-MM-DD")
+  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
 })
 PostSchema.path('modify_time').get(function (v) {
-  return moment(v).format("YYYY-MM-DD")
+  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
 })
 
 export default mongoose.model('Post', PostSchema)

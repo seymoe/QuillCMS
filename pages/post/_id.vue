@@ -21,7 +21,9 @@
         </el-col>
         <el-col class="sidebar" :xs="24" :sm="6">
           <advertise-box></advertise-box>
-          <hot-posts :hotPosts="hotPostList"></hot-posts>
+          <hot-posts 
+            :hotPosts="hotPostList"
+            :author="postData.author"></hot-posts>
           <!-- <hot-creaters></hot-creaters> -->
           <!-- <hot-tags></hot-tags> -->
         </el-col>
@@ -115,10 +117,11 @@ export default {
   methods: {
     // 客户端拉取用户相关文章
     clientGetRelativePosts() {
+      log(this.postData.author._id)
       this.$request
         .get(API.appPostList, {
           params: {
-            author: this.postData.author._id,
+            user: this.postData.author._id,
             sortBy: 'clicks',
             mode: 'simple',
             limit: 5

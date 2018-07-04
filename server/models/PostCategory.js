@@ -4,6 +4,7 @@
 
 import mongoose from 'mongoose'
 import shortid from 'shortid'
+import moment from 'moment'
 const Schema = mongoose.Schema
 
 const PostCategorySchema = new Schema({
@@ -48,6 +49,10 @@ const PostCategorySchema = new Schema({
     type: Date,
     default: Date.now
   }
+})
+
+PostCategorySchema.path('create_time').get(function (v) {
+  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
 })
 
 export default mongoose.model('PostCategory', PostCategorySchema)

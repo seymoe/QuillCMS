@@ -6,6 +6,8 @@ import Post from '../models/Post'
 // import PostTag from '../models/PostTag'
 import PostCategory from '../models/PostCategory'
 import User from '../models/User'
+import PostComment from '../models/PostComment';
+import PostTag from '../models/PostTag';
 
 // 上传至七牛
 const uploadToQiniu = (req, res, imgkey, imgname) => {
@@ -140,14 +142,14 @@ export default {
       // 用户总数
       let usersCount = await User.count(queryUserObj)
       // 留言统计
-      let commentsCount = 0
-      // 收入统计
-      let incomeCount = 0
+      let commentsCount = await PostComment.count()
+      // 标签统计
+      let tagsCount = await PostTag.count()
       let result = {
         docsCount,
         usersCount,
         commentsCount,
-        incomeCount
+        tagsCount
       }
       return res.send(renderApiData(res, 200, '总览数据获取成功', result))
     } catch (err) {

@@ -11,12 +11,12 @@
           <i class="iconfont">&#xe601;</i>
         </span>
         <div class="box">
-          <i class="el-icon-bell">
-            <!-- <span></span> -->
+          <!-- <i class="el-icon-bell">
+            <span></span>
           </i>
           <i class="el-icon-message">
-            <!-- <span></span> -->
-          </i>
+            <span></span> 
+          </i> -->
           <div class="avatar" 
             @click="handleTogglePanel"
             v-click-outside="handleOutsideClickMenu">

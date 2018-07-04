@@ -4,6 +4,7 @@
 
 import mongoose from 'mongoose'
 import shortid from 'shortid'
+import moment from 'moment'
 const Schema = mongoose.Schema
 
 const PostTagSchema = new Schema({
@@ -27,6 +28,10 @@ const PostTagSchema = new Schema({
     type: Number,
     default: 0
   }
+})
+
+PostTagSchema.path('create_time').get(function (v) {
+  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
 })
 
 export default mongoose.model('PostTag', PostTagSchema)

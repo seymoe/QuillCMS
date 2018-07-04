@@ -46,14 +46,14 @@
         <i class="iconfont">&#xe636;</i>
         <span slot="title">友链管理</span>
       </el-menu-item>
-      <el-submenu :index="routePath + '/system'">
+      <!-- <el-submenu :index="routePath + '/system'">
         <template slot="title">
           <i class="el-icon-setting"></i>
           <span>系统管理</span>
         </template>
         <el-menu-item :index="routePath + '/system/site'">站点设置</el-menu-item>
         <el-menu-item :index="routePath + '/system/slider'">轮播管理</el-menu-item>
-      </el-submenu>
+      </el-submenu> -->
     </el-menu>
   </aside>
 </template>

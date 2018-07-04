@@ -43,13 +43,13 @@ export default {
           name: '查看评论',
           type: 'warning',
           url: siteConf.adminPath + '/comments'
-        },
-        {
-          id: 5,
-          name: '系统设置',
-          type: 'danger',
-          url: siteConf.adminPath + '/system/site'
         }
+        // {
+        //   id: 5,
+        //   name: '系统设置',
+        //   type: 'danger',
+        //   url: siteConf.adminPath + '/system/site'
+        // }
       ]
     }
   },

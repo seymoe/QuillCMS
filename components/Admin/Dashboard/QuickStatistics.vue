@@ -38,8 +38,8 @@
       <el-col :span="5">
         <div class="box">
           <div>
-            <p>收入统计</p>
-            <h3 style="color: #F56C6C">¥ {{ quickData.incomeCount }}</h3>
+            <p>标签统计</p>
+            <h3 style="color: #F56C6C">{{ quickData.tagsCount }}</h3>
           </div>
           <div class="inicon">
             <i class="iconfont">&#xe645;</i>
