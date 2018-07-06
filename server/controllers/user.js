@@ -574,7 +574,7 @@ export default {
     let _session = req.session
     if (!shortid.isValid(fields._id) || !_session.userLogined || _session.userInfo.id !== fields._id) {
       return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
-    } else if (!fields.avatar || fields.avatar.length > 80) {
+    } else if (!fields.avatar || fields.avatar.length > 300) {
       return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
     }
 

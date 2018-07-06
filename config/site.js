@@ -37,6 +37,7 @@ export default {
   /**
    * 数据库配置
    */
+  TEST_DB_URL: 'mongodb://127.0.0.1:27017/zhejingxuan',
   DB_URL: 'mongodb://127.0.0.1:27017/zhejingxuan',
   DB_NAME: 'quillcms',
   DB_HOST: '127.0.0.1',

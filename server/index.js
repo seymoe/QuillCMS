@@ -22,14 +22,22 @@ mongoose.Promise = global.Promise
 const db = mongoose.connection
 
 // 连接mongoDB数据库
-mongoose.connect(siteConf.DB_URL)
-db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function () {
-  log('database opend!')
-})
+if (siteConf.dev) {
+  mongoose.connect(siteConf.TEST_DB_URL)
+  db.on('error', console.error.bind(console, 'connection error:'))
+  db.once('open', function () {
+    log('database opend!')
+  })
+} else {
+  mongoose.connect(siteConf.DB_URL, {auth:{authdb: 'kuajieyuan_molang'}})
+  db.on('error', console.error.bind(console, 'connection error:'))
+  db.once('open', function () {
+    log('database opend!')
+  })
+}
 
 // 初始化日志目录
-// logUtil.initPath()
+logUtil.initPath()
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
