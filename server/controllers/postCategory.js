@@ -77,7 +77,7 @@ export default {
         newQuery.default_url = parentObj.default_url + '/' + fields.default_url
       }
       await PostCategory.findOneAndUpdate({ _id: cateObj._id }, { $set: newQuery })
-      return res.send(renderApiData(res, 200, '分类创建成功', { id: cateObj._id }))
+      return res.send(renderApiData(req, res, 200, '分类创建成功', { id: cateObj._id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -130,7 +130,7 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '分类列表获取成功', cateObj))
+      return res.send(renderApiData(req, res, 200, '分类列表获取成功', cateObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -164,7 +164,7 @@ export default {
       }
 
       await PostCategory.remove({ _id: id })
-      return res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(req, res, 200, '删除成功', {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -206,7 +206,7 @@ export default {
     try {
       let item_id = fields._id
       await PostCategory.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, '分类更新成功', { id: item_id }))
+      return res.send(renderApiData(req, res, 200, '分类更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -224,7 +224,7 @@ export default {
       let queryObj = { _id: targetId }
       const cate = await PostCategory.findOne(queryObj).exec()
 
-      return res.send(renderApiData(res, 200, '获取成功', cate || {}))
+      return res.send(renderApiData(req, res, 200, '获取成功', cate || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

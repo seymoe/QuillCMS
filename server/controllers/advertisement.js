@@ -57,7 +57,7 @@ export default {
 
     try {
       let adObj = await newAd.save()
-      return res.send(renderApiData(res, 200, '广告创建成功', { id: adObj._id }))
+      return res.send(renderApiData(req, res, 200, '广告创建成功', { id: adObj._id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -75,7 +75,7 @@ export default {
       let queryObj = { _id: targetId }
       const ad = await Advertisement.findOne(queryObj).exec()
 
-      return res.send(renderApiData(res, 200, '获取成功', ad || {}))
+      return res.send(renderApiData(req, res, 200, '获取成功', ad || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -111,7 +111,7 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '广告列表获取成功', adObj))
+      return res.send(renderApiData(req, res, 200, '广告列表获取成功', adObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -142,7 +142,7 @@ export default {
       }
 
       await Advertisement.remove({ _id: id })
-      return res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(req, res, 200, '删除成功', {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -198,7 +198,7 @@ export default {
       }
 
       await Advertisement.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, '广告更新成功', { id: item_id }))
+      return res.send(renderApiData(req, res, 200, '广告更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

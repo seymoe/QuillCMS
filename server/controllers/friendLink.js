@@ -57,7 +57,7 @@ export default {
 
     try {
       let linkObj = await newLink.save()
-      return res.send(renderApiData(res, 200, '友情链接创建成功', { id: linkObj._id }))
+      return res.send(renderApiData(req, res, 200, '友情链接创建成功', { id: linkObj._id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -75,7 +75,7 @@ export default {
       let queryObj = { _id: targetId }
       const link = await FriendLink.findOne(queryObj).exec()
 
-      return res.send(renderApiData(res, 200, '获取成功', link || {}))
+      return res.send(renderApiData(req, res, 200, '获取成功', link || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -111,7 +111,7 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '友情链接列表获取成功', linkObj))
+      return res.send(renderApiData(req, res, 200, '友情链接列表获取成功', linkObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -142,7 +142,7 @@ export default {
       }
 
       await FriendLink.remove({ _id: id })
-      return res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(req, res, 200, '删除成功', {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -183,7 +183,7 @@ export default {
     try {
       let item_id = fields._id
       await FriendLink.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, '友链更新成功', { id: item_id }))
+      return res.send(renderApiData(req, res, 200, '友链更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

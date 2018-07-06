@@ -38,7 +38,7 @@ export default {
 
     try {
       let tagObj = await newTag.save()
-      return res.send(renderApiData(res, 200, '标签创建成功', { id: tagObj._id }))
+      return res.send(renderApiData(req, res, 200, '标签创建成功', { id: tagObj._id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -78,7 +78,7 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '标签列表获取成功', tagObj))
+      return res.send(renderApiData(req, res, 200, '标签列表获取成功', tagObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -109,7 +109,7 @@ export default {
       }
 
       await PostTag.remove({ _id: id })
-      return res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(req, res, 200, '删除成功', {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

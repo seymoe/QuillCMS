@@ -70,7 +70,7 @@ export default {
     try {
       let item_id = fields._id
       await PostComment.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, successMsg, { id: item_id }))
+      return res.send(renderApiData(req, res, 200, successMsg, { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -96,7 +96,7 @@ export default {
       }
 
       await PostComment.remove({ _id: id })
-      return res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(req, res, 200, '删除成功', {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -129,7 +129,7 @@ export default {
       // 更新文章评论数量信息
       await Post.findOneAndUpdate({_id: fields.post}, {'$inc': {commentsNum: 1}})
       // 对用户留言加分
-      return res.send(renderApiData(res, 200, '留言成功', {id: comment._id}))
+      return res.send(renderApiData(req, res, 200, '留言成功', {id: comment._id}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -200,7 +200,7 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '评论列表获取成功', tagObj))
+      return res.send(renderApiData(req, res, 200, '评论列表获取成功', tagObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

@@ -145,7 +145,7 @@ export default {
         obj.password = hash
         const newUser = new User(obj)
         let userObj = await newUser.save()
-        return res.send(renderApiData(res, 200, '用户创建成功', { id: userObj._id }))
+        return res.send(renderApiData(req, res, 200, '用户创建成功', { id: userObj._id }))
       } else {
         return res.status(500).send(renderApiErr(req, res, 500, '加密过程出错'))
       }
@@ -183,7 +183,7 @@ export default {
       }
 
       await User.remove({ _id: id })
-      return res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(req, res, 200, '删除成功', {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -221,7 +221,7 @@ export default {
     try {
       let item_id = fields._id
       await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, '用户资料更新成功', { id: item_id }))
+      return res.send(renderApiData(req, res, 200, '用户资料更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -268,7 +268,7 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '用户列表获取成功', userObj))
+      return res.send(renderApiData(req, res, 200, '用户列表获取成功', userObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -286,7 +286,7 @@ export default {
       let queryObj = { _id: targetId }
       const user = await User.findOne(queryObj).exec()
 
-      return res.send(renderApiData(res, 200, '获取成功', user || {}))
+      return res.send(renderApiData(req, res, 200, '获取成功', user || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -353,7 +353,7 @@ export default {
         user.last_login_time = Date.now()
         await user.save()
 
-        return res.send(renderApiData(res, 200, '登陆成功'))
+        return res.send(renderApiData(req, res, 200, '登陆成功'))
       } else {
         return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
       }
@@ -371,7 +371,7 @@ export default {
   logoutAction(req, res, next) {
     delete req.session.userLogined
     delete req.session.userInfo
-    return res.send(renderApiData(res, 200, '成功退出登陆'))
+    return res.send(renderApiData(req, res, 200, '成功退出登陆'))
   },
 
   // ------------------------ 会员相关 --------------------------
@@ -440,7 +440,7 @@ export default {
         user.last_login_time = Date.now()
         await user.save()
 
-        return res.send(renderApiData(res, 200, '登陆成功'))
+        return res.send(renderApiData(req, res, 200, '登陆成功'))
       } else {
         return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
       }
@@ -488,7 +488,7 @@ export default {
         obj.password = hash
         const newUser = new User(obj)
         let userObj = await newUser.save()
-        return res.send(renderApiData(res, 200, '注册成功', { id: userObj._id }))
+        return res.send(renderApiData(req, res, 200, '注册成功', { id: userObj._id }))
       } else {
         return res.status(500).send(renderApiErr(req, res, 500, '加密过程出错'))
       }
@@ -587,7 +587,7 @@ export default {
 
       log(user)
 
-      return res.send(renderApiData(res, 200, '获取成功', user || {}))
+      return res.send(renderApiData(req, res, 200, '获取成功', user || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -634,7 +634,7 @@ export default {
       // 更新session
       req.session.userInfo.avatar = fields.avatar
       req.session.save()
-      return res.send(renderApiData(res, 200, '头像更新成功', { id: item_id }))
+      return res.send(renderApiData(req, res, 200, '头像更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -675,7 +675,7 @@ export default {
     try {
       let item_id = fields._id
       await User.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, '资料更新成功', { id: item_id }))
+      return res.send(renderApiData(req, res, 200, '资料更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -703,7 +703,7 @@ export default {
       } else {
         let newTargetUser = await User.findOneAndUpdate({ _id: targetId }, { '$inc': { 'fansNum': 1 }, '$push': { 'fans_users': userId } })
         let newUser = await User.findOneAndUpdate({ _id: userId }, { '$inc': { 'followsNum': 1 }, '$push': { 'follow_users': newTargetUser._id } })
-        return res.send(renderApiData(res, 200, '关注成功'))
+        return res.send(renderApiData(req, res, 200, '关注成功'))
       }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
@@ -732,7 +732,7 @@ export default {
       } else {
         let newTargetUser = await User.findOneAndUpdate({ _id: targetId }, { '$inc': { 'fansNum': -1 }, '$pull': { 'fans_users': userId } })
         let newUser = await User.findOneAndUpdate({ _id: userId }, { '$inc': { 'followsNum': -1 }, '$pull': { 'follow_users': newTargetUser._id } })
-        return res.send(renderApiData(res, 200, '取消关注成功'))
+        return res.send(renderApiData(req, res, 200, '取消关注成功'))
       }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
