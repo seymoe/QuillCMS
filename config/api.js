@@ -1,5 +1,7 @@
 import siteConf from './site'
 
+siteConf.api_url = siteConf.dev ? 'http://127.0.0.1:8080' : ''
+
 export default {
   /** 管理端 ----------------- */
 
@@ -10,6 +12,7 @@ export default {
   categoryList: `${siteConf.api_url}/server${siteConf.api_path}/category/list`,
   categoryAdd: `${siteConf.api_url}/server${siteConf.api_path}/category/new`,
   categoryDelete: `${siteConf.api_url}/server${siteConf.api_path}/category`,
+  categoryUpdate: `${siteConf.api_url}/server${siteConf.api_path}/category/update`,
 
   // 标签相关
   tagList: `${siteConf.api_url}/server${siteConf.api_path}/tag/list`,

@@ -5,6 +5,10 @@ import { log, renderApiData, renderApiErr, getClientIp } from '../utils'
 import valiObj from '../../utils/validate'
 import xss from 'xss'
 
+// 引入bcrypt,并设置加密等级为10
+import bcrypt from 'bcrypt'
+const saltRounds = 10
+
 // 检验登陆请求
 let checkLoginActionFields = (formData) => {
   // fakemark 防伪标识， 值为 quillcms_login_mark_[时间戳]
@@ -133,11 +137,18 @@ export default {
       enable: fields.enable ? true : false
     }
 
-    const newUser = new User(obj)
-
     try {
-      let userObj = await newUser.save()
-      return res.send(renderApiData(res, 200, '用户创建成功', { id: userObj._id }))
+      // 利用bcrypt对密码进行加密
+      let hash = await bcrypt.hash(obj.password, saltRounds)
+
+      if (hash) {
+        obj.password = hash
+        const newUser = new User(obj)
+        let userObj = await newUser.save()
+        return res.send(renderApiData(res, 200, '用户创建成功', { id: userObj._id }))
+      } else {
+        return res.status(500).send(renderApiErr(req, res, 500, '加密过程出错'))
+      }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -226,7 +237,7 @@ export default {
     try {
       log(req.query)
       let fields = req.query
-      let queryObj = {}, sortObj = {create_time: -1}
+      let queryObj = {}, sortObj = { create_time: -1 }
       let page = Number(fields.page) || 1
       let pageSize = Number(fields.pageSize) || 10
       let role = fields.role  // 角色 super/admin/member
@@ -301,9 +312,9 @@ export default {
 
     // 数据格式校验成功，则查找数据库中是否存在用户，比对其密码
     let userObj = {
-      email: fields.email,
-      password: fields.password
+      email: fields.email
     }
+    let plainPassword = fields.password
 
     try {
       let user = await User.findOne(userObj).exec()
@@ -316,18 +327,24 @@ export default {
           return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
         }
 
+        // 与查找出来的密码比对，看是否相等
+        let hashResult = await bcrypt.compare(plainPassword, user.password)
+        if (!hashResult) {
+          return res.status(401).send(renderApiErr(req, res, 401, '用户名或密码错误'))
+        }
+
         // 用户信息正确，未被禁用
         log(user)
 
         req.session.userLogined = true,
-        req.session.userInfo = {
-          username: user.username,
-          id: user._id,
-          email: user.email,
-          nickname: user.nickname,
-          role: user.role,
-          avatar: user.avatar
-        }
+          req.session.userInfo = {
+            username: user.username,
+            id: user._id,
+            email: user.email,
+            nickname: user.nickname,
+            role: user.role,
+            avatar: user.avatar
+          }
         req.session.save()
 
         // 更新登陆信息
@@ -379,9 +396,9 @@ export default {
 
     // 数据格式校验成功，则查找数据库中是否存在用户，比对其密码
     let userObj = {
-      email: fields.email,
-      password: fields.password
+      email: fields.email
     }
+    let plainPassword = fields.password
 
     try {
       let user = await User.findOne(userObj).exec()
@@ -395,19 +412,27 @@ export default {
           return res.status(404).send(renderApiErr(req, res, 404, '用户不存在'))
         }
 
+        // 与查找出来的密码比对，看是否相等
+        let hashResult = await bcrypt.compare(plainPassword, user.password)
+        if (!hashResult) {
+          return res.status(401).send(renderApiErr(req, res, 401, '用户名或密码错误'))
+        }
+
         // 用户信息正确，未被禁用
         log(user)
 
         req.session.userLogined = true,
-        req.session.userInfo = {
-          username: user.username,
-          id: user._id,
-          email: user.email,
-          nickname: user.nickname,
-          role: user.role,
-          avatar: user.avatar
-        }
+          req.session.userInfo = {
+            username: user.username,
+            id: user._id,
+            email: user.email,
+            nickname: user.nickname,
+            role: user.role,
+            avatar: user.avatar
+          }
         req.session.save()
+
+        log('logSession -> ', req.session)
 
         // 更新登陆信息
         let ip = getClientIp(req)
@@ -450,17 +475,23 @@ export default {
       role: 'member'
     }
 
-    const newUser = new User(obj)
-
     try {
       // 查询数据库中是否已经存在邮箱
-      let _user = await User.findOne({email: obj.email})
+      let _user = await User.findOne({ email: obj.email }, { password: 0 })
       if (_user) {
         return res.status(500).send(renderApiErr(req, res, 500, '邮箱已被占用'))
       }
-      
-      let userObj = await newUser.save()
-      return res.send(renderApiData(res, 200, '注册成功', { id: userObj._id }))
+
+      // 利用bcrypt对密码进行加密
+      let hash = await bcrypt.hash(obj.password, saltRounds)
+      if (hash) {
+        obj.password = hash
+        const newUser = new User(obj)
+        let userObj = await newUser.save()
+        return res.send(renderApiData(res, 200, '注册成功', { id: userObj._id }))
+      } else {
+        return res.status(500).send(renderApiErr(req, res, 500, '加密过程出错'))
+      }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -530,20 +561,20 @@ export default {
           path: 'follow_users',
           select: 'nickname _id avatar signature',
           model: User,
-          options: {limit: 5}
+          options: { limit: 5 }
         },
         {
           path: 'fans_users',
           select: 'nickname _id avatar signature',
           model: User,
-          options: {limit: 5}
+          options: { limit: 5 }
         }
       ]).exec()
       user = user.toObject()
 
       // 判断用户间状态返回是否关注的信息
       if (_session.userLogined && _session.userInfo.id !== targetId) {
-        let targetUser = await User.findOne({_id: targetId})
+        let targetUser = await User.findOne({ _id: targetId })
         if (targetUser.fans_users.indexOf(_session.userInfo.id) > -1) {
           // 说明该登陆用户已经关注了访问的用户
           user.hasFollow = true
@@ -585,7 +616,7 @@ export default {
     try {
       let item_id = fields._id
 
-      let oldUser = await User.findOne({_id: item_id})
+      let oldUser = await User.findOne({ _id: item_id })
       // 如果新传来的图片路径和之前的图片路径不同，则删掉之前的图片并更新
       if (oldUser.cover !== obj.cover) {
         if (oldUser.cover.indexOf('/upload/images/') >= 0) {

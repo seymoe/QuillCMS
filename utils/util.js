@@ -50,7 +50,7 @@ export const renderApiErr = (req, res, responseCode, responseMessage) => {
   }
 
   // 记录错误日志
-  logUtil.error(responseMessage, req)
+  // logUtil.error(responseMessage, req)
 
   return errorData
 }
