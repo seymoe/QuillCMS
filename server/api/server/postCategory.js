@@ -7,5 +7,7 @@ const router = Router()
 router.post('/category/new', checkUserSession, PostCategoryController.createOne)
 router.get('/category/list', checkUserSession, PostCategoryController.getList)
 router.delete('/category/:id', checkUserSession, PostCategoryController.deleteOne)
+router.post('/category/update', checkUserSession, PostCategoryController.updateOne)
+router.get('/category/:id', checkUserSession, PostCategoryController.getOne)
 
 export default router

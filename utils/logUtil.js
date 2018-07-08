@@ -37,9 +37,9 @@ export default {
     }
   },
 
-  res(ctx, resTime) {
-    if (ctx) {
-      resLogger.info(formatRes(ctx, resTime))
+  res(msg, req, resTime) {
+    if (msg) {
+      resLogger.info(formatRes(req, resTime))
     }
   },
 

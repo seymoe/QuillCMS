@@ -15,12 +15,18 @@
         <categories-tree 
           :categoryTree="categoryList"
           @add-cate="handleToggleAddDialog"
-          @delete-cate="clientDeleteOneCate"></categories-tree>
+          @delete-cate="clientDeleteOneCate"
+          @update-cate="handleToggleUpdateDialog"></categories-tree>
         <add-cate-dialog 
           :dialogFormVisible="dialogFormVisible"
           :dialogParentNode="dialogParentNode"
           @add-cate="handleToggleAddDialog"
           @create-new-cate="clientCreateOneCate"></add-cate-dialog>
+        <edit-cate-dialog 
+          :dialogFormVisible="updateFormVisible"
+          :form="currentCateData"
+          @add-cate="handleToggleUpdateDialog"
+          @update-cate="clientUpdateOneCate"></edit-cate-dialog>
       </main>
     </div>
     <app-footer></app-footer>
@@ -40,6 +46,7 @@ import AppPageTitle from '~/components/Admin/AppPageTitle'
 import CategoriesTop from '~/components/Admin/Categories/CategoriesTop'
 import CategoriesTree from '~/components/Admin/Categories/CategoriesTree'
 import AddCateDialog from '~/components/Admin/Categories/AddCateDialog'
+import EditCateDialog from '~/components/Admin/Categories/EditCateDialog'
 
 export default {
   data() {
@@ -68,7 +75,12 @@ export default {
       categoryList: [],
       // 是否显示添加分类弹框
       dialogFormVisible: false,
-      dialogParentNode: {}
+      dialogParentNode: {},
+
+      // 是否显示更新框
+      updateFormVisible: false,
+      // 当前选中的链接对象
+      currentCateData: {}
     }
   },
 
@@ -101,6 +113,31 @@ export default {
 
       this.dialogFormVisible = bool
       this.dialogParentNode = topCateNode || {}
+    },
+
+    // 切换显示编辑框
+    handleToggleUpdateDialog(bool, data) {
+      if (this.updateFormVisible === bool) return false
+      // 只有管理员才能添加添加友链
+      if (
+        this.loginState.userInfo.role !== 'super' &&
+        this.loginState.userInfo.role !== 'admin'
+      ) {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
+      if (bool) {
+        // 拉取详情成功后，显示弹窗，注入数据
+        this.clientGetOneCate(data, () => {
+          this.updateFormVisible = bool
+        })
+      } else {
+        this.updateFormVisible = bool
+      }
     },
 
     // 客户端发送增加分类请求
@@ -183,6 +220,67 @@ export default {
         .catch(e => {
           log(e)
         })
+    },
+
+    // 客户端拉取单个详情
+    clientGetOneCate(node, callback) {
+      // 只有超级管理员才能编辑链接
+      if (
+        this.loginState.userInfo.role !== 'super' &&
+        this.loginState.userInfo.role !== 'admin'
+      ) {
+        this.$message({
+          type: 'warning',
+          message: '权限不足'
+        })
+        return false
+      }
+
+      log(node)
+
+      this.$request
+        .get(API.categoryDelete + '/' + node._id)
+        .then(res => {
+          if (res.data.success) {
+            this.currentCateData = res.data.data
+            callback && callback()
+          } else {
+            this.$notify({
+              title: '错误',
+              message: res.data.message,
+              type: 'danger'
+            })
+          }
+        })
+        .catch(e => {
+          log(e)
+        })
+    },
+
+    // 客户端更新友链
+    clientUpdateOneCate(data, successCB, failCB) {
+      log(data)
+      this.$request
+        .post(API.categoryUpdate, data)
+        .then(res => {
+          if (res.data.success) {
+            this.$notify({
+              title: '成功',
+              message: res.data.message,
+              type: 'success'
+            })
+            successCB && successCB()
+            this.clientGetCategoryList()
+          }
+        })
+        .catch(err => {
+          log(err)
+          this.$notify.error({
+            title: '错误',
+            message: err.message
+          })
+          failCB && failCB()
+        })
     }
   },
   computed: mapState([
@@ -198,11 +296,11 @@ export default {
     AppPageTitle,
     CategoriesTop,
     CategoriesTree,
-    AddCateDialog
+    AddCateDialog,
+    EditCateDialog
   }
 }
 </script>
 
 <style lang="scss" scoped>
 </style>
-

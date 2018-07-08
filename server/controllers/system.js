@@ -58,12 +58,12 @@ const uploadToQiniu = (req, res, imgkey, imgname) => {
     }
     if (respInfo.statusCode === 200) {
       log('qiniu-response->',respBody)
-      return res.send(renderApiData(res, 200, '图片上传成功', origin + '/' + respBody.key))
+      return res.send(renderApiData(req, res, 200, '图片上传成功', origin + '/' + respBody.key))
     } else {
       log(respInfo.statusCode)
       log(respBody)
       // 上传七牛云失败，返回服务器上的图片链接
-      return res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${imgname}`))
+      return res.send(renderApiData(req, res, 200, '图片上传成功', `/upload/images/${imgname}`))
     }
   })
 }
@@ -118,7 +118,7 @@ export default {
             uploadToQiniu(req, res, filePath, lastDir + '/' + req.file.filename)
           } else {
             // 未开启七牛云，返回服务器上的图片链接
-            return res.send(renderApiData(res, 200, '图片上传成功', `/upload/images/${lastDir}/${req.file.filename}`))
+            return res.send(renderApiData(req, res, 200, '图片上传成功', `/upload/images/${lastDir}/${req.file.filename}`))
           }
         }
       })
@@ -151,7 +151,7 @@ export default {
         commentsCount,
         tagsCount
       }
-      return res.send(renderApiData(res, 200, '总览数据获取成功', result))
+      return res.send(renderApiData(req, res, 200, '总览数据获取成功', result))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

@@ -198,7 +198,7 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '文章列表获取成功', postObj))
+      return res.send(renderApiData(req, res, 200, '文章列表获取成功', postObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -291,7 +291,7 @@ export default {
       // 更新用户发文数
       await User.findOneAndUpdate({ _id: obj.author }, { '$inc': { postsNum: 1 } })
 
-      return res.send(renderApiData(res, 200, '文章创建成功', { id: postObj._id }))
+      return res.send(renderApiData(req, res, 200, '文章创建成功', { id: postObj._id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -354,7 +354,7 @@ export default {
       }
 
       await Post.findOneAndUpdate({ _id: item_id }, { $set: obj })
-      return res.send(renderApiData(res, 200, '文章更新成功', { id: item_id }))
+      return res.send(renderApiData(req, res, 200, '文章更新成功', { id: item_id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -427,7 +427,7 @@ export default {
 
       log(content.hasLiked, content.hasCollected)
 
-      return res.send(renderApiData(res, 200, '获取成功', content || {}))
+      return res.send(renderApiData(req, res, 200, '获取成功', content || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -453,7 +453,7 @@ export default {
       }
 
       await Post.remove({ _id: id })
-      return res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(req, res, 200, '删除成功', {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -479,7 +479,7 @@ export default {
         return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
       } else {
         let newPost = await Post.findOneAndUpdate({ _id: postId }, { '$inc': { 'likesNum': 1 }, '$push': { 'like_users': userId } })
-        return res.send(renderApiData(res, 200, '更新成功', {likesNum: newPost.likesNum + 1, hasLiked: true}))
+        return res.send(renderApiData(req, res, 200, '更新成功', {likesNum: newPost.likesNum + 1, hasLiked: true}))
       }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
@@ -505,7 +505,7 @@ export default {
         return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
       } else {
         let newPost = await Post.findOneAndUpdate({ _id: postId }, { '$inc': { 'collectionsNum': 1 }, '$push': { 'collect_users': userId } })
-        return res.send(renderApiData(res, 200, '更新成功', {collectionsNum: newPost.collectionsNum + 1, hasCollected: true}))
+        return res.send(renderApiData(req, res, 200, '更新成功', {collectionsNum: newPost.collectionsNum + 1, hasCollected: true}))
       }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))

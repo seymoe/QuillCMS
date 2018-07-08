@@ -22,7 +22,7 @@
             class="btn"
             type="success"
             size="mini"
-            @click="() => deleteOneCate(data)">
+            @click="() => deleteUpdateCate(data)">
             编辑
           </el-button>
           <el-button
@@ -83,6 +83,9 @@ export default {
             log('取消删除')
           })
       }
+    },
+    deleteUpdateCate(data) {
+      this.$emit('update-cate', true, data)
     }
   }
 }

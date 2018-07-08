@@ -77,7 +77,7 @@ export default {
         newQuery.default_url = parentObj.default_url + '/' + fields.default_url
       }
       await PostCategory.findOneAndUpdate({ _id: cateObj._id }, { $set: newQuery })
-      return res.send(renderApiData(res, 200, '分类创建成功', { id: cateObj._id }))
+      return res.send(renderApiData(req, res, 200, '分类创建成功', { id: cateObj._id }))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -130,7 +130,7 @@ export default {
         pageSize: pageSize,
         totalCounts: totalCounts
       }
-      return res.send(renderApiData(res, 200, '分类列表获取成功', cateObj))
+      return res.send(renderApiData(req, res, 200, '分类列表获取成功', cateObj))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -164,7 +164,67 @@ export default {
       }
 
       await PostCategory.remove({ _id: id })
-      return res.send(renderApiData(res, 200, '删除成功', {}))
+      return res.send(renderApiData(req, res, 200, '删除成功', {}))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+    /**
+   * 更新
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  async updateOne(req, res, next) {
+    // 校验传入的参数
+    let fields = req.body
+    try {
+      let validateResult = checkCateFields(fields, req)
+      if (!validateResult) {
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
+      // 如果id不合法，则返回校验失败
+      if (!shortid.isValid(fields._id)) {
+        return res.status(500).send(renderApiErr(req, res, 500, '数据校验失败'))
+      }
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+
+    const obj = {
+      type: fields.type,
+      sort_id: fields.sort_id,
+      name: fields.name,
+      description: fields.description,
+      default_url: fields.default_url,
+      enable: fields.enable ? true : false
+    }
+
+    log(obj)
+
+    try {
+      let item_id = fields._id
+      await PostCategory.findOneAndUpdate({ _id: item_id }, { $set: obj })
+      return res.send(renderApiData(req, res, 200, '分类更新成功', { id: item_id }))
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
+  /**
+   * 获取一个链接
+   * @param {*} req 
+   * @param {*} res 
+   * @param {*} next 
+   */
+  async getOne(req, res, next) {
+    try {
+      let targetId = req.params.id
+      let queryObj = { _id: targetId }
+      const cate = await PostCategory.findOne(queryObj).exec()
+
+      return res.send(renderApiData(req, res, 200, '获取成功', cate || {}))
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }

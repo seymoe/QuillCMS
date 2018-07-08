@@ -12,6 +12,7 @@ export default {
   categoryList: `${siteConf.api_url}/server${siteConf.api_path}/category/list`,
   categoryAdd: `${siteConf.api_url}/server${siteConf.api_path}/category/new`,
   categoryDelete: `${siteConf.api_url}/server${siteConf.api_path}/category`,
+  categoryUpdate: `${siteConf.api_url}/server${siteConf.api_path}/category/update`,
 
   // 标签相关
   tagList: `${siteConf.api_url}/server${siteConf.api_path}/tag/list`,

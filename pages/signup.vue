@@ -167,7 +167,7 @@ export default {
               })
               this.$refs[formName].resetFields()
               setTimeout(() => {
-                location.replace('/login')
+                location.replace('/signin')
               }, 500)
             }
           }).catch(e => {
