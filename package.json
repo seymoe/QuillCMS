@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "axios": "^0.16.2",
-    "bcrypt": "^3.0.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "connect-mongo": "^2.0.1",
     "cookie-parser": "^1.4.3",

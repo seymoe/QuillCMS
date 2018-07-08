@@ -63,7 +63,7 @@
                 multiple
                 filterable
                 allow-create
-                placeholder="选择文章标签"
+                placeholder="选择或创建标签"
                 @change="handleTagChange">
                 <el-option
                   v-for="item in tagList"

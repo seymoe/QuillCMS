@@ -6,7 +6,7 @@ import valiObj from '../../utils/validate'
 import xss from 'xss'
 
 // 引入bcrypt,并设置加密等级为10
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 const saltRounds = 10
 
 // 检验登陆请求

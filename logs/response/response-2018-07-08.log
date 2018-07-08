@@ -1,0 +1,210 @@
+[2018-07-08T14:25:30.382] [INFO] resLogger - 
+*************** response log start ***************
+request url: /category/list?mode=full
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:30.681] [INFO] resLogger - 
+*************** response log start ***************
+request url: /post/rkGZcmyQm
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:30.850] [INFO] resLogger - 
+*************** response log start ***************
+request url: /friendlinks?limit=10
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:30.910] [INFO] resLogger - 
+*************** response log start ***************
+request url: /post/rkGZcmyQm
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:30.911] [INFO] resLogger - 
+*************** response log start ***************
+request url: /category/list?mode=full
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:30.955] [INFO] resLogger - 
+*************** response log start ***************
+request url: /friendlinks?limit=10
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:31.377] [INFO] resLogger - 
+*************** response log start ***************
+request url: /category/list?mode=full
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:31.392] [INFO] resLogger - 
+*************** response log start ***************
+request url: /post/rkGZcmyQm
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:31.402] [INFO] resLogger - 
+*************** response log start ***************
+request url: /friendlinks?limit=10
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:31.822] [INFO] resLogger - 
+*************** response log start ***************
+request url: /post/list?user=B1Jtu71QQ&sortBy=clicks&mode=simple&limit=5
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:31.823] [INFO] resLogger - 
+*************** response log start ***************
+request url: /comments?postId=rkGZcmyQm
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:31.840] [INFO] resLogger - 
+*************** response log start ***************
+request url: /post/rkGZcmyQm
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:31.848] [INFO] resLogger - 
+*************** response log start ***************
+request url: /category/list?mode=full
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:31.856] [INFO] resLogger - 
+*************** response log start ***************
+request url: /friendlinks?limit=10
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:41.681] [INFO] resLogger - 
+*************** response log start ***************
+request url: /user/login
+request method: POST
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{"email":"a@a.com","password":"12345678","fakemark":"quillcms_login_mark_1531031141469"}
+*************** response log end ***************
+
+[2018-07-08T14:25:42.381] [INFO] resLogger - 
+*************** response log start ***************
+request url: /data-preview
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:43.791] [INFO] resLogger - 
+*************** response log start ***************
+request url: /category/list?mode=full
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:45.124] [INFO] resLogger - 
+*************** response log start ***************
+request url: /post/list
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:48.350] [INFO] resLogger - 
+*************** response log start ***************
+request url: /category/list?mode=full
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:48.352] [INFO] resLogger - 
+*************** response log start ***************
+request url: /tag/list?mode=full
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
+[2018-07-08T14:25:48.356] [INFO] resLogger - 
+*************** response log start ***************
+request url: /post/rkGZcmyQm?getFrom=server
+request method: GET
+request client ip:  127.0.0.1
+response status: undefined
+response body: 
+{}
+*************** response log end ***************
+
