@@ -30,11 +30,36 @@
     methods: {
       // 关注
       handleFollow(id) {
+        // 判断是否登陆
+        if (!this.loginState.hasLogin || !this.loginState.userInfo.id) {
+          this.showConfirmBox()
+          return false
+        }
         this.$emit('follow-user', id)
       },
       // 取消关注
       handleUnFollow(id) {
+        // 判断是否登陆
+        if (!this.loginState.hasLogin || !this.loginState.userInfo.id) {
+          this.showConfirmBox()
+          return false
+        }
         this.$emit('unfollow-user', id)
+      },
+
+      // 提示登陆注册
+      showConfirmBox() {
+        this.$confirm('您还未登录，请登录后再进行相关操作', '请登陆', {
+          confirmButtonText: '去登陆',
+          cancelButtonText: '放弃了',
+          type: 'info',
+          center: true
+        })
+          .then(() => {
+            let fromUrl = '/user/' + this.userData._id
+            this.$router.push('/signin?fromUrl=' + fromUrl)
+          })
+          .catch(() => {})
       }
     }
   }
@@ -54,4 +79,3 @@
   }
 }
 </style>
-

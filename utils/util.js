@@ -1,6 +1,5 @@
 import shortid from 'shortid'
 import siteConf from '../config/site'
-// import logUtil from './logUtil'
 
 export const log = siteConf.dev ? console.log.bind(console) : () => { }
 
@@ -48,9 +47,6 @@ export const renderApiErr = (req, res, responseCode, responseMessage) => {
     request_time: (new Date()).getTime(),
     data: {}
   }
-
-  // 记录错误日志
-  logUtil.error(responseMessage, req)
 
   return errorData
 }

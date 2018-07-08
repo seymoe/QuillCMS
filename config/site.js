@@ -15,11 +15,11 @@ export default {
   // 站点域名
   host: '0.0.0.0',
   // 端口
-  port: 4000,
+  port: 8080,
   // API版本路径
   api_path: '/api/v1',
   // API URL地址
-  api_url: 'http://127.0.0.1:4000',
+  api_url: '',
 
   /**
    * 后台设置
@@ -46,7 +46,7 @@ export default {
   DB_PASSWORD: 'quillcms',
 
   /* 七牛配置 */
-  openqn: true, // 是否开启,若为true 则下面的信息必须配置正确完整
+  openqn: false, // 是否开启,若为true 则下面的信息必须配置正确完整
   accessKey: 'your accessKey',
   secretKey: 'your secretKey',
   bucket: 'quillcms', // 上传的目标资源空间

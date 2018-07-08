@@ -93,7 +93,7 @@ export default {
         return false
       }
       // 判断是否有值
-      if (this.form.content.length < 0 || this.form.content.length > 200) {
+      if (this.form.content.length <= 0 || this.form.content.length > 200) {
         return false
       }
 

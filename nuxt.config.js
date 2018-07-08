@@ -26,6 +26,9 @@ module.exports = {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://cdn.bootcss.com/highlight.js/9.12.0/styles/vs2015.min.css'}
+    ],
+    script: [
+      // { src: 'https://hm.baidu.com/hm.js?8d6372d90f2e18a7e8640a18ec3132ef' },/*引入百度统计的js*/
     ]
   },
   plugins: [
@@ -39,6 +42,10 @@ module.exports = {
     },
     {
       src: '~plugins/mavon-editor',
+      ssr: false
+    },
+    {
+      src: '~plugins/ga.js',
       ssr: false
     }
   ],

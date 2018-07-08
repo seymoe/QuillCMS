@@ -1,5 +1,7 @@
 import siteConf from './site'
 
+siteConf.api_url = siteConf.dev ? 'http://127.0.0.1:8080' : ''
+
 export default {
   /** 管理端 ----------------- */
 
