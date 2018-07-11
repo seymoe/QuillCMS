@@ -3,6 +3,10 @@ node_modules
 
 # logs
 npm-debug.log
+logs
+
+# images
+/static/upload
 
 # Nuxt build 本地build需要讲.nuxt注释掉， dist改为/dist
 .nuxt

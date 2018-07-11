@@ -78,7 +78,7 @@ export default {
     }
 
     let checkLink = (rule, value, callback) => {
-      if (!validator.isURL(value)) {
+      if (value !== '' && !validator.isURL(value)) {
         return callback(new Error('请输入链接'))
       } else {
         callback()
@@ -102,7 +102,6 @@ export default {
           { validator: checkDesc, trigger: 'blur' }
         ],
         link: [
-          { required: true, message: '链接地址不能为空' },
           { validator: checkLink, trigger: 'blur' }
         ]
       },

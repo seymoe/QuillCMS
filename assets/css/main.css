@@ -137,6 +137,12 @@ img{
   color: #3d464d;
   line-height: 1.8;
 }
+.posthtml p .codespan{
+  background-color: #1E1E1E;
+  color: #569CD6;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
 
 @media screen and (max-width: 767px) {
   .app-wrap{

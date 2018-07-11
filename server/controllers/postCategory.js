@@ -74,7 +74,7 @@ export default {
         let parentObj = await PostCategory.findOne({ '_id': fields.parent_id }, 'sort_path default_url')
         log('parentObj ', parentObj)
         newQuery.sort_path = parentObj.sort_path + "," + cateObj._id
-        newQuery.default_url = parentObj.default_url + '/' + fields.default_url
+        newQuery.default_url = parentObj.default_url + '-' + fields.default_url
       }
       await PostCategory.findOneAndUpdate({ _id: cateObj._id }, { $set: newQuery })
       return res.send(renderApiData(req, res, 200, '分类创建成功', { id: cateObj._id }))

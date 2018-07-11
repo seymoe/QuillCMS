@@ -20,7 +20,7 @@ let checkAdsFields = (formData, req) => {
     return false
   } else if (cover.length > 80) {
     return false
-  } else if (!validator.isURL(link)) {
+  } else if (link !== '' && !validator.isURL(link)) {
     return false
   }
   return true
