@@ -173,7 +173,7 @@ export default {
       hotTagList: [],
 
       // 首页广告位
-      indexAdvertise: {},
+      indexAdvertise: null,
       // 热门创作人
       hotCreaters: []
     }

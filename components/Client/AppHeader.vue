@@ -33,7 +33,7 @@
       <el-col :span="6" class="head-right flex-row">
         <el-button type="primary" size="mini" class="btn-write" @click="toNewPostPage">写文章</el-button>
         <div v-if="!loginState.hasLogin" class="unloigin-box flex-row">
-          <el-button type="text" class="btn" @click="handleSignin">登陆</el-button>
+          <el-button type="text" class="btn" @click="handleSignin">登录</el-button>
           <el-button type="text" class="btn" @click="handleSignup">注册</el-button>
         </div>
         <div v-else class="login-box flex-row">

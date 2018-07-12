@@ -14,19 +14,102 @@ const { JSDOM } = require('jsdom')
 const window = (new JSDOM('')).window
 const DOMPurify = createDOMPurify(window)
 
+// Marked配置
+let renderer = new Marked.Renderer()
+renderer.codespan = (code, lang) => {
+  log('codespan', code)
+  return '<code class="codespan">' + code.replace(/amp;/g, '') + '</code>'
+}
 Marked.setOptions({
-  renderer: new Marked.Renderer(),
+  renderer: renderer,
   gfm: true,
   tables: true,
   breaks: false,
   pedantic: false,
   sanitize: false,
-  smartLists: true,
+  smartLists: false,
   smartypants: false,
   highlight: function (code) {
+    code = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
     return highlight.highlightAuto(code).value
   }
 })
+
+// XSS配置
+let options = {
+  whiteList: {
+    a: ['id', 'class', 'target', 'href', 'title'],
+    abbr: ['id', 'class', 'title'],
+    address: ['id', 'class'],
+    area: ['id', 'class', 'shape', 'coords', 'href', 'alt'],
+    article: ['id', 'class',],
+    aside: ['id', 'class',],
+    audio: ['id', 'class', 'autoplay', 'controls', 'loop', 'preload', 'src'],
+    b: ['id', 'class',],
+    bdi: ['id', 'class', 'dir'],
+    bdo: ['id', 'class', 'dir'],
+    big: ['id', 'class',],
+    blockquote: ['id', 'class', 'cite'],
+    br: ['id', 'class',],
+    caption: ['id', 'class',],
+    center: ['id', 'class',],
+    cite: ['id', 'class',],
+    code: ['id', 'class',],
+    col: ['id', 'class', 'align', 'valign', 'span', 'width'],
+    colgroup: ['id', 'class', 'align', 'valign', 'span', 'width'],
+    dd: ['id', 'class',],
+    del: ['id', 'class', 'datetime'],
+    details: ['id', 'class', 'open'],
+    div: ['id', 'class',],
+    dl: ['id', 'class',],
+    dt: ['id', 'class',],
+    em: ['id', 'class',],
+    font: ['id', 'class', 'color', 'size', 'face'],
+    footer: ['id', 'class',],
+    h1: ['id', 'class',],
+    h2: ['id', 'class',],
+    h3: ['id', 'class',],
+    h4: ['id', 'class',],
+    h5: ['id', 'class',],
+    h6: ['id', 'class',],
+    header: ['id', 'class',],
+    hr: ['id', 'class',],
+    i: ['id', 'class',],
+    img: ['id', 'class', 'src', 'alt', 'title', 'width', 'height'],
+    ins: ['id', 'class', 'datetime'],
+    li: ['id', 'class'],
+    mark: ['id', 'class',],
+    nav: ['id', 'class',],
+    ol: ['id', 'class',],
+    p: ['id', 'class',],
+    pre: ['id', 'class',],
+    s: ['id', 'class',],
+    section: ['id', 'class',],
+    small: ['id', 'class',],
+    span: ['id', 'class',],
+    sub: ['id', 'class',],
+    sup: ['id', 'class',],
+    strong: ['id', 'class',],
+    table: ['id', 'class', 'width', 'border', 'align', 'valign'],
+    tbody: ['id', 'class', 'align', 'valign'],
+    td: ['id', 'class', 'width', 'rowspan', 'colspan', 'align', 'valign'],
+    tfoot: ['id', 'class', 'align', 'valign'],
+    th: ['id', 'class', 'width', 'rowspan', 'colspan', 'align', 'valign'],
+    thead: ['id', 'class', 'align', 'valign'],
+    tr: ['id', 'class', 'rowspan', 'align', 'valign'],
+    tt: ['id', 'class',],
+    u: ['id', 'class',],
+    ul: ['id', 'class',],
+    video:
+      ['id', 'class', 'autoplay',
+        'controls',
+        'loop',
+        'preload',
+        'src',
+        'height',
+        'width']
+  }
+}
 
 let checkCreatePostFields = (formData, req) => {
   let hasLogin = req.session.userLogined
@@ -337,7 +420,6 @@ export default {
       categories: fields.categories,
       tags: fields.tags,
       content_type: fields.content_type === 'T' ? 'T' : 'M',
-      author: fields.author
     }
 
     log(obj)
@@ -406,11 +488,8 @@ export default {
         if (content.content) {
           let tok = Marked.lexer(content.content)
           let text = Marked.parser(tok).replace(/<pre>/ig, '<pre class="hljs">')
-          // content.content = DOMPurify.sanitize(text)
-          log(text)
-          content.content = text
+          content.content = xss(text, options)
         }
-
         // 更具session判断用户是否登陆，如果是登陆状态则判断是否已经点赞了该文章
         if (_session.userLogined) {
           log(_session)
@@ -432,7 +511,7 @@ export default {
         }
       }
 
-      log(content.hasLiked, content.hasCollected)
+      log(content.content)
 
       return res.send(renderApiData(req, res, 200, '获取成功', content || {}))
     } catch (err) {
@@ -459,8 +538,17 @@ export default {
         return res.send(renderApiErr(req, res, 500, errMsg))
       }
 
-      await Post.remove({ _id: id })
-      return res.send(renderApiData(req, res, 200, '删除成功', {}))
+      let postAuthor = await Post.findOne({ _id: id }, 'author')
+      log(postAuthor)
+      if (postAuthor.author) {
+        await Post.remove({ _id: id })
+        // 用户的发文数量应该减 1
+        await User.findOneAndUpdate({ _id: postAuthor.author }, { '$inc': { postsNum: -1 } })
+        return res.send(renderApiData(req, res, 200, '删除成功', {}))
+      } else {
+        return res.send(renderApiErr(req, res, 500, errMsg))
+      }
+
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
     }
@@ -482,11 +570,11 @@ export default {
     }
     try {
       let oldPost = await Post.findOne({ _id: postId })
-      if ( !oldPost || (oldPost.like_users).indexOf(userId) > -1) {
+      if (!oldPost || (oldPost.like_users).indexOf(userId) > -1) {
         return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
       } else {
         let newPost = await Post.findOneAndUpdate({ _id: postId }, { '$inc': { 'likesNum': 1 }, '$push': { 'like_users': userId } })
-        return res.send(renderApiData(req, res, 200, '更新成功', {likesNum: newPost.likesNum + 1, hasLiked: true}))
+        return res.send(renderApiData(req, res, 200, '更新成功', { likesNum: newPost.likesNum + 1, hasLiked: true }))
       }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
@@ -508,11 +596,11 @@ export default {
     }
     try {
       let oldPost = await Post.findOne({ _id: postId })
-      if ( !oldPost || (oldPost.collect_users).indexOf(userId) > -1) {
+      if (!oldPost || (oldPost.collect_users).indexOf(userId) > -1) {
         return res.status(500).send(renderApiErr(req, res, 500, '更新失败'))
       } else {
         let newPost = await Post.findOneAndUpdate({ _id: postId }, { '$inc': { 'collectionsNum': 1 }, '$push': { 'collect_users': userId } })
-        return res.send(renderApiData(req, res, 200, '更新成功', {collectionsNum: newPost.collectionsNum + 1, hasCollected: true}))
+        return res.send(renderApiData(req, res, 200, '更新成功', { collectionsNum: newPost.collectionsNum + 1, hasCollected: true }))
       }
     } catch (err) {
       return res.status(500).send(renderApiErr(req, res, 500, err))
