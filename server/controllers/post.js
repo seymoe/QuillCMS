@@ -6,8 +6,13 @@ import PostCategory from '../models/PostCategory'
 import User from '../models/User'
 import shortid from 'shortid'
 import Marked from 'marked'
+import { log, renderApiData, renderApiErr } from '../utils'
+
 const highlight = require('highlight.js')
-import { log, renderApiData, renderApiErr, checkCurrentId } from '../utils'
+const createDOMPurify = require('dompurify')
+const { JSDOM } = require('jsdom')
+const window = (new JSDOM('')).window
+const DOMPurify = createDOMPurify(window)
 
 Marked.setOptions({
   renderer: new Marked.Renderer(),
@@ -227,7 +232,7 @@ export default {
       sub_title: fields.sub_title || '',
       description: fields.description,
       cover: fields.cover,
-      content: xss(fields.content),
+      content: fields.content,
       auth: fields.auth === 'secret' ? 'secret' : 'public',
       state: fields.state === 'draft' ? 'draft' : 'published',
       isTop: fields.isTop === 'true' ? true : false,
@@ -324,7 +329,7 @@ export default {
       sub_title: fields.sub_title,
       description: fields.description,
       cover: fields.cover,
-      content: xss(fields.content),
+      content: fields.content,
       auth: fields.auth === 'secret' ? 'secret' : 'public',
       state: fields.state === 'draft' ? 'draft' : 'published',
       isTop: fields.isTop === false ? false : true,
@@ -401,6 +406,8 @@ export default {
         if (content.content) {
           let tok = Marked.lexer(content.content)
           let text = Marked.parser(tok).replace(/<pre>/ig, '<pre class="hljs">')
+          // content.content = DOMPurify.sanitize(text)
+          log(text)
           content.content = text
         }
 
