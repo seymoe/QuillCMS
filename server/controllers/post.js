@@ -484,6 +484,7 @@ export default {
         if (content.content) {
           let tok = Marked.lexer(content.content)
           let text = Marked.parser(tok).replace(/<pre>/ig, '<pre class="hljs">')
+          log('text -> ', text)
           content.content = xss(text, options)
         }
         // 更具session判断用户是否登陆，如果是登陆状态则判断是否已经点赞了该文章
