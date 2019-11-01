@@ -3,33 +3,39 @@
     <app-header 
       :spanPostion="menuSetting.btnPosition"
       :loginState="loginState"
-      @toggle-appmenu="handleToggleAppmenu"></app-header>
+      @toggle-appmenu="handleToggleAppmenu"
+    />
     <div class="admin-main-content">
       <app-menu 
         :activeIndex="routePath + '/categories'"
-        :isCollapse="menuSetting.isCollapse"></app-menu>
+        :isCollapse="menuSetting.isCollapse"
+      />
       <main class="admin-main-wrap">
-        <app-page-title :cateObj="cateObj"></app-page-title>
+        <app-page-title :cateObj="cateObj" />
         <categories-top
-          @add-cate="handleToggleAddDialog"></categories-top>
+          @add-cate="handleToggleAddDialog"
+        />
         <categories-tree 
           :categoryTree="categoryList"
           @add-cate="handleToggleAddDialog"
           @delete-cate="clientDeleteOneCate"
-          @update-cate="handleToggleUpdateDialog"></categories-tree>
+          @update-cate="handleToggleUpdateDialog"
+        />
         <add-cate-dialog 
           :dialogFormVisible="dialogFormVisible"
           :dialogParentNode="dialogParentNode"
           @add-cate="handleToggleAddDialog"
-          @create-new-cate="clientCreateOneCate"></add-cate-dialog>
+          @create-new-cate="clientCreateOneCate"
+        />
         <edit-cate-dialog 
           :dialogFormVisible="updateFormVisible"
           :form="currentCateData"
           @add-cate="handleToggleUpdateDialog"
-          @update-cate="clientUpdateOneCate"></edit-cate-dialog>
+          @update-cate="clientUpdateOneCate"
+        />
       </main>
     </div>
-    <app-footer></app-footer>
+    <app-footer />
   </div>
 </template>
 

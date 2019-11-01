@@ -2,34 +2,41 @@
   <section class="tree-wrap">
     <el-tree
       :data="categoryTree"
-      node-key="_id"
       :props="defaultProps"
+      :expand-on-click-node="false"
+      node-key="_id"
       default-expand-all
       highlight-current
-      :expand-on-click-node="false">
-      <span class="custom-tree-node" slot-scope="{ node, data }">
+    >
+      <span
+        slot-scope="{ node, data }"
+        class="custom-tree-node"
+      >
         <span>{{ node.label }}</span>
         <span>
           <el-button
-            class="btn"
             v-if="data.children"
+            @click="addSubCate(data)"
+            class="btn"
             type="primary"
             size="mini"
-            @click="addSubCate(data)">
+          >
             添加
           </el-button>
           <el-button
+            @click="() => deleteUpdateCate(data)"
             class="btn"
             type="success"
             size="mini"
-            @click="() => deleteUpdateCate(data)">
+          >
             编辑
           </el-button>
           <el-button
+            @click="() => deleteOneCate(data)"
             class="btn"
             type="danger"
             size="mini"
-            @click="() => deleteOneCate(data)">
+          >
             删除
           </el-button>
         </span>
@@ -42,18 +49,18 @@
 import { log } from '~/utils/util'
 
 export default {
+  props: {
+    categoryTree: {
+      type: Array,
+      default: () => {return []}
+    }
+  },
   data() {
     return {
       defaultProps: {
         children: 'children',
         label: 'name'
       }
-    }
-  },
-  props: {
-    categoryTree: {
-      type: Array,
-      default: []
     }
   },
   methods: {

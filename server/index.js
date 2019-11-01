@@ -29,7 +29,7 @@ if (siteConf.dev) {
     log('database opend!')
   })
 } else {
-  mongoose.connect(siteConf.DB_URL, {auth:{authdb: 'kuajieyuan_molang'}})
+  mongoose.connect(siteConf.DB_URL, { auth: { authdb: 'kuajieyuan_molang' } })
   db.on('error', console.error.bind(console, 'connection error:'))
   db.once('open', function () {
     log('database opend!')
@@ -37,7 +37,7 @@ if (siteConf.dev) {
 }
 
 // 初始化日志目录
-logUtil.initPath()
+// logUtil.initPath()
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -70,4 +70,4 @@ app.use(nuxt.render)
 
 // Listen the server
 app.listen(port, host)
-log('Server listening on ' + host + ':' + port) // eslint-disable-line no-console
+log('Server listening on http://' + host + ':' + port) // eslint-disable-line no-console

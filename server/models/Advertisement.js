@@ -33,7 +33,7 @@ const AdvertisementSchema = new Schema({
 })
 
 AdvertisementSchema.path('create_time').get(function (v) {
-  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
+  return moment(v).utcOffset(8).format("YYYY-MM-DD")
 })
 
 export default mongoose.model('Advertisement', AdvertisementSchema)

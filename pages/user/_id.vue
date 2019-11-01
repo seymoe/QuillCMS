@@ -1,6 +1,6 @@
 <template>
   <div class="app-page">
-    <app-header 
+    <app-header
       :topMenuData="topMenu"
       :loginState="loginState"></app-header>
     <section class="app-wrap">

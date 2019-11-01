@@ -7,7 +7,7 @@ export const log = siteConf.dev ? console.log.bind(console) : () => { }
 export const checkCurrentId = (ids) => {
   if (!ids) return false
   let idState = true
-  let idsArr = ids.split(',')
+  const idsArr = ids.split(',')
   if (typeof idsArr === 'object' && idsArr.length > 0) {
     for (let i = 0; i < idsArr.length; i++) {
       if (!shortid.isValid(idsArr[i])) {
@@ -23,7 +23,7 @@ export const checkCurrentId = (ids) => {
 
 // 封装api返回的数据
 export const renderApiData = (req, res, responseCode, responseMessage, data = {}) => {
-  let sendData = {
+  const sendData = {
     status: responseCode,
     success: true,
     message: responseMessage,
@@ -40,7 +40,7 @@ export const renderApiErr = (req, res, responseCode, responseMessage) => {
   }
 
   // 如果是生产模式，不返回具体的报错信息
-  let errorData = {
+  const errorData = {
     status: responseCode,
     success: false,
     message: responseMessage,
@@ -55,10 +55,10 @@ export const renderApiErr = (req, res, responseCode, responseMessage) => {
 export const arrayToTree = (arr) => {
   if (arr.length < 2) return arr
 
-  let result = arr.filter((ele, index) => {
+  const result = arr.filter((ele) => {
     return ele.parent_id === '0'
   })
-  let subArr = arr.filter((ele, index) => {
+  const subArr = arr.filter((ele) => {
     return ele.parent_id !== '0'
   })
 

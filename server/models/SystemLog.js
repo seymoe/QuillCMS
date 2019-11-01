@@ -27,7 +27,7 @@ SystemLogSchema.set('toJSON', { getters: true, virtuals: true })
 SystemLogSchema.set('toObject', { getters: true, virtuals: true })
 
 SystemLogSchema.path('create_time').get(function (v) {
-  return moment(v).utc().zone(-8).format("YYYY-MM-DD HH:mm:ss")
+  return moment(v).utcOffset(8).format("YYYY-MM-DD HH:mm:ss")
 })
 
 export default mongoose.model('SystemLog', SystemLogSchema)

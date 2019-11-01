@@ -1,56 +1,114 @@
 <template>
   <el-dialog 
-    title="添加分类" 
-    :visible.sync="showDialog"
+    :visible.sync="showDialog" 
+    @close="cancelAddCate"
+    title="添加分类"
     width="40%"
     center
-    @close="cancelAddCate">
+  >
     <el-form 
+      ref="addCateForm"
       :model="form"
       :rules="addCateRules"
-      ref="addCateForm"
       label-position="right"
-      label-width="90px">
-      <el-form-item label="父级分类" v-if="dialogParentNode.parent_id">
-        <el-input size="small" disabled :value="dialogParentNode.name"></el-input>
+      label-width="90px"
+    >
+      <el-form-item
+        v-if="dialogParentNode.parent_id"
+        label="父级分类"
+      >
+        <el-input
+          :value="dialogParentNode.name"
+          size="small"
+          disabled 
+        />
       </el-form-item>
-      <el-form-item label="分类名称" prop="name">
-        <el-input v-model="form.name" size="small" placeholder="请输入分类名称"></el-input>
+      <el-form-item
+        label="分类名称"
+        prop="name"
+      >
+        <el-input
+          v-model="form.name"
+          size="small"
+          placeholder="请输入分类名称" 
+        />
       </el-form-item>
-      <el-form-item label="分类描述" prop="description">
+      <el-form-item
+        label="分类描述"
+        prop="description"
+      >
         <el-input 
-          type="textarea"
-          :rows="2" 
+          :rows="2"
           v-model="form.description" 
+          type="textarea" 
           size="small" 
-          placeholder="请输入分类描述"></el-input>
+          placeholder="请输入分类描述"
+        />
       </el-form-item>
-      <el-form-item label="SEO标识" prop="default_url">
-        <el-input v-model="form.default_url" size="small" placeholder="1-32位字母、数字、-、_组成"></el-input>
+      <el-form-item
+        label="SEO标识"
+        prop="default_url"
+      >
+        <el-input
+          v-model="form.default_url"
+          size="small"
+          placeholder="1-32位字母、数字、-、_组成"
+        />
       </el-form-item>
-      <el-form-item label="是否启用" prop="enable">
+      <el-form-item
+        label="是否启用"
+        prop="enable"
+      >
         <el-switch
           v-model="form.enable"
           active-color="#13ce66"
-          inactive-color="#ff4949">
-        </el-switch>
+          inactive-color="#ff4949"
+        />
       </el-form-item>
-      <el-form-item label="排序" prop="sort_id">
-        <el-input-number size="small" v-model="form.sort_id"></el-input-number>
+      <el-form-item
+        label="排序"
+        prop="sort_id"
+      >
+        <el-input-number
+          v-model="form.sort_id"
+          size="small"
+        />
       </el-form-item>
-      <el-form-item label="分类类型" prop="type">
-        <el-select size="small" v-model="form.type" placeholder="请选择分类类型">
+      <el-form-item
+        label="分类类型"
+        prop="type"
+      >
+        <el-select
+          v-model="form.type"
+          size="small"
+          placeholder="请选择分类类型"
+        >
           <el-option 
             v-for="item in typeOptions"
             :key="item.value"
             :label="item.label"
-            :value="item.value"></el-option>
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button size="small" @click="cancelAddCate">取 消</el-button>
-      <el-button size="small" type="primary" @click="confirmAddCate('addCateForm')">确 定</el-button>
+    <div
+      slot="footer"
+      class="dialog-footer"
+    >
+      <el-button
+        @click="cancelAddCate"
+        size="small"
+      >
+        取 消
+      </el-button>
+      <el-button
+        @click="confirmAddCate('addCateForm')"
+        size="small"
+        type="primary"
+      >
+        确 定
+      </el-button>
     </div>
   </el-dialog>
 </template>
@@ -59,6 +117,18 @@
 import { log } from '~/utils/util'
 
 export default {
+  props: {
+    dialogFormVisible: {
+      type: Boolean,
+      default: true
+    },
+    dialogParentNode: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
   data() {
     let checkName = (rule, value, callback) => {
       if (value.length > 10) {
@@ -121,16 +191,6 @@ export default {
           label: '快讯'
         }
       ]
-    }
-  },
-  props: {
-    dialogFormVisible: {
-      type: Boolean,
-      default: true
-    },
-    dialogParentNode: {
-      type: Object,
-      default: {}
     }
   },
   computed: {

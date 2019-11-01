@@ -49,11 +49,13 @@ const PostSchema = new Schema({
     type: Boolean,
     default: false
   },
-  // 文章来源 0: 原创 1: 转载
+
+  // 文档类型 0: 原创 -- 1: 转载
   from: {
     type: Number,
     default: 0
   },
+
   // 文章标签
   tags: [
     {
@@ -109,10 +111,10 @@ PostSchema.set('toJSON', { getters: true, virtuals: true })
 PostSchema.set('toObject', { getters: true, virtuals: true })
 
 PostSchema.path('create_time').get(function (v) {
-  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
+  return moment(v).utcOffset(8).format("YYYY-MM-DD")
 })
 PostSchema.path('modify_time').get(function (v) {
-  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
+  return moment(v).utcOffset(8).format("YYYY-MM-DD")
 })
 
 export default mongoose.model('Post', PostSchema)

@@ -62,7 +62,7 @@ const PostCommentSchema = new Schema({
 PostCommentSchema.set('toJSON', { getters: true, virtuals: true })
 PostCommentSchema.set('toObject', { getters: true, virtuals: true })
 PostCommentSchema.path('create_time').get(function (v) {
-  return moment(v).utc().zone(-8).startOf('hour').fromNow()
+  return moment(v).utcOffset(8).startOf('hour').fromNow()
 })
 
 export default mongoose.model('PostComment', PostCommentSchema)

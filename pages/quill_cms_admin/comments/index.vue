@@ -3,22 +3,25 @@
     <app-header 
       :spanPostion="menuSetting.btnPosition"
       :loginState="loginState"
-      @toggle-appmenu="handleToggleAppmenu"></app-header>
+      @toggle-appmenu="handleToggleAppmenu"
+    />
     <div class="admin-main-content">
       <app-menu 
         :activeIndex="routePath + '/comments'"
-        :isCollapse="menuSetting.isCollapse"></app-menu>
+        :isCollapse="menuSetting.isCollapse"
+      />
       <main class="admin-main-wrap">
-        <app-page-title :cateObj="cateObj"></app-page-title>
+        <app-page-title :cateObj="cateObj" />
         <comment-table 
           :tableData="commentsList"
           :pageSize="meta.pageSize"
           :totalCounts="meta.totalCounts"
           @delete-comment="clientDeleteOneComment"
-          @update-comment="clientUpdateOneComment"></comment-table>
+          @update-comment="clientUpdateOneComment"
+        />
       </main>
     </div>
-    <app-footer></app-footer>
+    <app-footer />
   </div>
 </template>
 
@@ -36,6 +39,13 @@ import AdTop from '~/components/Admin/Ads/AdTop'
 import CommentTable from '~/components/Admin/Comments/CommentTable'
 
 export default {
+  components: {
+    AppHeader,
+    AppFooter,
+    AppMenu,
+    AppPageTitle,
+    CommentTable
+  },
   data() {
     return {
       routePath: siteConf.adminPath,
@@ -67,6 +77,12 @@ export default {
         totalCounts: 0
       }
     }
+  },
+
+  computed: mapState(['loginState']),
+
+  mounted() {
+    this.clientGetCommentList()
   },
 
   methods: {
@@ -182,18 +198,6 @@ export default {
           log(e)
         })
     }
-  },
-  computed: mapState(['loginState']),
-  mounted() {
-    this.clientGetCommentList()
-  },
-  components: {
-    AppHeader,
-    AppFooter,
-    AppMenu,
-    AppPageTitle,
-    AdTop,
-    CommentTable
   }
 }
 </script>

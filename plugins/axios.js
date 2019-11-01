@@ -6,7 +6,7 @@ const instance = axios.create({
   baseURL: siteConf.api_url,
   withCredentials: true,
   headers: {
-    'Authorization': 'Bearer ' + localStorage.getItem('token')
+    Authorization: 'Bearer ' + localStorage.getItem('token')
   },
   timeout: 10000
 })

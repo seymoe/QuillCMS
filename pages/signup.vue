@@ -2,63 +2,104 @@
   <section class="wrap">
     <div class="head">
       <nuxt-link to="/">
-        <img src="../assets/img/logo.png" alt="">
+        <img
+          src="../assets/img/logo.png"
+          alt=""
+        >
       </nuxt-link>
     </div>
     <div class="signin-box">
       <div class="top">
         <h1>账户注册</h1>
-        <nuxt-link to="/signin">已有账号，立即登录 ></nuxt-link>
+        <nuxt-link to="/signin">
+          已有账号，立即登录 >
+        </nuxt-link>
       </div>
       <div class="form">
-        <el-form :model="form" status-icon :rules="rule" ref="form">
+        <el-form
+          ref="form"
+          :model="form"
+          :rules="rule"
+          status-icon
+        >
           <el-form-item prop="email">
-            <el-input class="input"
+            <el-input
+              v-model="form.email"
+              class="input"
               placeholder="邮箱地址"
               prefix-icon="el-icon-message"
-              v-model="form.email">
-            </el-input>
+            />
           </el-form-item>
           <el-form-item prop="username">
-            <el-input class="input"
+            <el-input
+              v-model="form.username"
+              class="input"
               minlength="4"
               maxlength="16"
               placeholder="用户名，4-16位字母 数字 _ - 组成"
-              v-model="form.username">
-              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 5px;">&#xe604;</i>
+            >
+              <i
+                slot="prefix"
+                class="el-input__icon iconfont"
+                style="position:relative;left: 5px;"
+              >&#xe604;</i>
             </el-input>
           </el-form-item>
           <el-form-item prop="nickname">
-            <el-input class="input"
+            <el-input
+              v-model="form.nickname"
+              class="input"
               minlength="1"
               maxlength="10"
               placeholder="你的昵称"
-              v-model="form.nickname">
-              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 5px;">&#xe604;</i>
+            >
+              <i
+                slot="prefix"
+                class="el-input__icon iconfont"
+                style="position:relative;left: 5px;"
+              >&#xe604;</i>
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input class="input"
+            <el-input
+              v-model="form.password"
+              class="input"
               type="password"
               minlength="8"
               maxlength="16"
               placeholder="设置密码"
-              v-model="form.password">
-              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 5px;">&#xe62d;</i>
+            >
+              <i
+                slot="prefix"
+                class="el-input__icon iconfont"
+                style="position:relative;left: 5px;"
+              >&#xe62d;</i>
             </el-input>
           </el-form-item>
           <el-form-item prop="confirmPassword">
-            <el-input class="input"
+            <el-input
+              v-model="form.confirmPassword"
+              class="input"
               type="password"
               minlength="8"
               maxlength="16"
               placeholder="确认密码"
-              v-model="form.confirmPassword">
-              <i slot="prefix" class="el-input__icon iconfont" style="position:relative;left: 5px;">&#xe62d;</i>
+            >
+              <i
+                slot="prefix"
+                class="el-input__icon iconfont"
+                style="position:relative;left: 5px;"
+              >&#xe62d;</i>
             </el-input>
           </el-form-item>
           <el-form-item>
-            <el-button class="btn-submit" type="success" @click="submitForm('form')">注册</el-button>
+            <el-button
+              @click="submitForm('form')"
+              class="btn-submit"
+              type="success"
+            >
+              注册
+            </el-button>
           </el-form-item>
         </el-form>
       </div>

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const shortid = require('shortid')
+import UserLabel from './UserLabel'
 import moment from 'moment'
 const Schema = mongoose.Schema
 
@@ -61,11 +62,6 @@ const UserSchema = new Schema({
     type: String,
     default: ''
   },        // 地址
-  // 积分
-  coin: {
-    type: Number,
-    default: 0
-  },
   // 发文数
   postsNum: {
     type: Number,
@@ -104,7 +100,7 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  　register_ip: {
+  register_ip: {
     type: String,
     default: ''
   },
@@ -115,20 +111,56 @@ const UserSchema = new Schema({
   last_login_ip: {
     type: String,
     default: ''
-  }
+  },
+
+  /* ----- 积分相关 ----- */
+  // 积分
+  coin: {
+    type: Number,
+    default: 0
+  },
+
+  /* ----- 签到相关 ----- */
+  // 签到次数
+  sign_count: {
+    type: Number,
+    default: 0
+  },
+  // 连续签到次数
+  continue_sign_count: {
+    type: Number,
+    default: 0
+  },
+  // 上次签到时间
+  last_sign_time: {
+    type: Date,
+    default: ''
+  },
+  
+  /* 用户身份标签 */
+  identity_label: [
+    {
+      type: String,
+      ref: 'UserLabel'
+    }
+  ]
 })
 
 UserSchema.set('toJSON', { getters: true, virtuals: true })
 UserSchema.set('toObject', { getters: true, virtuals: true })
 
 UserSchema.path('register_time').get(function (v) {
-  return moment(v).utc().zone(-8).format("YYYY-MM-DD HH:mm:ss")
+  return moment(v).utcOffset(8).format("YYYY-MM-DD HH:mm:ss")
 })
 UserSchema.path('update_time').get(function (v) {
-  return moment(v).utc().zone(-8).format("YYYY-MM-DD HH:mm:ss")
+  return moment(v).utcOffset(8).format("YYYY-MM-DD HH:mm:ss")
 })
 UserSchema.path('last_login_time').get(function (v) {
-  return moment(v).utc().zone(-8).format("YYYY-MM-DD HH:mm:ss")
+  return moment(v).utcOffset(8).format("YYYY-MM-DD HH:mm:ss")
 })
+UserSchema.path('last_sign_time').get(function (v) {
+  return moment(v).utcOffset(8).format("YYYY-MM-DD HH:mm:ss")
+})
+
 
 export default mongoose.model('User', UserSchema)

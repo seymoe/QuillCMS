@@ -6,13 +6,8 @@ import PostCategory from '../models/PostCategory'
 import User from '../models/User'
 import shortid from 'shortid'
 import Marked from 'marked'
-import { log, renderApiData, renderApiErr } from '../utils'
-
 const highlight = require('highlight.js')
-const createDOMPurify = require('dompurify')
-const { JSDOM } = require('jsdom')
-const window = (new JSDOM('')).window
-const DOMPurify = createDOMPurify(window)
+import { log, renderApiData, renderApiErr } from '../utils'
 
 // Marked配置
 let renderer = new Marked.Renderer()
@@ -129,11 +124,11 @@ let checkCreatePostFields = (formData, req) => {
   }
 
   if (formData.title.length === 0
-    || formData.title.length > 40
-    || (formData.sub_title && formData.sub_title.length > 40)
+    || formData.title.length > 80
+    || (formData.sub_title && formData.sub_title.length > 80)
     || formData.description.length === 0
-    || formData.description.length > 80
-    || formData.content.length === 0) {
+    || formData.description.length > 100
+    || formData.content.length < 100) {
     return {
       status: false,
       msg: '标题或简介长度校验不通过'
@@ -146,6 +141,79 @@ let checkCreatePostFields = (formData, req) => {
 }
 
 export default {
+  // 获取所有的文章分类，每个分类取六条数据
+  async getExplorePost(req, res, next) {
+    try {
+      let queryCate = {
+        type: 1,
+        enable: true,
+        parent_id: '0'
+      }
+      let cateFiles = {
+        _id: 1,
+        name: 1,
+        description: 1
+      }
+      let getPostFuncs = []
+
+      // 查询文章分类列表
+      const categoryList = await PostCategory.find(queryCate, cateFiles).sort({ sort_id: -1 }).exec()
+      
+      // 根据菜单拉取文章
+      if (categoryList.length > 0) {
+        for (let i = 0; i < categoryList.length; i++) {
+          getPostFuncs.push((async (index) => {
+            let postList = []
+            let cateId = categoryList[index]['_id']
+            if (!shortid.isValid(cateId)) {
+              postList = []
+            } else {
+              postList = await Post.find({
+                categories: cateId,
+                isTop: false,
+                state: 'published'
+              }, {
+                _id: 1,
+                title: 1,
+                cover: 1,
+                description: 1,
+                author: 1,
+                categories: 1,
+                tags: 1,
+                likesNum: 1,
+                clicksNum: 1,
+                collectionsNum: 1,
+                create_time: 1
+              }).sort({create_time: -1}).limit(6).populate([
+                {
+                  path: 'author',
+                  select: 'nickname _id avatar'
+                },
+                {
+                  path: 'tags',
+                  select: 'name _id'
+                }
+              ]).exec()
+            }
+            return postList
+          })(i))
+        }
+      }
+
+      let _postList = await Promise.all(getPostFuncs)
+
+      let result = {
+        cateArr: categoryList,
+        postArr: _postList
+      }
+      
+      return res.send(renderApiData(req, res, 200, '文章列表获取成功', result))
+
+    } catch (err) {
+      return res.status(500).send(renderApiErr(req, res, 500, err))
+    }
+  },
+
   /**
    * 获取post数据列表
    * @param {*} req 
@@ -315,7 +383,7 @@ export default {
       sub_title: fields.sub_title || '',
       description: fields.description,
       cover: fields.cover,
-      content: fields.content,
+      content: xss(fields.content),
       auth: fields.auth === 'secret' ? 'secret' : 'public',
       state: fields.state === 'draft' ? 'draft' : 'published',
       isTop: fields.isTop === 'true' ? true : false,
@@ -412,14 +480,14 @@ export default {
       sub_title: fields.sub_title,
       description: fields.description,
       cover: fields.cover,
-      content: fields.content,
+      content: xss(fields.content),
       auth: fields.auth === 'secret' ? 'secret' : 'public',
       state: fields.state === 'draft' ? 'draft' : 'published',
       isTop: fields.isTop === false ? false : true,
       from: fields.from === '1' ? 1 : 0,
       categories: fields.categories,
       tags: fields.tags,
-      content_type: fields.content_type === 'T' ? 'T' : 'M',
+      content_type: fields.content_type === 'T' ? 'T' : 'M'
     }
 
     log(obj)
@@ -470,7 +538,7 @@ export default {
       let content = await Post.findOneAndUpdate(queryObj, updateObj).populate([
         {
           path: 'author',
-          select: 'nickname _id'
+          select: 'nickname _id avatar signature fans_users'
         },
         {
           path: 'tags',
@@ -482,19 +550,21 @@ export default {
         }]
       ).exec()
 
+      // 转化为可变对象
       content = content.toObject()
 
       if (getFrom !== 'server') {
         if (content.content) {
           let tok = Marked.lexer(content.content)
           let text = Marked.parser(tok).replace(/<pre>/ig, '<pre class="hljs">')
-          log('text -> ', text)
           content.content = xss(text, options)
         }
-        // 更具session判断用户是否登陆，如果是登陆状态则判断是否已经点赞了该文章
+        // 根据session判断用户是否登陆，如果是登陆状态则判断是否已经点赞了该文章
+        // 根据session判断登录用户是否关注了发文的用户
         if (_session.userLogined) {
           log(_session)
           let userId = _session.userInfo.id
+          // 赞
           if (userId && content.like_users.indexOf(userId) > -1) {
             content.hasLiked = true
           } else {
@@ -506,12 +576,20 @@ export default {
           } else {
             content.hasCollected = false
           }
+          // 关注
+          if (userId && content.author.fans_users.indexOf(userId) > -1) {
+            content.author.hasFollowed = true
+          } else {
+            content.author.hasFollowed = false
+          }
         } else {
           content.hasLiked = false
           content.hasCollected = false
+          content.author.hasFollowed = false
         }
       }
 
+      content.author.fans_users = []
       log(content.content)
 
       return res.send(renderApiData(req, res, 200, '获取成功', content || {}))

@@ -13,7 +13,7 @@ const PostCategorySchema = new Schema({
     type: String,
     'default': shortid.generate
   },
-  // 分类类别 1: 文章分类 2. 专题分类 3. 快讯分类
+  // 分类类别 1: 文章分类 2. 专栏分类 3. 快讯分类 4. 话题讨论分类 5. 资料分类
   type: {
     type: Number,
     default: 1
@@ -52,7 +52,7 @@ const PostCategorySchema = new Schema({
 })
 
 PostCategorySchema.path('create_time').get(function (v) {
-  return moment(v).utc().zone(-8).format("YYYY-MM-DD")
+  return moment(v).utcOffset(8).format("YYYY-MM-DD")
 })
 
 export default mongoose.model('PostCategory', PostCategorySchema)

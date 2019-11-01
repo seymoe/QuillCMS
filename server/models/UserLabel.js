@@ -1,5 +1,5 @@
 /**
- * 文章标签
+ * 用户身份标签
  */
 
 import mongoose from 'mongoose'
@@ -7,7 +7,7 @@ import shortid from 'shortid'
 import moment from 'moment'
 const Schema = mongoose.Schema
 
-const PostTagSchema = new Schema({
+const UserLabelSchema = new Schema({
   _id: {
     type: String,
     default: shortid.generate
@@ -30,11 +30,11 @@ const PostTagSchema = new Schema({
   }
 })
 
-PostTagSchema.set('toJSON', { getters: true, virtuals: true })
-PostTagSchema.set('toObject', { getters: true, virtuals: true })
+UserLabelSchema.set('toJSON', { getters: true, virtuals: true })
+UserLabelSchema.set('toObject', { getters: true, virtuals: true })
 
-PostTagSchema.path('create_time').get(function (v) {
+UserLabelSchema.path('create_time').get(function (v) {
   return moment(v).utcOffset(8).format("YYYY-MM-DD")
 })
 
-export default mongoose.model('PostTag', PostTagSchema)
+export default mongoose.model('UserLabel', UserLabelSchema)

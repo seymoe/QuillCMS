@@ -2,34 +2,49 @@
   <div class="app-page">
     <app-header 
       :topMenuData="topMenu"
-      :loginState="loginState"></app-header>
+      :loginState="loginState"
+    />
     <section class="app-wrap">
-      <el-row class="container main" type="flex" justify="space-between">
-        <el-col class="content" :xs="24" :sm="18">
+      <el-row
+        class="container main"
+        type="flex"
+        justify="space-between"
+      >
+        <el-col
+          :xs="24"
+          :sm="18"
+          class="content"
+        >
           <post-detail 
             :postData="postData"
             :loginState="loginState"
             @like-post="clientLikePost"
             @collect-post="clientCollectPost"
-            ></post-detail>
+          />
           <comment-box 
             :commentList="commentList"
             :loginState="loginState"
             :postId="postId"
             @post-comment="clientPostComment"
-            @toggle-replybox="handleToggleReplybox"></comment-box>
+            @toggle-replybox="handleToggleReplybox"
+          />
         </el-col>
-        <el-col class="sidebar" :xs="24" :sm="6">
-          <advertise-box></advertise-box>
+        <el-col
+          :xs="24"
+          :sm="6"
+          class="sidebar"
+        >
+          <advertise-box />
           <hot-posts 
             :hotPosts="hotPostList"
-            :author="postData.author"></hot-posts>
+            :author="postData.author"
+          />
           <!-- <hot-creaters></hot-creaters> -->
           <!-- <hot-tags></hot-tags> -->
         </el-col>
       </el-row>
     </section>
-    <friend-link-box :friendLinks="friendLink"></friend-link-box>
+    <friend-link-box :friendLinks="friendLink" />
   </div>
 </template>
 
@@ -118,12 +133,7 @@ export default {
     }
   },
 
-  async fetch({ store, params }) {
-    let topMenuData = await serverGetMenuData()
-    let friendLinkData = await serverGetFriendLinks()
-    store.commit('SET_FRIEND_LINK', friendLinkData)
-    store.commit('SET_TOP_MENU', topMenuData)
-  },
+  computed: mapState(['topMenu', 'loginState', 'friendLink']),
 
   async asyncData({ params }) {
     let [postData] = await Promise.all([
@@ -135,7 +145,17 @@ export default {
     }
   },
 
-  computed: mapState(['topMenu', 'loginState', 'friendLink']),
+  async fetch({ store, params }) {
+    let topMenuData = await serverGetMenuData()
+    let friendLinkData = await serverGetFriendLinks()
+    store.commit('SET_FRIEND_LINK', friendLinkData)
+    store.commit('SET_TOP_MENU', topMenuData)
+  },
+
+  mounted() {
+    this.clientGetCommentList()
+    this.clientGetRelativePosts()
+  },
 
   methods: {
     // 客户端拉取用户相关文章
@@ -271,17 +291,10 @@ export default {
     }
   },
 
-  mounted() {
-    this.clientGetCommentList()
-    this.clientGetRelativePosts()
-  },
-
   components: {
     AppHeader,
     AdvertiseBox,
     HotPosts,
-    HotTags,
-    HotCreaters,
     PostDetail,
     CommentBox,
     FriendLinkBox

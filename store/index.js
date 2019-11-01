@@ -27,7 +27,7 @@ const store = () => new Vuex.Store({
   actions: {
     nuxtServerInit({ commit }, { req }) {
       if (req.session && req.session.userLogined) {
-        let _loginState = {
+        const _loginState = {
           hasLogin: req.session.userLogined,
           userInfo: req.session.userInfo
         }

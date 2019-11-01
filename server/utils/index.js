@@ -25,7 +25,7 @@ export const checkCurrentId = (ids) => {
 // 封装api返回的数据
 export const renderApiData = (req, res, responseCode, responseMessage, data = {}) => {
   logUtil.res(responseMessage, req)
-
+  
   let sendData = {
     status: responseCode,
     success: true,

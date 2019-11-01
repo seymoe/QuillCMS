@@ -3,7 +3,6 @@ import User from '../models/User'
 import shortid from 'shortid'
 import { log, renderApiData, renderApiErr, getClientIp } from '../utils'
 import valiObj from '../../utils/validate'
-import xss from 'xss'
 
 // 引入bcrypt,并设置加密等级为10
 import bcrypt from 'bcryptjs'
@@ -664,12 +663,12 @@ export default {
 
     let obj = {
       nickname: fields.nickname,
-      signature: xss(fields.signature),
+      signature: fields.signature,
       sex: parseInt(fields.sex) === 2 ? 2 : 1,
       age: parseInt(fields.age),
       province: fields.province,
       city: fields.province,
-      address: xss(fields.address)
+      address: fields.address
     }
 
     try {
