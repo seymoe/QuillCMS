@@ -28,7 +28,7 @@
     "log4js": "^5.3.0",
     "marked": "^0.7.0",
     "mavon-editor": "^2.7.7",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "mongoose": "^5.7.7",
     "multer": "^1.4.2",
     "nuxt": "^2.10.2",
